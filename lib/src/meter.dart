@@ -41,20 +41,16 @@ class Meter implements Metered {
     _lastTick = _startTime;
   }
 
-  /**
-   * Mark the occurrence of a given number of events.
-   *
-   * @param n the number of events
-   */
+  /// Mark the occurrence of [n] number of events.
   void mark([int n = 1]) {
-    tickIfNecessary();
+    _tickIfNecessary();
     _count += n;
     _m1Rate.update(n);
     _m5Rate.update(n);
     _m15Rate.update(n);
   }
 
-  void tickIfNecessary() {
+  void _tickIfNecessary() {
     final oldTick = _lastTick;
     final newTick = _clock.tick;
     final age = newTick - oldTick;
@@ -77,13 +73,13 @@ class Meter implements Metered {
 
   @override
   double get fifteenMinuteRate {
-    tickIfNecessary();
+    _tickIfNecessary();
     return _m15Rate.getRate(const Duration(seconds: 1));
   }
 
   @override
   double get fiveMinuteRate {
-    tickIfNecessary();
+    _tickIfNecessary();
     return _m5Rate.getRate(const Duration(seconds: 1));
   }
 
@@ -99,7 +95,7 @@ class Meter implements Metered {
 
   @override
   double get oneMinuteRate {
-    tickIfNecessary();
+    _tickIfNecessary();
     return _m1Rate.getRate(const Duration(seconds: 1));
   }
 }

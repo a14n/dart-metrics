@@ -14,11 +14,24 @@
 
 library metrics;
 
-import 'dart:math' show exp;
+import 'dart:math' show exp, min, sqrt, Random;
 
+part 'src/clock.dart';
+part 'src/counter.dart';
 part 'src/counting.dart';
 part 'src/ewma.dart';
+part 'src/exponentially_decaying_reservoir.dart';
+part 'src/gauge.dart';
+part 'src/histogram.dart';
 part 'src/meter.dart';
 part 'src/metered.dart';
 part 'src/metric.dart';
-part 'src/clock.dart';
+part 'src/metric_registry.dart';
+part 'src/metric_registry_listener.dart';
+part 'src/metric_set.dart';
+part 'src/reservoir.dart';
+part 'src/sampling.dart';
+part 'src/snapshot.dart';
+part 'src/timer.dart';
+part 'src/weighted_sample.dart';
+part 'src/weighted_snapshot.dart';
