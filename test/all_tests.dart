@@ -20,6 +20,7 @@ import 'src/ewma_tests.dart' as ewma_test;
 import 'src/exponentially_decaying_reservoir_tests.dart' as exponentially_decaying_reservoir_test;
 import 'src/histogram_tests.dart' as histogram_test;
 import 'src/meter_tests.dart' as meter_test;
+import 'src/metric_registry_tests.dart' as metric_registry_test;
 
 main() {
   clock_test.main();
@@ -28,4 +29,5 @@ main() {
   exponentially_decaying_reservoir_test.main();
   histogram_test.main();
   meter_test.main();
+  metric_registry_test.main();
 }

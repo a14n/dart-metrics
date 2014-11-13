@@ -46,8 +46,8 @@ class MetricRegistry implements MetricSet {
     if (metric is MetricSet) {
       _registerAll(name, metric);
     } else {
-      final Metric existing = _metrics.putIfAbsent(name, () => metric);
-      if (existing == null) {
+      if (!_metrics.containsKey(name)) {
+        _metrics[name] = metric;
         _onMetricAdded(name, metric);
       } else {
         throw new ArgumentError("A metric named " + name + " already exists");
@@ -147,8 +147,8 @@ class MetricRegistry implements MetricSet {
     throw new ArgumentError("$name is already used for a different type of metric");
   }
 
-  /*<T extends Metric> Map<String, T>*/Map<String, Metric> _getMetrics(bool test(String name, Metric metric)) {
-    final timers = <String, Metric>{};
+  /*<T extends Metric> Map<String, T>*/Map<String, dynamic> _getMetrics(bool test(String name, Metric metric)) {
+    final timers = <String, dynamic>{};
     for (String name in _metrics.keys) {
       final metric = _metrics[name];
       if (test(name, metric)) {

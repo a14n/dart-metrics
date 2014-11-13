@@ -14,6 +14,7 @@
 
 part of metrics;
 
+// TODO(aa) make streams
 /// Listeners for events from the registry.
 class MetricRegistryListener {
 
