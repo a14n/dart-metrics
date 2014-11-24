@@ -27,7 +27,7 @@ class MetricRegistry implements MetricSet {
 
   /// Creates a new [MetricRegistry].
   MetricRegistry() {
-    this._metrics = buildMap();
+    _metrics = buildMap();
   }
 
   /**
@@ -86,7 +86,7 @@ class MetricRegistry implements MetricSet {
   }
 
   /// Removes all metrics which match the given [test].
-  void removeMatching(bool test(String name, Metric metric)) =>
+  void removeMatching(MetricFilter test) =>
       _metrics.keys.where((name) => test(name, _metrics[name])).toList().forEach(remove);
 
   /**
@@ -111,23 +111,23 @@ class MetricRegistry implements MetricSet {
   Set<String> get names => _metrics.keys.toSet();
 
   /// Returns a map of all the gauges in the registry and their names which match the given [where].
-  Map<String, Gauge> getGauges({bool where(String name, Metric metric)}) =>
+  Map<String, Gauge> getGauges({MetricFilter where}) =>
       _getMetrics((name, metric) => metric is Gauge && (where == null || where(name, metric)));
 
   /// Returns a map of all the counters in the registry and their names which match the given [where].
-  Map<String, Counter> getCounters({bool where(String name, Metric metric)}) =>
+  Map<String, Counter> getCounters({MetricFilter where}) =>
       _getMetrics((name, metric) => metric is Counter && (where == null || where(name, metric)));
 
   /// Returns a map of all the histograms in the registry and their names which match the given [where].
-  Map<String, Histogram> getHistograms({bool where(String name, Metric metric)}) =>
+  Map<String, Histogram> getHistograms({MetricFilter where}) =>
       _getMetrics((name, metric) => metric is Histogram && (where == null || where(name, metric)));
 
   /// Returns a map of all the meters in the registry and their names which match the given [where].
-  Map<String, Meter> getMeters({bool where(String name, Metric metric)}) =>
+  Map<String, Meter> getMeters({MetricFilter where}) =>
       _getMetrics((name, metric) => metric is Meter && (where == null || where(name, metric)));
 
   /// Returns a map of all the timers in the registry and their names which match the given [where].
-  Map<String, Timer> getTimers({bool where(String name, Metric metric)}) =>
+  Map<String, Timer> getTimers({MetricFilter where}) =>
       _getMetrics((name, metric) => metric is Timer && (where == null || where(name, metric)));
 
   /*<T extends Metric> T*/ Metric _getOrAdd(String name, _MetricBuilder/*<T>*/ builder) {
@@ -147,7 +147,7 @@ class MetricRegistry implements MetricSet {
     throw new ArgumentError("$name is already used for a different type of metric");
   }
 
-  /*<T extends Metric> Map<String, T>*/Map<String, dynamic> _getMetrics(bool test(String name, Metric metric)) {
+  /*<T extends Metric> Map<String, T>*/Map<String, dynamic> _getMetrics(MetricFilter test) {
     final timers = <String, dynamic>{};
     for (String name in _metrics.keys) {
       final metric = _metrics[name];
