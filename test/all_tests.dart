@@ -15,6 +15,7 @@
 library metrics.meter_test;
 
 import 'src/clock_tests.dart' as clock_test;
+import 'src/console_reporter_tests.dart' as console_reporter_test;
 import 'src/counter_tests.dart' as counter_test;
 import 'src/ewma_tests.dart' as ewma_test;
 import 'src/exponentially_decaying_reservoir_tests.dart' as exponentially_decaying_reservoir_test;
@@ -24,6 +25,7 @@ import 'src/metric_registry_tests.dart' as metric_registry_test;
 
 main() {
   clock_test.main();
+  console_reporter_test.main();
   counter_test.main();
   ewma_test.main();
   exponentially_decaying_reservoir_test.main();

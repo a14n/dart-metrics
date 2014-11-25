@@ -65,7 +65,7 @@ abstract class ScheduledReporter implements Reporter {
               Map<String, Meter> meters,
               Map<String, Timer> timers);
 
-  double convertDuration(double duration) => duration / durationUnit._duration.inMicroseconds;
+  double convertDuration(num duration) => duration / durationUnit._duration.inMicroseconds;
 
   double convertRate(double rate) => rate * rateUnit._duration.inSeconds;
 }

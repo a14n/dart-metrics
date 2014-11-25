@@ -33,6 +33,7 @@ class ConsoleReporter extends ScheduledReporter {
   ConsoleReporter._(MetricRegistry registry, this._output, this._clock, TimeUnit rateUnit, TimeUnit durationUnit, MetricFilter filter)
       : super(registry, filter, rateUnit, durationUnit);
 
+  // TODO make named optional parameters
   @override
   void report(Map<String, Gauge> gauges,
               Map<String, Counter> counters,
@@ -100,7 +101,7 @@ class ConsoleReporter extends ScheduledReporter {
     _printValue('15-minute rate =', f(meter.fifteenMinuteRate));
   }
 
-  void _printCounter(Counter counter) => _printValue('value =', counter.count);
+  void _printCounter(Counter counter) => _printValue('count =', counter.count);
 
   void _printGauge(Gauge gauge) => _printValue('value =', gauge.value);
 
@@ -113,11 +114,11 @@ class ConsoleReporter extends ScheduledReporter {
     _printValue('mean =', f(snapshot.mean));
     _printValue('stddev =', f(snapshot.stdDev));
     _printValue('median =', f(snapshot.median));
-    _printValue('75%% <=', f(snapshot.get75thPercentile()));
-    _printValue('95%% <=', f(snapshot.get95thPercentile()));
-    _printValue('98%% <=', f(snapshot.get98thPercentile()));
-    _printValue('99%% <=', f(snapshot.get99thPercentile()));
-    _printValue('99.9%% <=', f(snapshot.get999thPercentile()));
+    _printValue('75% <=', f(snapshot.get75thPercentile()));
+    _printValue('95% <=', f(snapshot.get95thPercentile()));
+    _printValue('98% <=', f(snapshot.get98thPercentile()));
+    _printValue('99% <=', f(snapshot.get99thPercentile()));
+    _printValue('99.9% <=', f(snapshot.get999thPercentile()));
   }
 
   void _printTimer(Timer timer) {
@@ -128,7 +129,7 @@ class ConsoleReporter extends ScheduledReporter {
     _printValue('1-minute rate =', f1(timer.oneMinuteRate));
     _printValue('5-minute rate =', f1(timer.fiveMinuteRate));
     _printValue('15-minute rate =', f1(timer.fifteenMinuteRate));
-    String f2(num v) => '${convertDuration(v).toStringAsFixed(2)} ${durationUnit._name}';
+    String f2(num v) => '${convertDuration(v).toStringAsFixed(2)} ${durationUnit._name}s';
     _printValue('min =', f2(snapshot.min));
     _printValue('max =', f2(snapshot.max));
     _printValue('mean =', f2(snapshot.mean));
