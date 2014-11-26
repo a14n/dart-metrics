@@ -12,28 +12,12 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-library metrics.cached_gauge_test;
+library metrics_standalone;
 
 import 'dart:io';
-import 'package:unittest/unittest.dart';
+
+import 'package:path/path.dart' as p;
+
 import 'package:metrics/metrics.dart';
 
-main() {
-  test('caches the value for the given period', () {
-    int i = 1;
-    final gauge = new CachedGauge(() => i++, const Duration(milliseconds: 100));
-
-    expect(gauge.value, equals(1));
-    expect(gauge.value, equals(1));
-  });
-
-  test('reloads the cached value after the given period', () {
-    int i = 1;
-    final gauge = new CachedGauge(() => i++, const Duration(milliseconds: 100));
-
-    expect(gauge.value, equals(1));
-    sleep(const Duration(milliseconds: 150));
-    expect(gauge.value, equals(2));
-    expect(gauge.value, equals(2));
-  });
-}
+part 'src/csv_reporter.dart';

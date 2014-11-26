@@ -94,7 +94,7 @@ class ConsoleReporter extends ScheduledReporter {
 
   void _printMeter(Meter meter) {
     _printValue('count =', meter.count);
-    String f(double v) => '${convertRate(v).toStringAsFixed(2)} events/${rateUnit._name}';
+    String f(double v) => '${convertRate(v).toStringAsFixed(2)} events/${rateUnit.name}';
     _printValue('mean rate =', f(meter.meanRate));
     _printValue('1-minute rate =', f(meter.oneMinuteRate));
     _printValue('5-minute rate =', f(meter.fiveMinuteRate));
@@ -124,12 +124,12 @@ class ConsoleReporter extends ScheduledReporter {
   void _printTimer(Timer timer) {
     final Snapshot snapshot = timer.snapshot;
     _printValue('count =', timer.count);
-    String f1(double v) => '${convertRate(v).toStringAsFixed(2)} calls/${rateUnit._name}';
+    String f1(double v) => '${convertRate(v).toStringAsFixed(2)} calls/${rateUnit.name}';
     _printValue('mean rate =', f1(timer.meanRate));
     _printValue('1-minute rate =', f1(timer.oneMinuteRate));
     _printValue('5-minute rate =', f1(timer.fiveMinuteRate));
     _printValue('15-minute rate =', f1(timer.fifteenMinuteRate));
-    String f2(num v) => '${convertDuration(v).toStringAsFixed(2)} ${durationUnit._name}s';
+    String f2(num v) => '${convertDuration(v).toStringAsFixed(2)} ${durationUnit.name}s';
     _printValue('min =', f2(snapshot.min));
     _printValue('max =', f2(snapshot.max));
     _printValue('mean =', f2(snapshot.mean));
@@ -151,6 +151,9 @@ class ConsoleReporter extends ScheduledReporter {
   }
 }
 
+/// A [StringSink] that write with [print].
+///
+/// The underliing [print] is call only on [_PrintStringSink.writeln].
 class _PrintStringSink implements StringSink {
   StringBuffer sb = new StringBuffer();
 

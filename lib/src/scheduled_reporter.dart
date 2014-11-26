@@ -78,8 +78,8 @@ class TimeUnit {
   static const HOURS = const TimeUnit._('hour', const Duration(hours: 1));
   static const DAYS = const TimeUnit._('day', const Duration(days: 1));
 
-  final String _name;
+  final String name;
   final Duration _duration;
 
-  const TimeUnit._(this._name, this._duration);
+  const TimeUnit._(this.name, this._duration);
 }
