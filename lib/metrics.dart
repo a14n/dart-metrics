@@ -22,6 +22,7 @@ part 'src/clock.dart';
 part 'src/console_reporter.dart';
 part 'src/counter.dart';
 part 'src/counting.dart';
+part 'src/derivative_gauge.dart';
 part 'src/ewma.dart';
 part 'src/exponentially_decaying_reservoir.dart';
 part 'src/gauge.dart';
