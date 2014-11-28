@@ -25,6 +25,7 @@ import 'src/exponentially_decaying_reservoir_tests.dart' as exponentially_decayi
 import 'src/histogram_tests.dart' as histogram_test;
 import 'src/meter_tests.dart' as meter_test;
 import 'src/metric_registry_tests.dart' as metric_registry_test;
+import 'src/ratio_gauge_tests.dart' as ratio_gauge_test;
 
 main() {
   cached_gauge_test.main();
@@ -38,4 +39,5 @@ main() {
   histogram_test.main();
   meter_test.main();
   metric_registry_test.main();
+  ratio_gauge_test.main();
 }

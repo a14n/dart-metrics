@@ -14,15 +14,26 @@
 
 part of metrics;
 
-typedef T _Transfomer<F, T>(F value);
+/// A [Gauge] which measures the ratio of one value to another.
+class RatioGauge implements Gauge<double> {
+  final _Supplier<Ratio> _getRatio;
 
-/// A gauge whose value is derived from the value of another gauge.
-class DerivativeGauge<F, T> implements Gauge<T> {
-  final Gauge<F> _base;
-  final _Transfomer<F, T> _transform;
+  RatioGauge(this._getRatio) {
+    assert(_getRatio != null);
+  }
 
-  DerivativeGauge(this._base, this._transform);
+  /// Returns the metric's current value.
+  @override
+  double get value => _getRatio().value;
+}
+
+class Ratio {
+  final num numerator, denominator;
+
+  Ratio(this.numerator, this.denominator);
+
+  double get value => denominator.isNaN || denominator.isInfinite || denominator == 0 ? double.NAN : (numerator / denominator);
 
   @override
-  T get value => _transform(_base.value);
+  String toString() => '$numerator:$denominator';
 }

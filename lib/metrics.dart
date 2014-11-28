@@ -34,6 +34,7 @@ part 'src/metric_filter.dart';
 part 'src/metric_registry.dart';
 part 'src/metric_registry_listener.dart';
 part 'src/metric_set.dart';
+part 'src/ratio_gauge.dart';
 part 'src/reporter.dart';
 part 'src/reservoir.dart';
 part 'src/sampling.dart';

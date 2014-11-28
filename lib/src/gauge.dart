@@ -23,13 +23,20 @@ typedef T _Supplier<T>();
  *     List l = [];
  *     final gauge = new Gauge<int>(() => l.length);
  */
-class Gauge<T> extends Metric {
+abstract class Gauge<T> extends Metric {
+  factory Gauge(_Supplier<T> _getValue) => new _Gauge(_getValue);
+
+  /// Returns the metric's current value.
+  T get value;
+}
+
+class _Gauge<T> implements Gauge<T> {
   final _Supplier<T> _getValue;
 
-  Gauge(this._getValue) {
+  _Gauge(this._getValue) {
     assert(_getValue != null);
   }
 
-  /// Returns the metric's current value.
+  @override
   T get value => _getValue();
 }
