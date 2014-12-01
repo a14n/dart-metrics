@@ -18,7 +18,7 @@ import 'src/cached_gauge_tests.dart' as cached_gauge_test;
 import 'src/clock_tests.dart' as clock_test;
 import 'src/console_reporter_tests.dart' as console_reporter_test;
 import 'src/counter_tests.dart' as counter_test;
-import 'src/csv_reporter_tests.dart' as csv_reporter_test;
+import 'src/standalone/csv_reporter_tests.dart' as csv_reporter_test;
 import 'src/derivative_gauge_tests.dart' as derivative_gauge_test;
 import 'src/ewma_tests.dart' as ewma_test;
 import 'src/exponentially_decaying_reservoir_tests.dart' as exponentially_decaying_reservoir_test;

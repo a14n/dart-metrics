@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-library metrics.csv_reporter_test;
+library metrics.standalone.csv_reporter_test;
 
 import 'dart:io';
 

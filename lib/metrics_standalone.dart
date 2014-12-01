@@ -20,4 +20,4 @@ import 'package:path/path.dart' as p;
 
 import 'package:metrics/metrics.dart';
 
-part 'src/csv_reporter.dart';
+part 'src/standalone/csv_reporter.dart';
