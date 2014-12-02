@@ -17,6 +17,8 @@ library metrics;
 import 'dart:async' as a;
 import 'dart:math' show exp, min, sqrt, Random;
 
+import 'package:logging/logging.dart' as log;
+
 part 'src/cached_gauge.dart';
 part 'src/clock.dart';
 part 'src/console_reporter.dart';
@@ -27,6 +29,7 @@ part 'src/ewma.dart';
 part 'src/exponentially_decaying_reservoir.dart';
 part 'src/gauge.dart';
 part 'src/histogram.dart';
+part 'src/log_reporter.dart';
 part 'src/meter.dart';
 part 'src/metered.dart';
 part 'src/metric.dart';

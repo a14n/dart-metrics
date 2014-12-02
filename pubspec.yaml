@@ -5,6 +5,7 @@ description: Metrics provides a powerful toolkit of ways to measure the behavior
 homepage: https://github.com/a14n/dart-metrics
 dependencies:
   path: '>=1.0.0 <2.0.0'
+  logging: '>=0.9.0 <0.10.0'
 dev_dependencies:
   mock: any
   unittest: any

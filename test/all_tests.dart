@@ -23,6 +23,7 @@ import 'src/derivative_gauge_tests.dart' as derivative_gauge_test;
 import 'src/ewma_tests.dart' as ewma_test;
 import 'src/exponentially_decaying_reservoir_tests.dart' as exponentially_decaying_reservoir_test;
 import 'src/histogram_tests.dart' as histogram_test;
+import 'src/log_reporter_tests.dart' as log_reporter_test;
 import 'src/meter_tests.dart' as meter_test;
 import 'src/metric_registry_tests.dart' as metric_registry_test;
 import 'src/ratio_gauge_tests.dart' as ratio_gauge_test;
@@ -37,6 +38,7 @@ main() {
   ewma_test.main();
   exponentially_decaying_reservoir_test.main();
   histogram_test.main();
+  log_reporter_test.main();
   meter_test.main();
   metric_registry_test.main();
   ratio_gauge_test.main();
