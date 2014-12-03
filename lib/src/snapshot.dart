@@ -57,5 +57,5 @@ abstract class Snapshot {
   double get stdDev;
 
   /// Writes the values of the snapshot to the given [sink].
-  void dump(Sink<String> sink);
+  void dump(StringSink sink);
 }

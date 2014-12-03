@@ -33,7 +33,7 @@ class WeightedSnapshot extends Snapshot {
     this._normWeights = new List<double>.filled(copy.length, 0.0);
     this._quantiles = new List<double>.filled(copy.length, 0.0);
 
-    double sumWeight = copy.fold(0, (sum, sample) => sum + sample.weight);
+    double sumWeight = copy.fold(0, (sum, sample) => sum + sample.weight).toDouble();
 
     for (int i = 0; i < copy.length; i++) {
       _values[i] = copy[i].value;
@@ -45,7 +45,6 @@ class WeightedSnapshot extends Snapshot {
     }
   }
 
-  /// Returns the value at the given [quantile] (between 0 and 1).
   @override
   double getValue(double quantile) {
     if (quantile < 0.0 || quantile > 1.0) {
@@ -68,23 +67,18 @@ class WeightedSnapshot extends Snapshot {
     return _values[posx].toDouble();
   }
 
-  /// The number of values in the snapshot.
   @override
   int get size => _values.length;
 
-  /// The entire set of values in the snapshot.
   @override
   List<int> get values => new List<int>.from(_values);
 
-  /// The highest value in the snapshot.
   @override
   int get max => _values.isEmpty ? 0 : _values.last;
 
-  /// The lowest value in the snapshot.
   @override
   int get min => _values.isEmpty ? 0 : _values.first;
 
-  /// The weighted arithmetic mean of the values in the snapshot.
   @override
   double get mean {
     if (_values.isEmpty) return 0.0;
@@ -96,7 +90,6 @@ class WeightedSnapshot extends Snapshot {
     return sum;
   }
 
-  /// The weighted standard deviation of the values in the snapshot.
   @override
   double get stdDev {
     // two-pass algorithm for variance, avoids numeric overflow
@@ -116,12 +109,6 @@ class WeightedSnapshot extends Snapshot {
     return sqrt(variance);
   }
 
-  /// Writes the values of the snapshot to the given [sink].
   @override
-  void dump(Sink<String> sink) {
-    for (int value in _values) {
-      sink.add('$value\n');
-    }
-    sink.close();
-  }
+  void dump(StringSink sink) => _values.forEach(sink.writeln);
 }
