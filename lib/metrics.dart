@@ -42,6 +42,7 @@ part 'src/reporter.dart';
 part 'src/reservoir.dart';
 part 'src/sampling.dart';
 part 'src/scheduled_reporter.dart';
+part 'src/sliding_time_window_reservoir.dart';
 part 'src/sliding_window_reservoir.dart';
 part 'src/snapshot.dart';
 part 'src/timer.dart';
