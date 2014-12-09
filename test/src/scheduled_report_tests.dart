@@ -1,0 +1,95 @@
+// Copyright (c) 2014, Alexandre Ardhuin
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+// http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+
+library metrics.scheduled_report_test;
+
+import 'dart:async' as a;
+
+import 'package:unittest/unittest.dart';
+import 'package:metrics/metrics.dart';
+import 'package:mock/mock.dart';
+
+class MockMetric extends Mock implements Metric {
+}
+
+class MockGauge extends MockMetric implements Gauge {
+  noSuchMethod(Invocation invocation) => super.noSuchMethod(invocation);
+}
+
+@proxy
+class MockCounter extends MockMetric implements Counter {
+  noSuchMethod(Invocation invocation) => super.noSuchMethod(invocation);
+}
+
+class MockHistogram extends MockMetric implements Histogram {
+  noSuchMethod(Invocation invocation) => super.noSuchMethod(invocation);
+}
+
+class MockMeter extends MockMetric implements Meter {
+  noSuchMethod(Invocation invocation) => super.noSuchMethod(invocation);
+}
+
+class MockTimer extends MockMetric implements Timer {
+  noSuchMethod(Invocation invocation) => super.noSuchMethod(invocation);
+}
+
+
+class SpyScheduledReporter extends ScheduledReporter {
+
+  int _count = 0;
+
+  SpyScheduledReporter(MetricRegistry registry, MetricFilter filter,
+      TimeUnit durationUnit, TimeUnit rateUnit)
+      : super(registry, filter, durationUnit, rateUnit);
+
+  @override
+  void report(Map<String, Gauge> gauges,
+              Map<String, Counter> counters,
+              Map<String, Histogram> histograms,
+              Map<String, Meter> meters,
+              Map<String, Timer> timers) {
+    _count++;
+  }
+}
+
+final gauge = new MockGauge();
+final counter = new MockCounter();
+final histogram = new MockHistogram();
+final meter = new MockMeter();
+final timer = new MockTimer();
+
+main() {
+  final registry = new MetricRegistry();
+  final reporter = new SpyScheduledReporter(
+      registry,
+      null,
+      TimeUnit.SECONDS,
+      TimeUnit.MILLISECONDS);
+
+  test('polls periodically', () {
+    registry.register("gauge", gauge);
+    registry.register("counter", counter);
+    registry.register("histogram", histogram);
+    registry.register("meter", meter);
+    registry.register("timer", timer);
+
+    reporter.start(const Duration(milliseconds: 200));
+
+    new a.Future.delayed(const Duration(milliseconds: 500), expectAsync(() {
+      expect(reporter._count, equals(2));
+    })).whenComplete(() {
+      reporter.stop();
+    });
+  });
+}

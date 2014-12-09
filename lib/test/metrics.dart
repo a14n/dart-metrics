@@ -27,6 +27,10 @@ class ManualClock extends Clock {
     ticksInMicros += millis * Duration.MICROSECONDS_PER_MILLISECOND;
   }
 
+  void addMicros(int micros) {
+    ticksInMicros += micros;
+  }
+
   void addHours(int hours) {
     ticksInMicros += hours * Duration.MICROSECONDS_PER_HOUR;
   }

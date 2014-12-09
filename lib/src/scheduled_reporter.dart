@@ -26,6 +26,7 @@ abstract class ScheduledReporter implements Reporter {
   a.Timer _timer;
 
   /// Creates a new [ScheduledReporter] instance.
+  // TODO(aa) make filter named optional ("where")
   ScheduledReporter(this._registry, this._filter, this.rateUnit, this.durationUnit);
 
   /// Starts the reporter polling at the given [period] (the amount of time between polls).
