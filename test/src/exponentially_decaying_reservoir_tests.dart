@@ -16,7 +16,7 @@ library metrics.exponentially_decaying_reservoir_test;
 
 import 'package:unittest/unittest.dart';
 import 'package:metrics/metrics.dart';
-import 'package:metrics/test/metrics.dart';
+import 'package:metrics/test/manual_clock.dart';
 
 main() {
 

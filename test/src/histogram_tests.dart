@@ -18,15 +18,7 @@ import 'package:unittest/unittest.dart';
 import 'package:metrics/metrics.dart';
 import 'package:mock/mock.dart';
 
-@proxy
-class MockReservoir extends Mock implements Reservoir {
-  noSuchMethod(Invocation invocation) => super.noSuchMethod(invocation);
-}
-
-@proxy
-class MockSnapshot extends Mock implements Snapshot {
-  noSuchMethod(Invocation invocation) => super.noSuchMethod(invocation);
-}
+import '../lib/mocks.dart';
 
 main() {
 

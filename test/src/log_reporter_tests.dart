@@ -19,50 +19,11 @@ import 'package:metrics/metrics.dart';
 import 'package:mock/mock.dart';
 import 'package:unittest/unittest.dart';
 
-@proxy
+import '../lib/mocks.dart';
+
 class MockLogger implements Logger {
   final _mock = new Mock();
   noSuchMethod(Invocation invocation) => _mock.noSuchMethod(invocation);
-}
-
-@proxy
-class MockMetricRegistry extends Mock implements MetricRegistry {
-  noSuchMethod(Invocation invocation) => super.noSuchMethod(invocation);
-}
-
-@proxy
-class MockClock extends Mock implements Clock {
-  noSuchMethod(Invocation invocation) => super.noSuchMethod(invocation);
-}
-
-@proxy
-class MockGauge extends Mock implements Gauge {
-  noSuchMethod(Invocation invocation) => super.noSuchMethod(invocation);
-}
-
-@proxy
-class MockCounter extends Mock implements Counter {
-  noSuchMethod(Invocation invocation) => super.noSuchMethod(invocation);
-}
-
-@proxy
-class MockHistogram extends Mock implements Histogram {
-  noSuchMethod(Invocation invocation) => super.noSuchMethod(invocation);
-}
-
-@proxy
-class MockSnapshot extends Mock implements Snapshot {
-  noSuchMethod(Invocation invocation) => super.noSuchMethod(invocation);
-}
-
-@proxy
-class MockMeter extends Mock implements Meter {
-  noSuchMethod(Invocation invocation) => super.noSuchMethod(invocation);
-}
-
-@proxy
-class MockTimer extends Mock implements Timer {
-  noSuchMethod(Invocation invocation) => super.noSuchMethod(invocation);
 }
 
 main() {

@@ -18,10 +18,7 @@ import 'package:unittest/unittest.dart';
 import 'package:metrics/metrics.dart';
 import 'package:mock/mock.dart';
 
-@proxy
-class MockClock extends Mock implements Clock {
-  noSuchMethod(Invocation invocation) => super.noSuchMethod(invocation);
-}
+import '../lib/mocks.dart';
 
 main() {
 

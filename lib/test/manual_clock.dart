@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-library metrics.test;
+library metrics.test.manual_clock;
 
 import 'package:metrics/metrics.dart';
 

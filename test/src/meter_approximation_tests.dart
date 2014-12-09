@@ -16,13 +16,7 @@ library metrics.meter_approximation_test;
 
 import 'package:unittest/unittest.dart';
 import 'package:metrics/metrics.dart';
-import 'package:metrics/test/metrics.dart';
-import 'package:mock/mock.dart';
-
-@proxy
-class MockClock extends Mock implements Clock {
-  noSuchMethod(Invocation invocation) => super.noSuchMethod(invocation);
-}
+import 'package:metrics/test/manual_clock.dart';
 
 main() {
 

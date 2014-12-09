@@ -16,51 +16,12 @@ library metrics.standalone.csv_reporter_test;
 
 import 'dart:io';
 
-import 'package:metrics/metrics.dart';
 import 'package:metrics/metrics_standalone.dart';
 import 'package:mock/mock.dart';
 import 'package:path/path.dart' as p;
 import 'package:unittest/unittest.dart';
 
-@proxy
-class MockMetricRegistry extends Mock implements MetricRegistry {
-  noSuchMethod(Invocation invocation) => super.noSuchMethod(invocation);
-}
-
-@proxy
-class MockClock extends Mock implements Clock {
-  noSuchMethod(Invocation invocation) => super.noSuchMethod(invocation);
-}
-
-@proxy
-class MockGauge extends Mock implements Gauge {
-  noSuchMethod(Invocation invocation) => super.noSuchMethod(invocation);
-}
-
-@proxy
-class MockCounter extends Mock implements Counter {
-  noSuchMethod(Invocation invocation) => super.noSuchMethod(invocation);
-}
-
-@proxy
-class MockHistogram extends Mock implements Histogram {
-  noSuchMethod(Invocation invocation) => super.noSuchMethod(invocation);
-}
-
-@proxy
-class MockSnapshot extends Mock implements Snapshot {
-  noSuchMethod(Invocation invocation) => super.noSuchMethod(invocation);
-}
-
-@proxy
-class MockMeter extends Mock implements Meter {
-  noSuchMethod(Invocation invocation) => super.noSuchMethod(invocation);
-}
-
-@proxy
-class MockTimer extends Mock implements Timer {
-  noSuchMethod(Invocation invocation) => super.noSuchMethod(invocation);
-}
+import '../../lib/mocks.dart';
 
 main() {
   group('', () {

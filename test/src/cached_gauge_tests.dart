@@ -14,7 +14,8 @@
 
 library metrics.cached_gauge_test;
 
-import 'dart:io';
+import 'dart:async';
+
 import 'package:unittest/unittest.dart';
 import 'package:metrics/metrics.dart';
 
@@ -32,8 +33,9 @@ main() {
     final gauge = new CachedGauge(() => i++, const Duration(milliseconds: 100));
 
     expect(gauge.value, equals(1));
-    sleep(const Duration(milliseconds: 150));
-    expect(gauge.value, equals(2));
-    expect(gauge.value, equals(2));
+    new Future.delayed(const Duration(milliseconds: 150), expectAsync((){
+      expect(gauge.value, equals(2));
+      expect(gauge.value, equals(2));
+    }));
   });
 }
