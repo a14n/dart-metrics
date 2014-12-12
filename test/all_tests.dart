@@ -18,7 +18,6 @@ import 'src/cached_gauge_tests.dart' as cached_gauge_test;
 import 'src/clock_tests.dart' as clock_test;
 import 'src/console_reporter_tests.dart' as console_reporter_test;
 import 'src/counter_tests.dart' as counter_test;
-import 'src/standalone/csv_reporter_tests.dart' as csv_reporter_test;
 import 'src/derivative_gauge_tests.dart' as derivative_gauge_test;
 import 'src/ewma_tests.dart' as ewma_test;
 import 'src/exponentially_decaying_reservoir_tests.dart' as exponentially_decaying_reservoir_test;
@@ -35,12 +34,15 @@ import 'src/sliding_window_reservoir_tests.dart' as sliding_window_reservoir_tes
 import 'src/uniform_snapshot_tests.dart' as uniform_snapshot_test;
 import 'src/weighted_snapshot_tests.dart' as weighted_snapshot_test;
 
+import 'src/standalone/csv_reporter_tests.dart' as csv_reporter_test;
+
+import 'src/graphite/graphite_tests.dart' as graphite_test;
+
 main() {
   cached_gauge_test.main();
   clock_test.main();
   console_reporter_test.main();
   counter_test.main();
-  csv_reporter_test.main();
   derivative_gauge_test.main();
   ewma_test.main();
   exponentially_decaying_reservoir_test.main();
@@ -56,4 +58,8 @@ main() {
   sliding_window_reservoir_test.main();
   uniform_snapshot_test.main();
   weighted_snapshot_test.main();
+
+  graphite_test.main();
+
+  csv_reporter_test.main();
 }
