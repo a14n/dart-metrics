@@ -1,5 +1,5 @@
 name: metrics
-version: 0.0.2+1
+version: 0.0.3-dev
 author: Alexandre Ardhuin <alexandre.ardhuin@gmail.com>
 description: Metrics provides a powerful toolkit of ways to measure the behavior of critical components in your production environment.
 homepage: https://github.com/a14n/dart-metrics
