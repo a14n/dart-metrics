@@ -2,7 +2,7 @@
 
 This project is a port of the [Metrics](https://dropwizard.github.io/metrics/) Java library.
 
-## Setting Up Maven
+## Setting Up
 
 Add the `metrics` dependency to your `pubspec.yaml`.
 
