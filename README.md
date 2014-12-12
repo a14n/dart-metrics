@@ -28,7 +28,12 @@ There are several kind of metrics:
 
 ### The reporters
 
-They allows to export the collected datas. Currently there are a `ConsoleReporter` and a `CsvReporter`.
+They allows to export the collected datas. Currently there are :
+
+- a `ConsoleReporter` that will use the `print` method to display the metrics.
+- a `CsvReporter` that will write the metrics in cvs files under a provided directory.
+- a `LogReporter` that will use a `Logger` from the [logging package](https://pub.dartlang.org/packages/logging).
+- a `GraphiteReporter` that will send the metrics to [graphite](http://graphite.wikidot.com/).
 
 ## License
 Apache 2.0
