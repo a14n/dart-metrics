@@ -34,7 +34,7 @@ main() {
       });
     });
 
-    tearDown(() => serverSocket.close());
+    tearDown(() => Future.wait([serverSocket.close(), graphite.close()]));
 
     test('graphite is not connected', () {
       expect(graphite.isConnected, isFalse);

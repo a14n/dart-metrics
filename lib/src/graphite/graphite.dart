@@ -55,6 +55,7 @@ class Graphite implements GraphiteSender {
 
   @override
   Future close() {
+    if (_socket == null) return new Future.value();
     final sock = _socket;
     _socket = null;
     return sock.then((s) => s.flush().then((_) => s.close()));
