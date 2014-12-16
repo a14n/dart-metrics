@@ -18,13 +18,13 @@ part of metrics;
 /// similar to [ConsoleReporter] or [CsvReporter], but using the logging package
 /// instead.
 class LogReporter extends ScheduledReporter {
-  final log.Logger _logger;
-  final log.Level _logLevel;
+  final Logger _logger;
+  final Level _logLevel;
 
-  factory LogReporter(MetricRegistry registry, {log.Logger logger, log.Level level, TimeUnit rateUnit, TimeUnit durationUnit, MetricFilter where})
+  factory LogReporter(MetricRegistry registry, {Logger logger, Level level, TimeUnit rateUnit, TimeUnit durationUnit, MetricFilter where})
       => new LogReporter._(registry,
-          logger != null ? logger : new log.Logger('metrics'),
-          level != null ? level : log.Level.INFO,
+          logger != null ? logger : new Logger('metrics'),
+          level != null ? level : Level.INFO,
           rateUnit != null ? rateUnit : TimeUnit.SECONDS,
           durationUnit != null ? durationUnit : TimeUnit.MILLISECONDS,
           where: where);

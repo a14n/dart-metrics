@@ -18,6 +18,8 @@ part of metrics;
 ///
 ///  See [ConsoleReporter], [CsvReporter], [LogReporter]
 abstract class ScheduledReporter implements Reporter {
+  static final log = new Logger("ScheduledReporter");
+
   final MetricRegistry _registry;
   final MetricFilter where;
   final TimeUnit durationUnit;
@@ -38,8 +40,7 @@ abstract class ScheduledReporter implements Reporter {
       try {
         report();
       } catch (e) {
-        // TODO(aa) use log
-        print('Exception thrown from ${this.runtimeType}#report. Exception was suppressed. Exception was $e');
+        log.warning('Exception thrown from ${this.runtimeType}#report.', e);
       }
     });
   }
