@@ -31,23 +31,14 @@ class CachedGauge<T> implements Gauge<T> {
 
   @override
   T get value {
-    if (_shouldLoad()) {
-      _value = _getValue();
-    }
+    if (_shouldLoad()) _value = _getValue();
     return _value;
   }
 
   bool _shouldLoad() {
-    for ( ; ; ) {
-      final time = _clock.tick;
-      final current = _reloadAt;
-      if (current > time) {
-        return false;
-      }
-      if (_reloadAt == current) {
-        _reloadAt = time + _timeoutInMicroseconds;
-        return true;
-      }
-    }
+    final time = _clock.tick;
+    if (time <= _reloadAt) return false;
+    _reloadAt = time + _timeoutInMicroseconds;
+    return true;
   }
 }
