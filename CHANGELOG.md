@@ -1,4 +1,12 @@
 
+# v0.1.0 (2014-12-16)
+
+## Breaking change
+
+- `RegistryListener` has been removed. You should now use streams 
+`onMetricAdded` dans `onMetricRemoved` on `MetricRegistry`.
+- optional named parameters is used at several places. 
+
 # v0.0.2 (2014-12-12)
 
 Almost every core classes from the 3.1.0 Java version have been ported.
