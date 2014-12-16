@@ -14,7 +14,8 @@
 
 library metrics;
 
-import 'dart:async' as a;
+import 'dart:async' hide Timer;
+import 'dart:async' as a show Timer;
 import 'dart:math' show exp, min, sqrt, Random;
 
 import 'package:logging/logging.dart' as log;
@@ -35,7 +36,6 @@ part 'src/metered.dart';
 part 'src/metric.dart';
 part 'src/metric_filter.dart';
 part 'src/metric_registry.dart';
-part 'src/metric_registry_listener.dart';
 part 'src/metric_set.dart';
 part 'src/ratio_gauge.dart';
 part 'src/reporter.dart';

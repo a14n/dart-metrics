@@ -14,9 +14,10 @@
 
 library metrics.metric_registry_test;
 
+import 'dart:async' as a show Timer;
+
 import 'package:unittest/unittest.dart';
 import 'package:metrics/metrics.dart';
-import 'package:mock/mock.dart';
 
 import '../lib/mocks.dart';
 
@@ -34,90 +35,59 @@ class SimpleMetricSet extends MetricSet {
 main() {
 
   test('registering a gauge triggers a notification', () {
-    registeringAMetricTriggersANotification(gauge, 'onGaugeAdded');
+    registeringAMetricTriggersANotification(gauge);
   });
 
   test('removing a gauge triggers a notification', () {
-    removingAMetricTriggersANotification(gauge, 'onGaugeRemoved');
+    removingAMetricTriggersANotification(gauge);
   });
 
   test('registering a counter triggers a notification', () {
-    registeringAMetricTriggersANotification(counter, 'onCounterAdded');
+    registeringAMetricTriggersANotification(counter);
   });
 
   test('accessing a counter registers and reuses the counter', () {
-    accessingAMetricRegistersAndReusesTheMetric((r) => r.counter, 'onCounterAdded');
+    accessingAMetricRegistersAndReusesTheMetric((r) => r.counter);
   });
 
   test('removing a counter triggers a notification', () {
-    removingAMetricTriggersANotification(counter, 'onCounterRemoved');
+    removingAMetricTriggersANotification(counter);
   });
 
   test('registering a histogram triggers a notification', () {
-    registeringAMetricTriggersANotification(histogram, 'onHistogramAdded');
+    registeringAMetricTriggersANotification(histogram);
   });
 
   test('accessing a histogram registers and reuses the histogram', () {
-    accessingAMetricRegistersAndReusesTheMetric((r) => r.histogram, 'onHistogramAdded');
+    accessingAMetricRegistersAndReusesTheMetric((r) => r.histogram);
   });
 
   test('removing a histogram triggers a notification', () {
-    removingAMetricTriggersANotification(histogram, 'onHistogramRemoved');
+    removingAMetricTriggersANotification(histogram);
   });
 
   test('registering a meter triggers a notification', () {
-    registeringAMetricTriggersANotification(meter, 'onMeterAdded');
+    registeringAMetricTriggersANotification(meter);
   });
 
   test('accessing a meter registers and reuses the meter', () {
-    accessingAMetricRegistersAndReusesTheMetric((r) => r.meter, 'onMeterAdded');
+    accessingAMetricRegistersAndReusesTheMetric((r) => r.meter);
   });
 
   test('removing a meter triggers a notification', () {
-    removingAMetricTriggersANotification(meter, 'onMeterRemoved');
+    removingAMetricTriggersANotification(meter);
   });
 
   test('registering a timer triggers a notification', () {
-    registeringAMetricTriggersANotification(timer, 'onTimerAdded');
+    registeringAMetricTriggersANotification(timer);
   });
 
   test('accessing a timer registers and reuses the timer', () {
-    accessingAMetricRegistersAndReusesTheMetric((r) => r.timer, 'onTimerAdded');
+    accessingAMetricRegistersAndReusesTheMetric((r) => r.timer);
   });
 
   test('removing a timer triggers a notification', () {
-    removingAMetricTriggersANotification(timer, 'onTimerRemoved');
-  });
-
-  test('adding a listener with existing metrics catches it up', () {
-    final listener1 =  new MockMetricRegistryListener();
-    final registry = new MetricRegistry()..addListener(listener1);
-
-    registry.register('gauge', gauge);
-    registry.register('counter', counter);
-    registry.register('histogram', histogram);
-    registry.register('meter', meter);
-    registry.register('timer', timer);
-
-    final listener2 =  new MockMetricRegistryListener();
-    registry.addListener(listener2);
-
-    listener2.getLogs(callsTo('onGaugeAdded', 'gauge', gauge)).verify(happenedExactly(1));
-    listener2.getLogs(callsTo('onCounterAdded', 'counter', counter)).verify(happenedExactly(1));
-    listener2.getLogs(callsTo('onHistogramAdded', 'histogram', histogram)).verify(happenedExactly(1));
-    listener2.getLogs(callsTo('onMeterAdded', 'meter', meter)).verify(happenedExactly(1));
-    listener2.getLogs(callsTo('onTimerAdded', 'timer', timer)).verify(happenedExactly(1));
-  });
-
-  test('a removed listener does not receive updates', () {
-    final listener =  new MockMetricRegistryListener();
-    final registry = new MetricRegistry()..addListener(listener);
-
-    registry.register('gauge', gauge);
-    registry.removeListener(listener);
-    registry.register('gauge2', gauge);
-
-    listener.getLogs(callsTo('onGaugeAdded', 'gauge2', gauge)).verify(neverHappened);
+    removingAMetricTriggersANotification(timer);
   });
 
   test('has a map of registered gauges', () {
@@ -248,8 +218,10 @@ main() {
   });
 
   test('removes metrics matching a filter', () {
-    final listener =  new MockMetricRegistryListener();
-    final registry = new MetricRegistry()..addListener(listener);
+    final registry = new MetricRegistry();
+
+    final metricsRemoved = <NamedMetric>[];
+    registry.onMetricRemoved.listen(metricsRemoved.add);
 
     registry.timer('timer-1');
     registry.timer('timer-2');
@@ -262,24 +234,34 @@ main() {
     expect(registry.names, isNot(contains(['timer-1', 'histogram-1'])));
     expect(registry.names, unorderedEquals(['timer-2']));
 
-    listener.getLogs(callsTo('onTimerRemoved', 'timer-1')).verify(happenedExactly(1));
-    listener.getLogs(callsTo('onHistogramRemoved', 'histogram-1')).verify(happenedExactly(1));
+    a.Timer.run(expectAsync((){
+      expect(metricsRemoved, hasLength(2));
+      expect(metricsRemoved.where((nm) => nm.name == 'timer-1' && nm.metric is Timer).length, equals(1));
+      expect(metricsRemoved.where((nm) => nm.name == 'histogram-1' && nm.metric is Histogram).length, equals(1));
+    }));
   });
 
 }
 
-void registeringAMetricTriggersANotification(MockMetric m, String methodName) {
-  final listener =  new MockMetricRegistryListener();
-  final registry = new MetricRegistry()..addListener(listener);
+void registeringAMetricTriggersANotification(MockMetric m) {
+  final registry = new MetricRegistry();
+
+  final metricsAdded = <NamedMetric>[];
+  registry.onMetricAdded.listen(metricsAdded.add);
 
   expect(registry.register('thing', m), equals(m));
 
-  listener.getLogs(callsTo(methodName, 'thing', m)).verify(happenedExactly(1));
+  a.Timer.run(expectAsync((){
+    expect(metricsAdded, hasLength(1));
+    expect(metricsAdded.where((nm) => nm.name == 'thing' && nm.metric == m).length, equals(1));
+  }));
 }
 
-void accessingAMetricRegistersAndReusesTheMetric(getFunction(MetricRegistry mr), String methodName) {
-  final listener =  new MockMetricRegistryListener();
-  final registry = new MetricRegistry()..addListener(listener);
+void accessingAMetricRegistersAndReusesTheMetric(getFunction(MetricRegistry mr)) {
+  final registry = new MetricRegistry();
+
+  final metricsAdded = <NamedMetric>[];
+  registry.onMetricAdded.listen(metricsAdded.add);
 
   final createMetric = getFunction(registry);
   final m1 = createMetric('thing');
@@ -287,16 +269,24 @@ void accessingAMetricRegistersAndReusesTheMetric(getFunction(MetricRegistry mr),
 
   expect(m1, same(m2));
 
-  listener.getLogs(callsTo(methodName, 'thing', m1)).verify(happenedExactly(1));
+  a.Timer.run(expectAsync((){
+    expect(metricsAdded, hasLength(1));
+    expect(metricsAdded.where((nm) => nm.name == 'thing' && nm.metric == m1).length, equals(1));
+  }));
 }
 
-void removingAMetricTriggersANotification(MockMetric m, String methodName) {
-  final listener =  new MockMetricRegistryListener();
-  final registry = new MetricRegistry()..addListener(listener);
+void removingAMetricTriggersANotification(MockMetric m) {
+  final registry = new MetricRegistry();
+
+  final metricsRemoved = <NamedMetric>[];
+  registry.onMetricRemoved.listen(metricsRemoved.add);
 
   registry.register('thing', m);
 
   expect(registry.remove('thing'), equals(true));
 
-  listener.getLogs(callsTo(methodName, 'thing')).verify(happenedExactly(1));
+  a.Timer.run(expectAsync((){
+    expect(metricsRemoved, hasLength(1));
+    expect(metricsRemoved.where((nm) => nm.name == 'thing' && nm.metric == m).length, equals(1));
+  }));
 }

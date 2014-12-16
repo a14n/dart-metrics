@@ -14,6 +14,12 @@
 
 part of metrics;
 
+class NamedMetric<T extends Metric> {
+  final String name;
+  final T metric;
+  NamedMetric(this.name, this.metric);
+}
+
 /// A registry of metric instances.
 class MetricRegistry implements MetricSet {
   /// Concatenates elements to form a dotted name, eliding any null values or empty strings.
@@ -23,12 +29,17 @@ class MetricRegistry implements MetricSet {
   static String nameWithType(Type t, List<String> names) => name([t.toString()]..addAll(names));
 
   Map<String, Metric> _metrics;
-  final List<MetricRegistryListener> _listeners = <MetricRegistryListener>[];
+
+  final _metricAddedController = new StreamController<NamedMetric>.broadcast();
+  final _metricRemovedController = new StreamController<NamedMetric>.broadcast();
 
   /// Creates a new [MetricRegistry].
   MetricRegistry() {
     _metrics = buildMap();
   }
+
+  Stream<NamedMetric> get onMetricAdded => _metricAddedController.stream;
+  Stream<NamedMetric> get onMetricRemoved => _metricRemovedController.stream;
 
   /**
    * Creates a new [Map] implementation for use inside the registry. Override this
@@ -89,23 +100,6 @@ class MetricRegistry implements MetricSet {
   void removeMatching(MetricFilter test) =>
       _metrics.keys.where((name) => test(name, _metrics[name])).toList().forEach(remove);
 
-  /**
-   * Adds a [MetricRegistryListener] to a collection of listeners that will be notified on
-   * metric creation.  Listeners will be notified in the order in which they are added.
-   * **N.B.:** The listener will be notified of all existing metrics when it first registers.
-   */
-  void addListener(MetricRegistryListener listener) {
-    _listeners.add(listener);
-
-    for (String name in _metrics.keys) {
-      _notifyListenerOfAddedMetric(listener, _metrics[name], name);
-    }
-  }
-
-  /// Removes a [MetricRegistryListener] from this registry's collection of listeners.
-  void removeListener(MetricRegistryListener listener) {
-    _listeners.remove(listener);
-  }
 
   /// A set of the names of all the metrics in the registry.
   Set<String> get names => _metrics.keys.toSet();
@@ -159,47 +153,27 @@ class MetricRegistry implements MetricSet {
   }
 
   void _onMetricAdded(String name, Metric metric) {
-    for (MetricRegistryListener listener in _listeners) {
-      _notifyListenerOfAddedMetric(listener, metric, name);
-    }
-  }
-
-  void _notifyListenerOfAddedMetric(MetricRegistryListener listener, Metric metric, String name) {
     if (metric is Gauge) {
-      listener.onGaugeAdded(name, metric);
     } else if (metric is Counter) {
-      listener.onCounterAdded(name, metric);
     } else if (metric is Histogram) {
-      listener.onHistogramAdded(name, metric);
     } else if (metric is Meter) {
-      listener.onMeterAdded(name, metric);
     } else if (metric is Timer) {
-      listener.onTimerAdded(name, metric);
     } else {
       throw new ArgumentError("Unknown metric type: ${metric.runtimeType}");
     }
+    _metricAddedController.add(new NamedMetric(name, metric));
   }
 
   void _onMetricRemoved(String name, Metric metric) {
-    for (MetricRegistryListener listener in _listeners) {
-      _notifyListenerOfRemovedMetric(name, metric, listener);
-    }
-  }
-
-  void _notifyListenerOfRemovedMetric(String name, Metric metric, MetricRegistryListener listener) {
     if (metric is Gauge) {
-      listener.onGaugeRemoved(name);
     } else if (metric is Counter) {
-      listener.onCounterRemoved(name);
     } else if (metric is Histogram) {
-      listener.onHistogramRemoved(name);
     } else if (metric is Meter) {
-      listener.onMeterRemoved(name);
     } else if (metric is Timer) {
-      listener.onTimerRemoved(name);
     } else {
       throw new ArgumentError("Unknown metric type: ${metric.runtimeType}");
     }
+    _metricRemovedController.add(new NamedMetric(name, metric));
   }
 
   void _registerAll(String prefix, MetricSet metrics) {

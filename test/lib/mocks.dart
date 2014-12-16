@@ -55,7 +55,3 @@ class MockTimer extends MockMetric implements Timer {
 class MockReservoir extends Mock implements Reservoir {
   noSuchMethod(Invocation invocation) => super.noSuchMethod(invocation);
 }
-
-class MockMetricRegistryListener extends Mock implements MetricRegistryListener {
-  noSuchMethod(Invocation invocation) => super.noSuchMethod(invocation);
-}

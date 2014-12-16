@@ -25,7 +25,6 @@ import 'src/histogram_tests.dart' as histogram_test;
 import 'src/log_reporter_tests.dart' as log_reporter_test;
 import 'src/meter_approximation_tests.dart' as meter_approximation_test;
 import 'src/meter_tests.dart' as meter_test;
-import 'src/metric_registry_listener_tests.dart' as metric_registry_listener_test;
 import 'src/metric_registry_tests.dart' as metric_registry_test;
 import 'src/ratio_gauge_tests.dart' as ratio_gauge_test;
 import 'src/scheduled_report_tests.dart' as scheduled_report_test;
@@ -50,7 +49,6 @@ main() {
   log_reporter_test.main();
   meter_approximation_test.main();
   meter_test.main();
-  metric_registry_listener_test.main();
   metric_registry_test.main();
   ratio_gauge_test.main();
   scheduled_report_test.main();
