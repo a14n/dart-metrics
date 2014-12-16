@@ -14,17 +14,16 @@
 
 part of metrics;
 
-/**
- * An exponentially-weighted moving average.
- *
- * See :
- * - [UNIX Load Average Part 1: How It Works](http://www.teamquest.com/pdfs/whitepaper/ldavg1.pdf)
- * - [UNIX Load Average Part 2: Not Your Average Average](http://www.teamquest.com/pdfs/whitepaper/ldavg2.pdf)
- * - [EMA](http://en.wikipedia.org/wiki/Moving_average#Exponential_moving_average)
- */
+///
+/// An exponentially-weighted moving average.
+///
+/// See :
+/// - [UNIX Load Average Part 1: How It Works](http://www.teamquest.com/pdfs/whitepaper/ldavg1.pdf)
+/// - [UNIX Load Average Part 2: Not Your Average Average](http://www.teamquest.com/pdfs/whitepaper/ldavg2.pdf)
+/// - [EMA](http://en.wikipedia.org/wiki/Moving_average#Exponential_moving_average)
 class EWMA {
   static const _INTERVAL_IN_SECONDS = 5;
-  static final _INTERVAL_IN_MINUTES = _INTERVAL_IN_SECONDS / 60.0;
+  static final _INTERVAL_IN_MINUTES = _INTERVAL_IN_SECONDS / Duration.SECONDS_PER_MINUTE;
 
   static final _M1_ALPHA = 1 - exp(-_INTERVAL_IN_MINUTES / 1.0);
   static final _M5_ALPHA = 1 - exp(-_INTERVAL_IN_MINUTES / 5.0);
@@ -53,8 +52,8 @@ class EWMA {
 
   /// Create a new EWMA with a specific smoothing constant [_alpha] and the
   /// expected tick interval [expectedTickInterval].
-  EWMA(this._alpha, Duration expectedTickInterval) : _interval =
-      expectedTickInterval.inMicroseconds.toDouble();
+  EWMA(this._alpha, Duration expectedTickInterval)
+      : _interval = expectedTickInterval.inMicroseconds.toDouble();
 
   /// Update the moving average with a new value [n].
   void update(int n) {
