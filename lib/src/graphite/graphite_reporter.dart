@@ -35,11 +35,11 @@ class GraphiteReporter extends ScheduledReporter {
       : super(registry, filter, rateUnit, durationUnit);
 
   @override
-  void report(Map<String, Gauge> gauges,
-              Map<String, Counter> counters,
-              Map<String, Histogram> histograms,
-              Map<String, Meter> meters,
-             Map<String, Timer> timers) {
+  void report({Map<String, Gauge> gauges,
+               Map<String, Counter> counters,
+               Map<String, Histogram> histograms,
+               Map<String, Meter> meters,
+               Map<String, Timer> timers}) {
     final timeInSeconds = _clock.time ~/ 1000;
 
     try {
@@ -47,25 +47,35 @@ class GraphiteReporter extends ScheduledReporter {
         _graphite.connect();
       }
 
-      gauges.forEach((name, gauge) {
-        reportGauge(timeInSeconds, name, gauge);
-      });
+      if (gauges != null) {
+        gauges.forEach((name, gauge) {
+          reportGauge(timeInSeconds, name, gauge);
+        });
+      }
 
-      counters.forEach((name, counter) {
-        reportCounter(timeInSeconds, name, counter);
-      });
+      if (counters != null) {
+        counters.forEach((name, counter) {
+          reportCounter(timeInSeconds, name, counter);
+        });
+      }
 
-      histograms.forEach((name, histogram) {
-        reportHistogram(timeInSeconds, name, histogram);
-      });
+      if (histograms != null) {
+        histograms.forEach((name, histogram) {
+          reportHistogram(timeInSeconds, name, histogram);
+        });
+      }
 
-      meters.forEach((name, meter) {
-        reportMeter(timeInSeconds, name, meter);
-      });
+      if (meters != null) {
+        meters.forEach((name, meter) {
+          reportMeter(timeInSeconds, name, meter);
+        });
+      }
 
-      timers.forEach((name, timer) {
-        reportTimer(timeInSeconds, name, timer);
-      });
+      if (timers != null) {
+        timers.forEach((name, timer) {
+          reportTimer(timeInSeconds, name, timer);
+        });
+      }
 
       _graphite.flush();
     } on IOException catch (e) {

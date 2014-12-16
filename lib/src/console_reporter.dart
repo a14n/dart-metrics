@@ -33,18 +33,17 @@ class ConsoleReporter extends ScheduledReporter {
   ConsoleReporter._(MetricRegistry registry, this._output, this._clock, TimeUnit rateUnit, TimeUnit durationUnit, MetricFilter filter)
       : super(registry, filter, rateUnit, durationUnit);
 
-  // TODO make named optional parameters
   @override
-  void report(Map<String, Gauge> gauges,
-              Map<String, Counter> counters,
-              Map<String, Histogram> histograms,
-              Map<String, Meter> meters,
-             Map<String, Timer> timers) {
+  void report({Map<String, Gauge> gauges,
+               Map<String, Counter> counters,
+               Map<String, Histogram> histograms,
+               Map<String, Meter> meters,
+               Map<String, Timer> timers}) {
     final dateTime = new DateTime.fromMillisecondsSinceEpoch(_clock.time);
     _printWithBanner(dateTime.toIso8601String(), '=');
     _output.writeln();
 
-    if (!gauges.isEmpty) {
+    if (gauges != null && !gauges.isEmpty) {
       _printWithBanner("-- Gauges", '-');
       gauges.forEach((name, gauge) {
         _output.writeln(name);
@@ -53,7 +52,7 @@ class ConsoleReporter extends ScheduledReporter {
       _output.writeln();
     }
 
-    if (!counters.isEmpty) {
+    if (counters != null && !counters.isEmpty) {
       _printWithBanner("-- Counters", '-');
       counters.forEach((name, counter) {
         _output.writeln(name);
@@ -62,7 +61,7 @@ class ConsoleReporter extends ScheduledReporter {
       _output.writeln();
     }
 
-    if (!histograms.isEmpty) {
+    if (histograms != null && !histograms.isEmpty) {
       _printWithBanner("-- Histograms", '-');
       histograms.forEach((name, histogram) {
         _output.writeln(name);
@@ -71,7 +70,7 @@ class ConsoleReporter extends ScheduledReporter {
       _output.writeln();
     }
 
-    if (!meters.isEmpty) {
+    if (meters != null && !meters.isEmpty) {
       _printWithBanner("-- Meters", '-');
       meters.forEach((name, meter) {
         _output.writeln(name);
@@ -80,7 +79,7 @@ class ConsoleReporter extends ScheduledReporter {
       _output.writeln();
     }
 
-    if (!timers.isEmpty) {
+    if (timers != null && !timers.isEmpty) {
       _printWithBanner("-- Timers", '-');
       timers.forEach((name, timer) {
         _output.writeln(name);

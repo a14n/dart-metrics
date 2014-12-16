@@ -33,30 +33,40 @@ class LogReporter extends ScheduledReporter {
       : super(registry, filter, rateUnit, durationUnit);
 
   @override
-  void report(Map<String, Gauge> gauges,
-              Map<String, Counter> counters,
-              Map<String, Histogram> histograms,
-              Map<String, Meter> meters,
-             Map<String, Timer> timers) {
-    gauges.forEach((name, gauge) {
-      logGauge(name, gauge);
-    });
+  void report({Map<String, Gauge> gauges,
+               Map<String, Counter> counters,
+               Map<String, Histogram> histograms,
+               Map<String, Meter> meters,
+               Map<String, Timer> timers}) {
+    if (gauges != null) {
+      gauges.forEach((name, gauge) {
+        logGauge(name, gauge);
+      });
+    }
 
-    counters.forEach((name, counter) {
-      logCounter(name, counter);
-    });
+    if (counters != null) {
+      counters.forEach((name, counter) {
+        logCounter(name, counter);
+      });
+    }
 
-    histograms.forEach((name, histogram) {
-      logHistogram(name, histogram);
-    });
+    if (histograms != null) {
+      histograms.forEach((name, histogram) {
+        logHistogram(name, histogram);
+      });
+    }
 
-    meters.forEach((name, meter) {
-      logMeter(name, meter);
-    });
+    if (meters != null) {
+      meters.forEach((name, meter) {
+        logMeter(name, meter);
+      });
+    }
 
-    timers.forEach((name, timer) {
-      logTimer(name, timer);
-    });
+    if (timers != null) {
+      timers.forEach((name, timer) {
+        logTimer(name, timer);
+      });
+    }
   }
 
   void logGauge(String name, Gauge gauge) {

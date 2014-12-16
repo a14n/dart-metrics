@@ -49,7 +49,7 @@ main() {
       final gauge = new MockGauge();
       gauge.when(callsTo('get value')).thenReturn(1);
 
-      reporter.report({'gauge': gauge}, {}, {}, {}, {});
+      reporter.report(gauges: {'gauge': gauge});
 
       expect(getFileContents('gauge.csv'), equals('''
 t,value
@@ -61,7 +61,7 @@ t,value
       final counter = new MockCounter();
       counter.when(callsTo('get count')).thenReturn(100);
 
-      reporter.report({}, {'test.counter': counter}, {}, {}, {});
+      reporter.report(counters: {'test.counter': counter});
 
       expect(getFileContents('test.counter.csv'), equals('''
 t,count
@@ -87,7 +87,7 @@ t,count
 
       histogram.when(callsTo('get snapshot')).thenReturn(snapshot);
 
-      reporter.report({}, {}, {'test.histogram': histogram}, {}, {});
+      reporter.report(histograms: {'test.histogram': histogram});
 
       expect(getFileContents('test.histogram.csv'), equals('''
 t,count,max,mean,min,stddev,p50,p75,p95,p98,p99,p999
@@ -103,7 +103,7 @@ t,count,max,mean,min,stddev,p50,p75,p95,p98,p99,p999
       meter.when(callsTo('get fiveMinuteRate')).thenReturn(4.0);
       meter.when(callsTo('get fifteenMinuteRate')).thenReturn(5.0);
 
-      reporter.report({}, {}, {}, {'test.meter': meter}, {});
+      reporter.report(meters: {'test.meter': meter});
 
       expect(getFileContents('test.meter.csv'), equals('''
 t,count,mean_rate,m1_rate,m5_rate,m15_rate,rate_unit
@@ -133,7 +133,7 @@ t,count,mean_rate,m1_rate,m5_rate,m15_rate,rate_unit
 
       timer.when(callsTo('get snapshot')).thenReturn(snapshot);
 
-      reporter.report({}, {}, {}, {}, {'test.another.timer': timer});
+      reporter.report(timers: {'test.another.timer': timer});
 
       expect(getFileContents('test.another.timer.csv'), equals('''
 t,count,max,mean,min,stddev,p50,p75,p95,p98,p99,p999,mean_rate,m1_rate,m5_rate,m15_rate,rate_unit,duration_unit

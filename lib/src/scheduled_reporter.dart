@@ -51,20 +51,20 @@ abstract class ScheduledReporter implements Reporter {
      */
   void _report() {
     report(
-        _registry.getGauges(where: _filter),
-        _registry.getCounters(where: _filter),
-        _registry.getHistograms(where: _filter),
-        _registry.getMeters(where: _filter),
-        _registry.getTimers(where: _filter));
+        gauges: _registry.getGauges(where: _filter),
+        counters: _registry.getCounters(where: _filter),
+        histograms: _registry.getHistograms(where: _filter),
+        meters: _registry.getMeters(where: _filter),
+        timers: _registry.getTimers(where: _filter));
   }
 
 
   /// Called periodically by the polling thread. Subclasses should report all the given metrics.
-  void report(Map<String, Gauge> gauges,
-              Map<String, Counter> counters,
-              Map<String, Histogram> histograms,
-              Map<String, Meter> meters,
-              Map<String, Timer> timers);
+  void report({Map<String, Gauge> gauges,
+               Map<String, Counter> counters,
+               Map<String, Histogram> histograms,
+               Map<String, Meter> meters,
+               Map<String, Timer> timers});
 
   double convertDuration(num duration) => duration / durationUnit._duration.inMicroseconds;
 
