@@ -14,12 +14,6 @@
 
 part of metrics;
 
-class NamedMetric<T extends Metric> {
-  final String name;
-  final T metric;
-  NamedMetric(this.name, this.metric);
-}
-
 /// A registry of metric instances.
 class MetricRegistry implements MetricSet {
   /// Concatenates elements to form a dotted name, eliding any null values or empty strings.
@@ -206,3 +200,10 @@ class _MetricBuilder<T extends Metric> {
 
   bool isInstance(Metric metric) => metric is T;
 }
+
+class NamedMetric<T extends Metric> {
+  final String name;
+  final T metric;
+  NamedMetric(this.name, this.metric);
+}
+

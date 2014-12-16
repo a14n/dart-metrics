@@ -18,7 +18,7 @@ part of metrics;
 abstract class Snapshot {
 
   /// Returns the value at the given [quantile] (between 0 and 1).
-  num getValue(num quantile);
+  double getValue(num quantile);
 
   /// The entire set of values in the snapshot.
   List<int> get values;
@@ -27,34 +27,34 @@ abstract class Snapshot {
   int get size;
 
   ///The median value in the distribution.
-  num get median => getValue(0.5);
+  double get median => getValue(0.5);
 
   /// Returns the value at the 75th percentile in the distribution.
-  num get75thPercentile() => getValue(0.75);
+  double get75thPercentile() => getValue(0.75);
 
   /// Returns the value at the 95th percentile in the distribution.
-  num get95thPercentile() => getValue(0.95);
+  double get95thPercentile() => getValue(0.95);
 
   /// Returns the value at the 98th percentile in the distribution.
-  num get98thPercentile() => getValue(0.98);
+  double get98thPercentile() => getValue(0.98);
 
   /// Returns the value at the 99th percentile in the distribution.
-  num get99thPercentile() => getValue(0.99);
+  double get99thPercentile() => getValue(0.99);
 
   /// Returns the value at the 99.9th percentile in the distribution.
-  num get999thPercentile() => getValue(0.999);
+  double get999thPercentile() => getValue(0.999);
 
   /// The highest value in the snapshot.
   int get max;
 
   /// The arithmetic mean of the values in the snapshot.
-  num get mean;
+  double get mean;
 
   /// The lowest value in the snapshot.
   int get min;
 
   /// The standard deviation of the values in the snapshot.
-  num get stdDev;
+  double get stdDev;
 
   /// Writes the values of the snapshot to the given [sink].
   void dump(StringSink sink);

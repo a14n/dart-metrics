@@ -17,8 +17,8 @@ part of metrics;
 /// A statistical snapshot of a [WeightedSnapshot].
 class WeightedSnapshot extends Snapshot {
   List<int> _values;
-  List<num> _normWeights;
-  List<num> _quantiles;
+  List<double> _normWeights;
+  List<double> _quantiles;
 
   /// Create a new [Snapshot] with the given [values].
   WeightedSnapshot(Iterable<WeightedSample> values) {
@@ -30,8 +30,8 @@ class WeightedSnapshot extends Snapshot {
         });
 
     this._values = new List<int>.filled(copy.length, 0);
-    this._normWeights = new List<num>.filled(copy.length, 0.0);
-    this._quantiles = new List<num>.filled(copy.length, 0.0);
+    this._normWeights = new List<double>.filled(copy.length, 0.0);
+    this._quantiles = new List<double>.filled(copy.length, 0.0);
 
     final sumWeight = copy.fold(0, (sum, sample) => sum + sample.weight);
 
@@ -46,7 +46,7 @@ class WeightedSnapshot extends Snapshot {
   }
 
   @override
-  num getValue(num quantile) {
+  double getValue(num quantile) {
     if (quantile < 0.0 || quantile > 1.0) {
       throw new ArgumentError("$quantile is not in [0..1]");
     }
@@ -62,7 +62,7 @@ class WeightedSnapshot extends Snapshot {
       }
     }
 
-    return _values[posx];
+    return _values[posx].toDouble();
   }
 
   @override
@@ -78,10 +78,10 @@ class WeightedSnapshot extends Snapshot {
   int get min => _values.isEmpty ? 0 : _values.first;
 
   @override
-  num get mean {
+  double get mean {
     if (_values.isEmpty) return 0.0;
 
-    num sum = 0.0;
+    double sum = 0.0;
     for (int i = 0; i < _values.length; i++) {
       sum += _values[i] * _normWeights[i];
     }
@@ -89,7 +89,7 @@ class WeightedSnapshot extends Snapshot {
   }
 
   @override
-  num get stdDev {
+  double get stdDev {
     if (_values.isEmpty) return 0.0;
 
     final mean = this.mean;

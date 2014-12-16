@@ -14,11 +14,9 @@
 
 part of metrics;
 
-/**
- * A set of named metrics.
- *
- * See [MetricRegistry.registerAll]
- */
+/// A set of named metrics.
+///
+/// See [MetricRegistry.registerAll]
 abstract class MetricSet extends Metric {
   /// A map of metric names to metrics.
   Map<String, Metric> get metrics;

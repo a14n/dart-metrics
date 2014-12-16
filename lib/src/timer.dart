@@ -14,10 +14,8 @@
 
 part of metrics;
 
-/**
- * A timer metric which aggregates timing durations and provides duration statistics, plus
- * throughput statistics via [Meter].
- */
+/// A timer metric which aggregates timing durations and provides duration statistics, plus
+/// throughput statistics via [Meter].
 class Timer implements Metered, Sampling {
 
   Meter _meter;
@@ -36,7 +34,7 @@ class Timer implements Metered, Sampling {
 
   /// Times and records the duration of event.
   /*<T> T*/ timed(event()) {
-    final int startTime = _clock.tick;
+    final startTime = _clock.tick;
     try {
       return event.call();
     } finally {
@@ -73,11 +71,9 @@ class Timer implements Metered, Sampling {
   }
 }
 
-/**
- * A timing context.
- *
- * See [Timer.time]
- */
+/// A timing context.
+///
+/// See [Timer.time]
 class TimerContext {
   final Timer _timer;
   final Clock _clock;
@@ -87,12 +83,10 @@ class TimerContext {
       _clock = clock,
       _startTime = clock.tick;
 
-  /**
-   * Updates the timer with the difference between current and start time.
-   *
-   * Call to this method will not reset the start time. Multiple calls result in multiple updates.
-   * Returns the elapsed time in microseconds.
-   */
+  /// Updates the timer with the difference between current and start time.
+  ///
+  /// Call to this method will not reset the start time. Multiple calls result in multiple updates.
+  /// Returns the elapsed time in microseconds.
   int stop() {
     final elapsed = _clock.tick - _startTime;
     _timer.update(new Duration(microseconds: elapsed));

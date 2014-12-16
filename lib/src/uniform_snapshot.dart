@@ -23,7 +23,7 @@ class UniformSnapshot extends Snapshot {
       : _values = values.toList(growable: false);
 
   @override
-  num getValue(num quantile) {
+  double getValue(num quantile) {
     if (quantile < 0.0 || quantile > 1.0) {
       throw new ArgumentError("$quantile is not in [0..1]");
     }
@@ -32,12 +32,12 @@ class UniformSnapshot extends Snapshot {
 
     final pos = quantile * (_values.length + 1);
 
-    if (pos < 1) return _values[0];
-    if (pos >= _values.length) return _values[_values.length - 1];
+    if (pos < 1) return _values[0].toDouble();
+    if (pos >= _values.length) return _values[_values.length - 1].toDouble();
 
     final lower = _values[pos.toInt() - 1];
     final upper = _values[pos.toInt()];
-    return lower + (pos - pos.floor()) * (upper - lower);
+    return (lower + (pos - pos.floor()) * (upper - lower)).toDouble();
   }
 
   @override
@@ -53,11 +53,11 @@ class UniformSnapshot extends Snapshot {
   int get min => _values.isEmpty ? 0 : _values.first;
 
   @override
-  num get mean => _values.isEmpty ? 0.0 :
+  double get mean => _values.isEmpty ? 0.0 :
     (_values.reduce((a,b) => a + b) / _values.length);
 
   @override
-  num get stdDev {
+  double get stdDev {
     if (_values.isEmpty) return 0.0;
 
     final mean = this.mean;
