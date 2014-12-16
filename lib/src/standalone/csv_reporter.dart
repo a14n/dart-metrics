@@ -34,11 +34,11 @@ class CsvReporter extends ScheduledReporter {
       : super(registry, filter, rateUnit, durationUnit);
 
   @override
-  void report({Map<String, Gauge> gauges,
-               Map<String, Counter> counters,
-               Map<String, Histogram> histograms,
-               Map<String, Meter> meters,
-               Map<String, Timer> timers}) {
+  void reportMetrics({Map<String, Gauge> gauges,
+                      Map<String, Counter> counters,
+                      Map<String, Histogram> histograms,
+                      Map<String, Meter> meters,
+                      Map<String, Timer> timers}) {
     final timeInSeconds = _clock.time ~/ 1000;
 
     if (gauges != null) {

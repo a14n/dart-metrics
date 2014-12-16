@@ -34,11 +34,11 @@ class ConsoleReporter extends ScheduledReporter {
       : super(registry, filter, rateUnit, durationUnit);
 
   @override
-  void report({Map<String, Gauge> gauges,
-               Map<String, Counter> counters,
-               Map<String, Histogram> histograms,
-               Map<String, Meter> meters,
-               Map<String, Timer> timers}) {
+  void reportMetrics({Map<String, Gauge> gauges,
+                      Map<String, Counter> counters,
+                      Map<String, Histogram> histograms,
+                      Map<String, Meter> meters,
+                      Map<String, Timer> timers}) {
     final dateTime = new DateTime.fromMillisecondsSinceEpoch(_clock.time);
     _printWithBanner(dateTime.toIso8601String(), '=');
     _output.writeln();

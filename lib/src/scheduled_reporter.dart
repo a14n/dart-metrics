@@ -33,7 +33,7 @@ abstract class ScheduledReporter implements Reporter {
   void start(Duration period) {
     _timer = new a.Timer.periodic(period, (_) {
       try {
-        _report();
+        report();
       } catch (e) {
         // TODO(aa) use log
         print('Exception thrown from ${this.runtimeType}#report. Exception was suppressed. Exception was $e');
@@ -46,11 +46,9 @@ abstract class ScheduledReporter implements Reporter {
     _timer.cancel();
   }
 
-  /**
-     * Report the current values of all metrics in the registry.
-     */
-  void _report() {
-    report(
+  /// Report the current values of all metrics in the registry.
+  void report() {
+    reportMetrics(
         gauges: _registry.getGauges(where: _filter),
         counters: _registry.getCounters(where: _filter),
         histograms: _registry.getHistograms(where: _filter),
@@ -60,11 +58,11 @@ abstract class ScheduledReporter implements Reporter {
 
 
   /// Called periodically by the polling thread. Subclasses should report all the given metrics.
-  void report({Map<String, Gauge> gauges,
-               Map<String, Counter> counters,
-               Map<String, Histogram> histograms,
-               Map<String, Meter> meters,
-               Map<String, Timer> timers});
+  void reportMetrics({Map<String, Gauge> gauges,
+                      Map<String, Counter> counters,
+                      Map<String, Histogram> histograms,
+                      Map<String, Meter> meters,
+                      Map<String, Timer> timers});
 
   double convertDuration(num duration) => duration / durationUnit._duration.inMicroseconds;
 

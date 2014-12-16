@@ -40,7 +40,7 @@ main() {
       final gauge = new MockGauge();
       gauge.when(callsTo('get value')).thenReturn(1);
 
-      reporter.report(gauges: {'gauge': gauge});
+      reporter.reportMetrics(gauges: {'gauge': gauge});
 
       expect(output.toString(), equals('''
 2013-03-18T02:04:36.000 ========================================================
@@ -57,7 +57,7 @@ gauge
       final counter = new MockCounter();
       counter.when(callsTo('get count')).thenReturn(100);
 
-      reporter.report(counters: {'test.counter': counter});
+      reporter.reportMetrics(counters: {'test.counter': counter});
 
       expect(output.toString(), equals('''
 2013-03-18T02:04:36.000 ========================================================
@@ -88,7 +88,7 @@ test.counter
 
       histogram.when(callsTo('get snapshot')).thenReturn(snapshot);
 
-      reporter.report(histograms: {'test.histogram': histogram});
+      reporter.reportMetrics(histograms: {'test.histogram': histogram});
 
       expect(output.toString(), equals('''
 2013-03-18T02:04:36.000 ========================================================
@@ -119,7 +119,7 @@ test.histogram
       meter.when(callsTo('get fiveMinuteRate')).thenReturn(4.0);
       meter.when(callsTo('get fifteenMinuteRate')).thenReturn(5.0);
 
-      reporter.report(meters: {'test.meter': meter});
+      reporter.reportMetrics(meters: {'test.meter': meter});
 
       expect(output.toString(), equals('''
 2013-03-18T02:04:36.000 ========================================================
@@ -158,7 +158,7 @@ test.meter
 
       timer.when(callsTo('get snapshot')).thenReturn(snapshot);
 
-      reporter.report(timers: {'test.another.timer': timer});
+      reporter.reportMetrics(timers: {'test.another.timer': timer});
 
       expect(output.toString(), equals('''
 2013-03-18T02:04:36.000 ========================================================

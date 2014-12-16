@@ -46,7 +46,7 @@ void testLevel(Level level) {
     });
 
     test('reports gauge values at $level', () {
-      reporter.report(gauges: {'gauge': new Gauge(() => 'value')});
+      reporter.reportMetrics(gauges: {'gauge': new Gauge(() => 'value')});
 
       logger._mock.getLogs(callsTo('log', level, 'type=GAUGE, name=gauge, value=value')).verify(happenedExactly(1));
     });
@@ -55,7 +55,7 @@ void testLevel(Level level) {
       final counter = new MockCounter();
       counter.when(callsTo('get count')).thenReturn(100);
 
-      reporter.report(counters: {'test.counter': counter});
+      reporter.reportMetrics(counters: {'test.counter': counter});
 
       logger._mock.getLogs(callsTo('log', level, 'type=COUNTER, name=test.counter, count=100')).verify(happenedExactly(1));
     });
@@ -78,7 +78,7 @@ void testLevel(Level level) {
 
       histogram.when(callsTo('get snapshot')).thenReturn(snapshot);
 
-      reporter.report(histograms: {'test.histogram': histogram});
+      reporter.reportMetrics(histograms: {'test.histogram': histogram});
 
       logger._mock.getLogs(callsTo('log', level, 'type=HISTROGRAM, name=test.histogram, count=1, max=2, mean=3.0, min=4, stddev=5.0, p50=6.0, p75=7.0, p95=8.0, p98=9.0, p99=10.0, p999=11.0')).verify(happenedExactly(1));
     });
@@ -91,7 +91,7 @@ void testLevel(Level level) {
       meter.when(callsTo('get fiveMinuteRate')).thenReturn(4.0);
       meter.when(callsTo('get fifteenMinuteRate')).thenReturn(5.0);
 
-      reporter.report(meters: {'test.meter': meter});
+      reporter.reportMetrics(meters: {'test.meter': meter});
 
       logger._mock.getLogs(callsTo('log', level, 'type=METER, name=test.meter, count=1, mean_rate=2.0, m1_rate=3.0, m5_rate=4.0, m15_rate=5.0, rate_unit=events/second')).verify(happenedExactly(1));
     });
@@ -118,7 +118,7 @@ void testLevel(Level level) {
 
       timer.when(callsTo('get snapshot')).thenReturn(snapshot);
 
-      reporter.report(timers: {'test.another.timer': timer});
+      reporter.reportMetrics(timers: {'test.another.timer': timer});
 
       logger._mock.getLogs(callsTo('log', level, 'type=TIMER, name=test.another.timer, count=1, max=100.0, mean=200.0, min=300.0, stddev=400.0, p50=500.0, p75=600.0, p95=700.0, p98=800.0, p99=900.0, p999=1000.0, mean_rate=2.0, m1_rate=3.0, m5_rate=4.0, m15_rate=5.0, rate_unit=calls/second, duration_unit=milliseconds')).verify(happenedExactly(1));
     });

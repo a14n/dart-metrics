@@ -30,11 +30,11 @@ class SpyScheduledReporter extends ScheduledReporter {
       : super(registry, filter, durationUnit, rateUnit);
 
   @override
-  void report({Map<String, Gauge> gauges,
-               Map<String, Counter> counters,
-               Map<String, Histogram> histograms,
-               Map<String, Meter> meters,
-               Map<String, Timer> timers}) {
+  void reportMetrics({Map<String, Gauge> gauges,
+                      Map<String, Counter> counters,
+                      Map<String, Histogram> histograms,
+                      Map<String, Meter> meters,
+                      Map<String, Timer> timers}) {
     _count++;
   }
 }
