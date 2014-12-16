@@ -14,11 +14,9 @@
 
 part of metrics;
 
-/**
- * A metric which calculates the distribution of a value.
- *
- * See [Accurately computing running variance](http://www.johndcook.com/standard_deviation.html)
- */
+/// A metric which calculates the distribution of a value.
+///
+/// See [Accurately computing running variance](http://www.johndcook.com/standard_deviation.html)
 class Histogram implements Metric, Sampling, Counting {
   final Reservoir _reservoir;
   int _count = 0;

@@ -14,12 +14,10 @@
 
 part of metrics;
 
-/**
- * A meter metric which measures mean throughput and one-, five-, and
- * fifteen-minute exponentially-weighted moving average throughputs.
- *
- *  See [EWMA]
- */
+/// A meter metric which measures mean throughput and one-, five-, and
+/// fifteen-minute exponentially-weighted moving average throughputs.
+///
+///  See [EWMA]
 class Meter implements Metered {
   static final _TICK_INTERVAL = const Duration(seconds: 5).inMicroseconds;
 
@@ -88,7 +86,7 @@ class Meter implements Metered {
     if (count == 0) {
       return 0.0;
     } else {
-      final num elapsed = (_clock.tick - _startTime);
+      final elapsed = _clock.tick - _startTime;
       return count / elapsed * Duration.MICROSECONDS_PER_SECOND;
     }
   }
