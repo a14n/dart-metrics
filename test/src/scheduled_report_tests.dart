@@ -25,9 +25,9 @@ class SpyScheduledReporter extends ScheduledReporter {
 
   int _count = 0;
 
-  SpyScheduledReporter(MetricRegistry registry, MetricFilter filter,
-      TimeUnit durationUnit, TimeUnit rateUnit)
-      : super(registry, filter, durationUnit, rateUnit);
+  SpyScheduledReporter(MetricRegistry registry,
+      TimeUnit durationUnit, TimeUnit rateUnit, {MetricFilter where})
+      : super(registry, durationUnit, rateUnit, where: where);
 
   @override
   void reportMetrics({Map<String, Gauge> gauges,
@@ -49,7 +49,6 @@ main() {
   final registry = new MetricRegistry();
   final reporter = new SpyScheduledReporter(
       registry,
-      null,
       TimeUnit.SECONDS,
       TimeUnit.MILLISECONDS);
 

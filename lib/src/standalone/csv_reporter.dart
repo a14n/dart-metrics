@@ -22,16 +22,16 @@ class CsvReporter extends ScheduledReporter {
   final Directory _directory;
   final Clock _clock;
 
-  factory CsvReporter(MetricRegistry registry, Directory directory, {Clock clock, TimeUnit rateUnit, TimeUnit durationUnit, MetricFilter filter})
+  factory CsvReporter(MetricRegistry registry, Directory directory, {Clock clock, TimeUnit rateUnit, TimeUnit durationUnit, MetricFilter where})
       => new CsvReporter._(registry,
           directory,
           clock != null ? clock : Clock.defaultClock,
           rateUnit != null ? rateUnit : TimeUnit.SECONDS,
           durationUnit != null ? durationUnit : TimeUnit.MILLISECONDS,
-          filter);
+          where: where);
 
-  CsvReporter._(MetricRegistry registry, this._directory, this._clock, TimeUnit rateUnit, TimeUnit durationUnit, MetricFilter filter)
-      : super(registry, filter, rateUnit, durationUnit);
+  CsvReporter._(MetricRegistry registry, this._directory, this._clock, TimeUnit rateUnit, TimeUnit durationUnit, {MetricFilter where})
+      : super(registry, rateUnit, durationUnit, where: where);
 
   @override
   void reportMetrics({Map<String, Gauge> gauges,

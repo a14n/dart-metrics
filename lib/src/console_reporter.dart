@@ -22,16 +22,16 @@ class ConsoleReporter extends ScheduledReporter {
   final StringSink _output;
   final Clock _clock;
 
-  factory ConsoleReporter(MetricRegistry registry, {StringSink output, Clock clock, TimeUnit rateUnit, TimeUnit durationUnit, MetricFilter filter})
+  factory ConsoleReporter(MetricRegistry registry, {StringSink output, Clock clock, TimeUnit rateUnit, TimeUnit durationUnit, MetricFilter where})
       => new ConsoleReporter._(registry,
           output != null ? output : new _PrintStringSink(),
           clock != null ? clock : Clock.defaultClock,
           rateUnit != null ? rateUnit : TimeUnit.SECONDS,
           durationUnit != null ? durationUnit : TimeUnit.MILLISECONDS,
-          filter);
+          where: where);
 
-  ConsoleReporter._(MetricRegistry registry, this._output, this._clock, TimeUnit rateUnit, TimeUnit durationUnit, MetricFilter filter)
-      : super(registry, filter, rateUnit, durationUnit);
+  ConsoleReporter._(MetricRegistry registry, this._output, this._clock, TimeUnit rateUnit, TimeUnit durationUnit, {MetricFilter where})
+      : super(registry, rateUnit, durationUnit, where: where);
 
   @override
   void reportMetrics({Map<String, Gauge> gauges,

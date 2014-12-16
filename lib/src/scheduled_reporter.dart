@@ -19,15 +19,18 @@ part of metrics;
 ///  See [ConsoleReporter], [CsvReporter], [LogReporter]
 abstract class ScheduledReporter implements Reporter {
   final MetricRegistry _registry;
-  final MetricFilter _filter;
+  final MetricFilter where;
   final TimeUnit durationUnit;
   final TimeUnit rateUnit;
 
   a.Timer _timer;
 
   /// Creates a new [ScheduledReporter] instance.
-  // TODO(aa) make filter named optional ("where")
-  ScheduledReporter(this._registry, this._filter, this.rateUnit, this.durationUnit);
+  ScheduledReporter(this._registry, this.rateUnit, this.durationUnit, {this.where}) {
+    assert(_registry != null);
+    assert(rateUnit != null);
+    assert(durationUnit != null);
+  }
 
   /// Starts the reporter polling at the given [period] (the amount of time between polls).
   void start(Duration period) {
@@ -49,11 +52,11 @@ abstract class ScheduledReporter implements Reporter {
   /// Report the current values of all metrics in the registry.
   void report() {
     reportMetrics(
-        gauges: _registry.getGauges(where: _filter),
-        counters: _registry.getCounters(where: _filter),
-        histograms: _registry.getHistograms(where: _filter),
-        meters: _registry.getMeters(where: _filter),
-        timers: _registry.getTimers(where: _filter));
+        gauges: _registry.getGauges(where: where),
+        counters: _registry.getCounters(where: where),
+        histograms: _registry.getHistograms(where: where),
+        meters: _registry.getMeters(where: where),
+        timers: _registry.getTimers(where: where));
   }
 
 

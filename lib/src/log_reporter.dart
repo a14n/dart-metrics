@@ -21,16 +21,16 @@ class LogReporter extends ScheduledReporter {
   final log.Logger _logger;
   final log.Level _logLevel;
 
-  factory LogReporter(MetricRegistry registry, {log.Logger logger, log.Level level, TimeUnit rateUnit, TimeUnit durationUnit, MetricFilter filter})
+  factory LogReporter(MetricRegistry registry, {log.Logger logger, log.Level level, TimeUnit rateUnit, TimeUnit durationUnit, MetricFilter where})
       => new LogReporter._(registry,
           logger != null ? logger : new log.Logger('metrics'),
           level != null ? level : log.Level.INFO,
           rateUnit != null ? rateUnit : TimeUnit.SECONDS,
           durationUnit != null ? durationUnit : TimeUnit.MILLISECONDS,
-          filter);
+          where: where);
 
-  LogReporter._(MetricRegistry registry, this._logger, this._logLevel, TimeUnit rateUnit, TimeUnit durationUnit, MetricFilter filter)
-      : super(registry, filter, rateUnit, durationUnit);
+  LogReporter._(MetricRegistry registry, this._logger, this._logLevel, TimeUnit rateUnit, TimeUnit durationUnit, {MetricFilter where})
+      : super(registry, rateUnit, durationUnit, where: where);
 
   @override
   void reportMetrics({Map<String, Gauge> gauges,
