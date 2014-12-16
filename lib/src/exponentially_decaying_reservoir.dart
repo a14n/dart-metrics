@@ -14,22 +14,21 @@
 
 part of metrics;
 
-/**
- * An exponentially-decaying random reservoir of [int]s. Uses Cormode et al's
- * forward-decaying priority reservoir sampling method to produce a statistically representative
- * sampling reservoir, exponentially biased towards newer entries.
- *
- * See [Cormode et al. Forward Decay: A Practical Time Decay Model for Streaming Systems. ICDE '09:
- *      Proceedings of the 2009 IEEE International Conference on Data Engineering (2009)](http://dimacs.rutgers.edu/~graham/pubs/papers/fwddecay.pdf)
- */
+///
+/// An exponentially-decaying random reservoir of [int]s. Uses Cormode et al's
+/// forward-decaying priority reservoir sampling method to produce a statistically representative
+/// sampling reservoir, exponentially biased towards newer entries.
+///
+/// See [Cormode et al. Forward Decay: A Practical Time Decay Model for Streaming Systems. ICDE '09:
+///      Proceedings of the 2009 IEEE International Conference on Data Engineering (2009)](http://dimacs.rutgers.edu/~graham/pubs/papers/fwddecay.pdf)
 class ExponentiallyDecayingReservoir implements Reservoir {
-  static const int _DEFAULT_SIZE = 1028;
-  static const double _DEFAULT_ALPHA = 0.015;
-  static const int _RESCALE_THRESHOLD = Duration.MICROSECONDS_PER_HOUR;
+  static const _DEFAULT_SIZE = 1028;
+  static const _DEFAULT_ALPHA = 0.015;
+  static const _RESCALE_THRESHOLD = Duration.MICROSECONDS_PER_HOUR;
 
   static final _random = new Random();
 
-  final Map<double, WeightedSample> _values = <double, WeightedSample>{};
+  final _values = <double, WeightedSample>{};
   final double _alpha;
   final int _size;
   int _count = 0;
@@ -37,19 +36,17 @@ class ExponentiallyDecayingReservoir implements Reservoir {
   int _nextScaleTime;
   final Clock _clock;
 
-  /**
-   * Creates a new [ExponentiallyDecayingReservoir].
-   *
-   * By default a new [ExponentiallyDecayingReservoir] of 1028 elements, which offers a 99.9%
-   * confidence level with a 5% margin of error assuming a normal distribution, and an alpha
-   * factor of 0.015, which heavily biases the reservoir to the past 5 minutes of measurements.
-   *
-   * [_size] is the number of samples to keep in the sampling reservoir
-   * [_alpha] is the exponential decay factor; the higher this is, the more biased the reservoir will be towards newer values
-   * [clock] is the clock used to timestamp samples and track rescaling
-   */
-  ExponentiallyDecayingReservoir([this._size = _DEFAULT_SIZE, this._alpha = _DEFAULT_ALPHA, Clock clock]) :
-      _clock = clock != null ? clock : Clock.defaultClock {
+  /// Creates a new [ExponentiallyDecayingReservoir].
+  ///
+  /// By default a new [ExponentiallyDecayingReservoir] of 1028 elements, which offers a 99.9%
+  /// confidence level with a 5% margin of error assuming a normal distribution, and an alpha
+  /// factor of 0.015, which heavily biases the reservoir to the past 5 minutes of measurements.
+  ///
+  /// [_size] is the number of samples to keep in the sampling reservoir
+  /// [_alpha] is the exponential decay factor; the higher this is, the more biased the reservoir will be towards newer values
+  /// [clock] is the clock used to timestamp samples and track rescaling
+  ExponentiallyDecayingReservoir([this._size = _DEFAULT_SIZE, this._alpha = _DEFAULT_ALPHA, Clock clock])
+      : _clock = clock != null ? clock : Clock.defaultClock {
     _startTime = _currentTimeInSeconds;
     _nextScaleTime = _clock.tick + _RESCALE_THRESHOLD;
   }
@@ -61,11 +58,11 @@ class ExponentiallyDecayingReservoir implements Reservoir {
   void update(int value, [int timestamp]) {
     if (timestamp == null) timestamp = _currentTimeInSeconds;
     _rescaleIfNeeded();
-    final double itemWeight = _weight(timestamp - _startTime);
-    final WeightedSample sample = new WeightedSample(value, itemWeight);
-    final double priority = itemWeight / _random.nextDouble();
+    final itemWeight = _weight(timestamp - _startTime);
+    final sample = new WeightedSample(value, itemWeight);
+    final priority = itemWeight / _random.nextDouble();
 
-    final int newCount = ++_count;
+    final newCount = ++_count;
     if (newCount <= _size) {
       _values[priority] = sample;
     } else {
@@ -83,8 +80,8 @@ class ExponentiallyDecayingReservoir implements Reservoir {
   }
 
   void _rescaleIfNeeded() {
-    final int now = _clock.tick;
-    final int next = _nextScaleTime;
+    final now = _clock.tick;
+    final next = _nextScaleTime;
     if (now >= next) {
       _rescale(now, next);
     }
@@ -118,14 +115,14 @@ class ExponentiallyDecayingReservoir implements Reservoir {
   void _rescale(int now, int next) {
     if (_nextScaleTime == next) {
       _nextScaleTime = now + _RESCALE_THRESHOLD;
-      final int oldStartTime = _startTime;
+      final oldStartTime = _startTime;
       _startTime = _currentTimeInSeconds;
-      final double scalingFactor = exp(-_alpha * (_startTime - oldStartTime));
+      final scalingFactor = exp(-_alpha * (_startTime - oldStartTime));
 
-      final List<double> keys = new List<double>.from(_values.keys);
-      for (double key in keys) {
-        final WeightedSample sample = _values.remove(key);
-        final WeightedSample newSample = new WeightedSample(sample.value, sample.weight * scalingFactor);
+      final keys = new List<double>.from(_values.keys);
+      for (final key in keys) {
+        final sample = _values.remove(key);
+        final newSample = new WeightedSample(sample.value, sample.weight * scalingFactor);
         _values[key * scalingFactor] = newSample;
       }
 
