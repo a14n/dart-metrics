@@ -23,29 +23,21 @@ class UniformSnapshot extends Snapshot {
       : _values = values.toList(growable: false);
 
   @override
-  // TODO return num  to avoid toDouble ?
-  double getValue(double quantile) {
+  num getValue(num quantile) {
     if (quantile < 0.0 || quantile > 1.0) {
       throw new ArgumentError("$quantile is not in [0..1]");
     }
 
-    if (_values.isEmpty) {
-      return 0.0;
-    }
+    if (_values.isEmpty) return 0.0;
 
     final pos = quantile * (_values.length + 1);
 
-    if (pos < 1) {
-      return _values[0].toDouble();
-    }
-
-    if (pos >= _values.length) {
-      return _values[_values.length - 1].toDouble();
-    }
+    if (pos < 1) return _values[0];
+    if (pos >= _values.length) return _values[_values.length - 1];
 
     final lower = _values[pos.toInt() - 1];
     final upper = _values[pos.toInt()];
-    return (lower + (pos - pos.floor()) * (upper - lower)).toDouble();
+    return lower + (pos - pos.floor()) * (upper - lower);
   }
 
   @override
@@ -61,26 +53,19 @@ class UniformSnapshot extends Snapshot {
   int get min => _values.isEmpty ? 0 : _values.first;
 
   @override
-  double get mean => _values.isEmpty ? 0.0 :
+  num get mean => _values.isEmpty ? 0.0 :
     (_values.reduce((a,b) => a + b) / _values.length);
 
   @override
-  double get stdDev {
-    // two-pass algorithm for variance, avoids numeric overflow
+  num get stdDev {
+    if (_values.isEmpty) return 0.0;
 
-    if (_values.length <= 1) {
-      return 0.0;
-    }
+    final mean = this.mean;
+    final sum = _values.map((e) => e - mean)
+                       .map((e) => e * e)
+                       .reduce((a, b) => a + b);
 
-    final double mean = this.mean;
-    double sum = 0.0;
-
-    for (int i = 0; i < _values.length; i++) {
-      final double diff = _values[i] - mean;
-      sum += diff * diff;
-    }
-
-    final double variance = sum / (_values.length - 1);
+    final variance = sum / (_values.length - 1);
     return sqrt(variance);
   }
 

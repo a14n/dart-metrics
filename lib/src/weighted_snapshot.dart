@@ -17,8 +17,8 @@ part of metrics;
 /// A statistical snapshot of a [WeightedSnapshot].
 class WeightedSnapshot extends Snapshot {
   List<int> _values;
-  List<double> _normWeights;
-  List<double> _quantiles;
+  List<num> _normWeights;
+  List<num> _quantiles;
 
   /// Create a new [Snapshot] with the given [values].
   WeightedSnapshot(Iterable<WeightedSample> values) {
@@ -30,10 +30,10 @@ class WeightedSnapshot extends Snapshot {
         });
 
     this._values = new List<int>.filled(copy.length, 0);
-    this._normWeights = new List<double>.filled(copy.length, 0.0);
-    this._quantiles = new List<double>.filled(copy.length, 0.0);
+    this._normWeights = new List<num>.filled(copy.length, 0.0);
+    this._quantiles = new List<num>.filled(copy.length, 0.0);
 
-    double sumWeight = copy.fold(0, (sum, sample) => sum + sample.weight).toDouble();
+    final sumWeight = copy.fold(0, (sum, sample) => sum + sample.weight);
 
     for (int i = 0; i < copy.length; i++) {
       _values[i] = copy[i].value;
@@ -46,14 +46,12 @@ class WeightedSnapshot extends Snapshot {
   }
 
   @override
-  double getValue(double quantile) {
+  num getValue(num quantile) {
     if (quantile < 0.0 || quantile > 1.0) {
       throw new ArgumentError("$quantile is not in [0..1]");
     }
 
-    if (_values.isEmpty) {
-      return 0.0;
-    }
+    if (_values.isEmpty) return 0.0;
 
     int posx = _quantiles.indexOf(quantile);
     if (posx < 0) {
@@ -64,7 +62,7 @@ class WeightedSnapshot extends Snapshot {
       }
     }
 
-    return _values[posx].toDouble();
+    return _values[posx];
   }
 
   @override
@@ -80,10 +78,10 @@ class WeightedSnapshot extends Snapshot {
   int get min => _values.isEmpty ? 0 : _values.first;
 
   @override
-  double get mean {
+  num get mean {
     if (_values.isEmpty) return 0.0;
 
-    double sum = 0.0;
+    num sum = 0.0;
     for (int i = 0; i < _values.length; i++) {
       sum += _values[i] * _normWeights[i];
     }
@@ -91,18 +89,14 @@ class WeightedSnapshot extends Snapshot {
   }
 
   @override
-  double get stdDev {
-    // two-pass algorithm for variance, avoids numeric overflow
+  num get stdDev {
+    if (_values.isEmpty) return 0.0;
 
-    if (_values.length <= 1) {
-      return 0.0;
-    }
-
-    final double mean = this.mean;
-    double variance = 0.0;
+    final mean = this.mean;
+    num variance = 0.0;
 
     for (int i = 0; i < _values.length; i++) {
-      final double diff = _values[i] - mean;
+      final diff = _values[i] - mean;
       variance += _normWeights[i] * diff * diff;
     }
 
