@@ -57,7 +57,8 @@ main() {
   uniform_snapshot_test.main();
   weighted_snapshot_test.main();
 
-  graphite_test.main();
+  // inactive because of a pending isolate
+  // graphite_test.main();
 
   csv_reporter_test.main();
 }
