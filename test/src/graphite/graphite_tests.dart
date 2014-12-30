@@ -48,12 +48,14 @@ main() {
 
     test('connects to graphite', () {
       serverSocket.length.then(expectAsync((int l) => expect(l, equals(1))));
-      graphite.connect().then(expectAsync((_) => serverSocket.close()));
+      graphite.connect()
+          .then((_) => graphite.close())
+          .then((_) => serverSocket.close());
     });
 
     test('disconnects from graphite', () {
       graphite.connect()
-          .then(expectAsync((_) => graphite.close()))
+          .then((_) => graphite.close())
           .then(expectAsync((_) => expect(graphite.isConnected, isFalse)));
     });
 
@@ -63,13 +65,13 @@ main() {
       }));
     });
 
-    test('writes values to graphite', () {
+    solo_test('writes values to graphite', () {
       final line = new Completer<String>();
       serverSocket.listen((s) => s.map(UTF8.decode).listen((s) => line.complete(s)));
       graphite.connect()
-          .then(expectAsync((_) => graphite.send('name', 'value', 100)))
-          .then(expectAsync((_) => graphite.close()))
-          .then(expectAsync((_) => line.future))
+          .then((_) => graphite.send('name', 'value', 100))
+          .then((_) => graphite.close())
+          .then((_) => line.future)
           .then(expectAsync((s) => expect(s, equals('name value 100\n'))));
     });
 
@@ -77,9 +79,9 @@ main() {
       final line = new Completer<String>();
       serverSocket.listen((s) => s.map(UTF8.decode).listen((s) => line.complete(s)));
       graphite.connect()
-          .then(expectAsync((_) => graphite.send('name woo', 'value', 100)))
-          .then(expectAsync((_) => graphite.close()))
-          .then(expectAsync((_) => line.future))
+          .then((_) => graphite.send('name woo', 'value', 100))
+          .then((_) => graphite.close())
+          .then((_) => line.future)
           .then(expectAsync((s) => expect(s, equals('name-woo value 100\n'))));
     });
 
@@ -87,9 +89,9 @@ main() {
       final line = new Completer<String>();
       serverSocket.listen((s) => s.map(UTF8.decode).listen((s) => line.complete(s)));
       graphite.connect()
-          .then(expectAsync((_) => graphite.send('name', 'value woo', 100)))
-          .then(expectAsync((_) => graphite.close()))
-          .then(expectAsync((_) => line.future))
+          .then((_) => graphite.send('name', 'value woo', 100))
+          .then((_) => graphite.close())
+          .then((_) => line.future)
           .then(expectAsync((s) => expect(s, equals('name value-woo 100\n'))));
     });
 
