@@ -25,11 +25,12 @@ main() {
 
     StringBuffer output;
     ConsoleReporter reporter;
+    final DateTime datetime = new DateTime.fromMillisecondsSinceEpoch(1363568676000);
 
     setUp(() {
       final registry = new MockMetricRegistry();
       final clock = new MockClock();
-      clock.when(callsTo('get time')).thenReturn(1363568676000);
+      clock.when(callsTo('get time')).thenReturn(datetime.millisecondsSinceEpoch);
 
       output = new StringBuffer();
       reporter = new ConsoleReporter(registry, output: output, clock: clock);
@@ -43,7 +44,7 @@ main() {
       reporter.reportMetrics(gauges: {'gauge': gauge});
 
       expect(output.toString(), equals('''
-2013-03-18T02:04:36.000 ========================================================
+${datetime.toIso8601String()} ========================================================
 
 -- Gauges ----------------------------------------------------------------------
 gauge
@@ -60,7 +61,7 @@ gauge
       reporter.reportMetrics(counters: {'test.counter': counter});
 
       expect(output.toString(), equals('''
-2013-03-18T02:04:36.000 ========================================================
+${datetime.toIso8601String()} ========================================================
 
 -- Counters --------------------------------------------------------------------
 test.counter
@@ -91,7 +92,7 @@ test.counter
       reporter.reportMetrics(histograms: {'test.histogram': histogram});
 
       expect(output.toString(), equals('''
-2013-03-18T02:04:36.000 ========================================================
+${datetime.toIso8601String()} ========================================================
 
 -- Histograms ------------------------------------------------------------------
 test.histogram
@@ -122,7 +123,7 @@ test.histogram
       reporter.reportMetrics(meters: {'test.meter': meter});
 
       expect(output.toString(), equals('''
-2013-03-18T02:04:36.000 ========================================================
+${datetime.toIso8601String()} ========================================================
 
 -- Meters ----------------------------------------------------------------------
 test.meter
@@ -161,7 +162,7 @@ test.meter
       reporter.reportMetrics(timers: {'test.another.timer': timer});
 
       expect(output.toString(), equals('''
-2013-03-18T02:04:36.000 ========================================================
+${datetime.toIso8601String()} ========================================================
 
 -- Timers ----------------------------------------------------------------------
 test.another.timer
