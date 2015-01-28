@@ -58,6 +58,6 @@ class Graphite implements GraphiteSender {
     if (_socket == null) return new Future.value();
     final sock = _socket;
     _socket = null;
-    return sock.then((s) => s.flush().then((_) => s.close()));
+    return sock.then((s) => Future.wait([s.drain(), s.close()]));
   }
 }

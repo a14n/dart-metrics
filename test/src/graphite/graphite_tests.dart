@@ -47,27 +47,37 @@ main() {
     });
 
     test('connects to graphite', () {
-      serverSocket.length.then(expectAsync((int l) => expect(l, equals(1))));
+      int con = 0;
+      serverSocket.listen((s) => UTF8.decodeStream(s)
+          .then((_) => con++)
+          .then((_) => s.close()));
       graphite.connect()
           .then((_) => graphite.close())
-          .then((_) => serverSocket.close());
+          .then((_) => serverSocket.close())
+          .then(expectAsync((_) => expect(con, equals(1))));
     });
 
     test('disconnects from graphite', () {
+      serverSocket.listen((s) => UTF8.decodeStream(s)
+          .then((_) => s.close()));
       graphite.connect()
           .then((_) => graphite.close())
           .then(expectAsync((_) => expect(graphite.isConnected, isFalse)));
     });
 
     test('does not allow double connections', () {
-      graphite.connect().then(expectAsync((_){
+      serverSocket.listen((s) => UTF8.decodeStream(s)
+          .then((_) => s.close()));
+      graphite.connect().then(expectAsync((_) {
         expect(() => graphite.connect(), throwsStateError);
       }));
     });
 
-    solo_test('writes values to graphite', () {
+    test('writes values to graphite', () {
       final line = new Completer<String>();
-      serverSocket.listen((s) => s.map(UTF8.decode).listen((s) => line.complete(s)));
+      serverSocket.listen((s) => UTF8.decodeStream(s)
+          .then((datas) => line.complete(datas))
+          .then((_) => s.close()));
       graphite.connect()
           .then((_) => graphite.send('name', 'value', 100))
           .then((_) => graphite.close())
@@ -77,7 +87,9 @@ main() {
 
     test('sanitizes names', () {
       final line = new Completer<String>();
-      serverSocket.listen((s) => s.map(UTF8.decode).listen((s) => line.complete(s)));
+      serverSocket.listen((s) => UTF8.decodeStream(s)
+          .then((datas) => line.complete(datas))
+          .then((_) => s.close()));
       graphite.connect()
           .then((_) => graphite.send('name woo', 'value', 100))
           .then((_) => graphite.close())
@@ -87,7 +99,9 @@ main() {
 
     test('sanitizes values', () {
       final line = new Completer<String>();
-      serverSocket.listen((s) => s.map(UTF8.decode).listen((s) => line.complete(s)));
+      serverSocket.listen((s) => UTF8.decodeStream(s)
+          .then((datas) => line.complete(datas))
+          .then((_) => s.close()));
       graphite.connect()
           .then((_) => graphite.send('name', 'value woo', 100))
           .then((_) => graphite.close())
