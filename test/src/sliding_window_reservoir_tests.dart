@@ -14,14 +14,14 @@
 
 library metrics.sliding_window_reservoir_test;
 
-import 'package:unittest/unittest.dart';
+import 'package:test/test.dart';
 import 'package:metrics/metrics.dart';
 
 
 main() {
-  group('', () {
+  group('sliding window reservoir', () {
 
-    SlidingWindowReservoir reservoir;
+    late SlidingWindowReservoir reservoir;
 
     setUp(() {
       reservoir = new SlidingWindowReservoir(3);

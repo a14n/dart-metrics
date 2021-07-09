@@ -16,29 +16,26 @@ part of metrics_standalone;
 
 /// A reporter which outputs measurements with a [StringSink].
 class CsvReporter extends ScheduledReporter {
-  static const _CONSOLE_WIDTH = 80;
-  static const _LEFT_WIDTH = 20;
-
   final Directory _directory;
   final Clock _clock;
 
-  factory CsvReporter(MetricRegistry registry, Directory directory, {Clock clock, TimeUnit rateUnit, TimeUnit durationUnit, MetricFilter where})
+  factory CsvReporter(MetricRegistry registry, Directory directory, {Clock? clock, TimeUnit? rateUnit, TimeUnit? durationUnit, MetricFilter? where})
       => new CsvReporter._(registry,
           directory,
-          clock != null ? clock : Clock.defaultClock,
-          rateUnit != null ? rateUnit : TimeUnit.SECONDS,
-          durationUnit != null ? durationUnit : TimeUnit.MILLISECONDS,
+          clock ?? Clock.defaultClock,
+          rateUnit ?? TimeUnit.SECONDS,
+          durationUnit ?? TimeUnit.MILLISECONDS,
           where: where);
 
-  CsvReporter._(MetricRegistry registry, this._directory, this._clock, TimeUnit rateUnit, TimeUnit durationUnit, {MetricFilter where})
+  CsvReporter._(MetricRegistry registry, this._directory, this._clock, TimeUnit rateUnit, TimeUnit durationUnit, {MetricFilter? where})
       : super(registry, rateUnit, durationUnit, where: where);
 
   @override
-  void reportMetrics({Map<String, Gauge> gauges,
-                      Map<String, Counter> counters,
-                      Map<String, Histogram> histograms,
-                      Map<String, Meter> meters,
-                      Map<String, Timer> timers}) {
+  void reportMetrics({Map<String, Gauge>? gauges,
+                      Map<String, Counter>? counters,
+                      Map<String, Histogram>? histograms,
+                      Map<String, Meter>? meters,
+                      Map<String, Timer>? timers}) {
     final timeInSeconds = _clock.time ~/ 1000;
 
     if (gauges != null) {
@@ -139,6 +136,6 @@ class CsvReporter extends ScheduledReporter {
         ..createSync()
         ..writeAsStringSync('t,${datas.keys.join(',')}\n');
     }
-    file.writeAsStringSync('$timeInSeconds,${datas.values.join(',')}\n', mode: FileMode.APPEND, flush: true);
+    file.writeAsStringSync('$timeInSeconds,${datas.values.join(',')}\n', mode: FileMode.append, flush: true);
   }
 }

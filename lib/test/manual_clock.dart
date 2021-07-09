@@ -20,11 +20,11 @@ class ManualClock extends Clock {
   int ticksInMicros = 0;
 
   void addSeconds(int seconds) {
-    ticksInMicros += seconds * Duration.MICROSECONDS_PER_SECOND;
+    ticksInMicros += seconds * Duration.microsecondsPerSecond;
   }
 
   void addMillis(int millis) {
-    ticksInMicros += millis * Duration.MICROSECONDS_PER_MILLISECOND;
+    ticksInMicros += millis * Duration.microsecondsPerMillisecond;
   }
 
   void addMicros(int micros) {
@@ -32,12 +32,12 @@ class ManualClock extends Clock {
   }
 
   void addHours(int hours) {
-    ticksInMicros += hours * Duration.MICROSECONDS_PER_HOUR;
+    ticksInMicros += hours * Duration.microsecondsPerHour;
   }
 
   @override
   int get tick => ticksInMicros;
 
   @override
-  int get time => ticksInMicros ~/ Duration.MICROSECONDS_PER_MILLISECOND;
+  int get time => ticksInMicros ~/ Duration.microsecondsPerMillisecond;
 }

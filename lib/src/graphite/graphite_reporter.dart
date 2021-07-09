@@ -19,27 +19,27 @@ class GraphiteReporter extends ScheduledReporter {
   static final _log = new Logger('GraphiteReporter');
 
   final Clock _clock;
-  final String _prefix;
+  final String? _prefix;
   final GraphiteSender _graphite;
 
-  factory GraphiteReporter(MetricRegistry registry, GraphiteSender graphite, {String prefix, Clock clock, TimeUnit rateUnit, TimeUnit durationUnit, MetricFilter where})
+  factory GraphiteReporter(MetricRegistry registry, GraphiteSender graphite, {String? prefix, Clock? clock, TimeUnit? rateUnit, TimeUnit? durationUnit, MetricFilter? where})
       => new GraphiteReporter._(registry,
           graphite,
           prefix,
-          clock != null ? clock : Clock.defaultClock,
-          rateUnit != null ? rateUnit : TimeUnit.SECONDS,
-          durationUnit != null ? durationUnit : TimeUnit.MILLISECONDS,
+          clock ?? Clock.defaultClock,
+          rateUnit ?? TimeUnit.SECONDS,
+          durationUnit ?? TimeUnit.MILLISECONDS,
           where: where);
 
-  GraphiteReporter._(MetricRegistry registry, this._graphite, this._prefix, this._clock, TimeUnit rateUnit, TimeUnit durationUnit, {MetricFilter where})
+  GraphiteReporter._(MetricRegistry registry, this._graphite, this._prefix, this._clock, TimeUnit rateUnit, TimeUnit durationUnit, {MetricFilter? where})
       : super(registry, rateUnit, durationUnit, where: where);
 
   @override
-  void reportMetrics({Map<String, Gauge> gauges,
-                      Map<String, Counter> counters,
-                      Map<String, Histogram> histograms,
-                      Map<String, Meter> meters,
-                      Map<String, Timer> timers}) {
+  void reportMetrics({Map<String, Gauge>? gauges,
+                      Map<String, Counter>? counters,
+                      Map<String, Histogram>? histograms,
+                      Map<String, Meter>? meters,
+                      Map<String, Timer>? timers}) {
     final timeInSeconds = _clock.time ~/ 1000;
 
     try {

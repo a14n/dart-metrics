@@ -14,38 +14,38 @@
 
 library metrics.counter_test;
 
-import 'package:unittest/unittest.dart';
+import 'package:test/test.dart';
 import 'package:metrics/metrics.dart';
 
 main() {
+  group('counter', () {
+    test('start at zero', () {
+      final counter = new Counter();
+      expect(counter.count, equals(0));
+    });
 
-  test('start at zero', () {
-    final counter = new Counter();
-    expect(counter.count, equals(0));
+    test('increments by one', () {
+      final counter = new Counter();
+      counter.inc();
+      expect(counter.count, equals(1));
+    });
+
+    test('increments by an arbitrary delta', () {
+      final counter = new Counter();
+      counter.inc(12);
+      expect(counter.count, equals(12));
+    });
+
+    test('decrements by one', () {
+      final counter = new Counter();
+      counter.dec();
+      expect(counter.count, equals(-1));
+    });
+
+    test('decrements by an arbitrary delta', () {
+      final counter = new Counter();
+      counter.dec(12);
+      expect(counter.count, equals(-12));
+    });
   });
-
-  test('increments by one', () {
-    final counter = new Counter();
-    counter.inc();
-    expect(counter.count, equals(1));
-  });
-
-  test('increments by an arbitrary delta', () {
-    final counter = new Counter();
-    counter.inc(12);
-    expect(counter.count, equals(12));
-  });
-
-  test('decrements by one', () {
-    final counter = new Counter();
-    counter.dec();
-    expect(counter.count, equals(-1));
-  });
-
-  test('decrements by an arbitrary delta', () {
-    final counter = new Counter();
-    counter.dec(12);
-    expect(counter.count, equals(-12));
-  });
-
 }

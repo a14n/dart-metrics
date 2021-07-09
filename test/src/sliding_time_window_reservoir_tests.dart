@@ -14,17 +14,19 @@
 
 library metrics.sliding_time_window_reservoir_test;
 
-import 'package:unittest/unittest.dart';
+import 'package:mockito/annotations.dart';
+import 'package:mockito/mockito.dart';
+import 'package:test/test.dart';
 import 'package:metrics/metrics.dart';
-import 'package:mock/mock.dart';
 
-import '../lib/mocks.dart';
+import 'meter_tests.mocks.dart';
 
+@GenerateMocks([Clock])
 main() {
-  group('', () {
+  group('sliding time window reservoir', () {
 
-    MockClock clock;
-    SlidingTimeWindowReservoir reservoir;
+    late MockClock clock;
+    late SlidingTimeWindowReservoir reservoir;
 
     setUp(() {
       clock = new MockClock();
@@ -32,7 +34,7 @@ main() {
     });
 
     test('stores measurements with duplicate ticks', () {
-      clock.when(callsTo('get tick')).alwaysReturn(20);
+      when(clock.tick).thenReturn(20);
 
       reservoir.update(1);
       reservoir.update(2);
@@ -42,19 +44,19 @@ main() {
     });
 
     test('bounds measurements to a time window', () {
-      clock.when(callsTo('get tick')).thenReturn(0);
+      when(clock.tick).thenReturn(0);
       reservoir.update(1);
 
-      clock.when(callsTo('get tick')).thenReturn(5);
+      when(clock.tick).thenReturn(5);
       reservoir.update(2);
 
-      clock.when(callsTo('get tick')).thenReturn(10);
+      when(clock.tick).thenReturn(10);
       reservoir.update(3);
 
-      clock.when(callsTo('get tick')).thenReturn(15);
+      when(clock.tick).thenReturn(15);
       reservoir.update(4);
 
-      clock.when(callsTo('get tick')).alwaysReturn(20);
+      when(clock.tick).thenReturn(20);
       reservoir.update(5);
 
       expect(reservoir.size, equals(2));

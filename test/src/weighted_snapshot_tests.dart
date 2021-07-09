@@ -14,13 +14,13 @@
 
 library metrics.weighted_snapshot_test;
 
-import 'package:unittest/unittest.dart';
+import 'package:test/test.dart';
 import 'package:metrics/metrics.dart';
 
 
 main() {
-  group('', () {
-    Snapshot snapshot;
+  group('weighted snapshot', () {
+    late Snapshot snapshot;
 
     setUp(() {
       snapshot = new WeightedSnapshot(
@@ -123,9 +123,9 @@ main() {
 
     test('expect no overflow for low weights', () {
       final singleItemSnapshot = new WeightedSnapshot(
-          [new WeightedSample(1, double.MIN_POSITIVE),
-           new WeightedSample(2, double.MIN_POSITIVE),
-           new WeightedSample(3, double.MIN_POSITIVE),]);
+          [new WeightedSample(1, double.minPositive),
+           new WeightedSample(2, double.minPositive),
+           new WeightedSample(3, double.minPositive),]);
       expect(singleItemSnapshot.mean, equals(2));
     });
 

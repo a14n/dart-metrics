@@ -18,15 +18,15 @@ part of metrics;
 /// throughput statistics via [Meter].
 class Timer implements Metered, Sampling {
 
-  Meter _meter;
-  Histogram _histogram;
-  Clock _clock;
+  late Meter _meter;
+  late Histogram _histogram;
+  late Clock _clock;
 
   /// Creates a new [Timer] that uses the given [reservoir] and [clock].
-  Timer([Reservoir reservoir, Clock clock]) {
-    _clock = clock != null ? clock : Clock.defaultClock;
+  Timer([Reservoir? reservoir, Clock? clock]) {
+    _clock = clock ?? Clock.defaultClock;
     _meter = new Meter(_clock);
-    _histogram = new Histogram(reservoir != null ? reservoir : new ExponentiallyDecayingReservoir());
+    _histogram = new Histogram(reservoir ?? new ExponentiallyDecayingReservoir());
   }
 
   /// Adds a recorded [duration].

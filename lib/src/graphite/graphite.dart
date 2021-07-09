@@ -19,7 +19,7 @@ class Graphite implements GraphiteSender {
   final host;
   final int port;
 
-  Future<Socket> _socket;
+  Future<Socket>? _socket;
   int _failures = 0;
 
   /// Creates a new client which connects to the given address.
@@ -36,7 +36,8 @@ class Graphite implements GraphiteSender {
   @override
   Future send(String name, String value, int timeInSeconds) {
     sanitize(String s) => s.replaceAll(new RegExp(r'\s+'), '-');
-    return _socket.then((sock) {
+    if (!isConnected) connect();
+    return _socket!.then((sock) {
       sock.writeln('${sanitize(name)} ${sanitize(value)} $timeInSeconds');
       _failures = 0;
     }).catchError((_) {
@@ -45,7 +46,10 @@ class Graphite implements GraphiteSender {
   }
 
   @override
-  Future flush() => _socket.then((s) => s.flush());
+  Future flush() {
+    if (_socket == null) return new Future.value();
+    return _socket!.then((s) => s.flush());
+  }
 
   @override
   bool get isConnected => _socket != null;
@@ -56,7 +60,7 @@ class Graphite implements GraphiteSender {
   @override
   Future close() {
     if (_socket == null) return new Future.value();
-    final sock = _socket;
+    final sock = _socket!;
     _socket = null;
     return sock.then((s) => Future.wait([s.drain(), s.close()]));
   }

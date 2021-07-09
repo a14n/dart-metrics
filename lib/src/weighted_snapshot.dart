@@ -16,9 +16,9 @@ part of metrics;
 
 /// A statistical snapshot of a [WeightedSnapshot].
 class WeightedSnapshot extends Snapshot {
-  List<int> _values;
-  List<double> _normWeights;
-  List<double> _quantiles;
+  late List<int> _values;
+  late List<double> _normWeights;
+  late List<double> _quantiles;
 
   /// Create a new [Snapshot] with the given [values].
   WeightedSnapshot(Iterable<WeightedSample> values) {
@@ -33,7 +33,7 @@ class WeightedSnapshot extends Snapshot {
     this._normWeights = new List<double>.filled(copy.length, 0.0);
     this._quantiles = new List<double>.filled(copy.length, 0.0);
 
-    final sumWeight = copy.fold(0, (sum, sample) => sum + sample.weight);
+    final sumWeight = copy.fold(0.0, (double sum, WeightedSample sample) => sum + sample.weight);
 
     for (int i = 0; i < copy.length; i++) {
       _values[i] = copy[i].value;
@@ -53,7 +53,7 @@ class WeightedSnapshot extends Snapshot {
 
     if (_values.isEmpty) return 0.0;
 
-    int posx = _quantiles.indexOf(quantile);
+    int posx = quantile is double ? _quantiles.indexOf(quantile) : -1;
     if (posx < 0) {
       posx = 0;
       for (int i = 0; i < _quantiles.length; i++) {
