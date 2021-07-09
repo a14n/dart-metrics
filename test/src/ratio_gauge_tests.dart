@@ -14,38 +14,39 @@
 
 library metrics.ratio_gauge_test;
 
-import 'package:unittest/unittest.dart';
+import 'package:test/test.dart';
 import 'package:metrics/metrics.dart';
 
 main() {
+  group('ratio gauge', () {
+    test('ratios are human readable', () {
+      final ratio = new Ratio(100, 200);
 
-  test('ratios are human readable', () {
-    final ratio = new Ratio(100, 200);
+      expect(ratio.toString(), equals('100:200'));
+    });
 
-    expect(ratio.toString(), equals('100:200'));
-  });
+    test('calculates the ratio of the numerator to the denominator', () {
+      final regular = new RatioGauge(() => new Ratio(2, 4));
 
-  test('calculates the ratio of the numerator to the denominator', () {
-    final regular = new RatioGauge(() => new Ratio(2, 4));
+      expect(regular.value, equals(0.5));
+    });
 
-    expect(regular.value, equals(0.5));
-  });
+    test('handles divide by zero issues', () {
+      final regular = new RatioGauge(() => new Ratio(100, 0));
 
-  test('handles divide by zero issues', () {
-    final regular = new RatioGauge(() => new Ratio(100, 0));
+      expect(regular.value, isNaN);
+    });
 
-    expect(regular.value, isNaN);
-  });
+    test('handles infinite denominators', () {
+      final regular = new RatioGauge(() => new Ratio(10, double.infinity));
 
-  test('handles infinite denominators', () {
-    final regular = new RatioGauge(() => new Ratio(10, double.INFINITY));
+      expect(regular.value, isNaN);
+    });
 
-    expect(regular.value, isNaN);
-  });
+    test('handles NaN denominators', () {
+      final regular = new RatioGauge(() => new Ratio(10, double.nan));
 
-  test('handles NaN denominators', () {
-    final regular = new RatioGauge(() => new Ratio(10, double.NAN));
-
-    expect(regular.value, isNaN);
+      expect(regular.value, isNaN);
+    });
   });
 }

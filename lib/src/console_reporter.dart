@@ -22,23 +22,23 @@ class ConsoleReporter extends ScheduledReporter {
   final StringSink _output;
   final Clock _clock;
 
-  factory ConsoleReporter(MetricRegistry registry, {StringSink output, Clock clock, TimeUnit rateUnit, TimeUnit durationUnit, MetricFilter where})
+  factory ConsoleReporter(MetricRegistry registry, {StringSink? output, Clock? clock, TimeUnit? rateUnit, TimeUnit? durationUnit, MetricFilter? where})
       => new ConsoleReporter._(registry,
-          output != null ? output : new _PrintStringSink(),
-          clock != null ? clock : Clock.defaultClock,
-          rateUnit != null ? rateUnit : TimeUnit.SECONDS,
-          durationUnit != null ? durationUnit : TimeUnit.MILLISECONDS,
+          output ?? new _PrintStringSink(),
+          clock ?? Clock.defaultClock,
+          rateUnit ?? TimeUnit.SECONDS,
+          durationUnit ?? TimeUnit.MILLISECONDS,
           where: where);
 
-  ConsoleReporter._(MetricRegistry registry, this._output, this._clock, TimeUnit rateUnit, TimeUnit durationUnit, {MetricFilter where})
+  ConsoleReporter._(MetricRegistry registry, this._output, this._clock, TimeUnit rateUnit, TimeUnit durationUnit, {MetricFilter? where})
       : super(registry, rateUnit, durationUnit, where: where);
 
   @override
-  void reportMetrics({Map<String, Gauge> gauges,
-                      Map<String, Counter> counters,
-                      Map<String, Histogram> histograms,
-                      Map<String, Meter> meters,
-                      Map<String, Timer> timers}) {
+  void reportMetrics({Map<String, Gauge>? gauges,
+                      Map<String, Counter>? counters,
+                      Map<String, Histogram>? histograms,
+                      Map<String, Meter>? meters,
+                      Map<String, Timer>? timers}) {
     final dateTime = new DateTime.fromMillisecondsSinceEpoch(_clock.time);
     _printWithBanner(dateTime.toIso8601String(), '=');
     _output.writeln();
@@ -157,7 +157,7 @@ class _PrintStringSink implements StringSink {
   StringBuffer sb = new StringBuffer();
 
   @override
-  void write(Object obj) {
+  void write(Object? obj) {
     sb.write(obj);
   }
 
@@ -172,7 +172,7 @@ class _PrintStringSink implements StringSink {
   }
 
   @override
-  void writeln([Object obj = ""]) {
+  void writeln([Object? obj = ""]) {
     sb.write(obj);
     print(sb.toString());
     sb.clear();

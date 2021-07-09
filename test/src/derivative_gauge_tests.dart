@@ -14,14 +14,17 @@
 
 library metrics.derivative_gauge_test;
 
-import 'package:unittest/unittest.dart';
+import 'package:test/test.dart';
 import 'package:metrics/metrics.dart';
 
 main() {
-  test('returns a transformed value', () {
-    final gauge1 = new Gauge<String>(() => 'woo');
-    final gauge2 = new DerivativeGauge<String, int>(gauge1, (String s) => s.length);
+  group('derivative gauge', () {
+    test('returns a transformed value', () {
+      final gauge1 = new Gauge<String>(() => 'woo');
+      final gauge2 = new DerivativeGauge<String, int>(
+          gauge1, (String s) => s.length);
 
-    expect(gauge2.value, equals(3));
+      expect(gauge2.value, equals(3));
+    });
   });
 }

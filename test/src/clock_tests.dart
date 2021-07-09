@@ -14,21 +14,23 @@
 
 library metrics.clock_test;
 
-import 'package:unittest/unittest.dart';
+import 'package:test/test.dart';
 import 'package:metrics/metrics.dart';
 
 main() {
-  test('fake tick clock', () {
-    final clock = new FakeTickClock();
+  group('clock', () {
+    test('fake tick clock', () {
+      final clock = new FakeTickClock();
 
-    expect(clock.time, closeTo(new DateTime.now().millisecondsSinceEpoch, 100));
-    expect(clock.tick, closeTo(new DateTime.now().millisecondsSinceEpoch * Duration.MICROSECONDS_PER_MILLISECOND, 100 * Duration.MICROSECONDS_PER_MILLISECOND));
-  });
+      expect(clock.time, closeTo(new DateTime.now().millisecondsSinceEpoch, 100));
+      expect(clock.tick, closeTo(new DateTime.now().millisecondsSinceEpoch * Duration.microsecondsPerMillisecond, 100 * Duration.microsecondsPerMillisecond));
+    });
 
-  test('stopwatch clock', () {
-    final clock = new StopwatchClock();
+    test('stopwatch clock', () {
+      final clock = new StopwatchClock();
 
-    expect(clock.time, closeTo(new DateTime.now().millisecondsSinceEpoch, 100));
-    expect(clock.tick, closeTo(new DateTime.now().millisecondsSinceEpoch * Duration.MICROSECONDS_PER_MILLISECOND, 100 * Duration.MICROSECONDS_PER_MILLISECOND));
+      expect(clock.time, closeTo(new DateTime.now().millisecondsSinceEpoch, 100));
+      expect(clock.tick, closeTo(new DateTime.now().millisecondsSinceEpoch * Duration.microsecondsPerMillisecond, 100 * Duration.microsecondsPerMillisecond));
+    });
   });
 }

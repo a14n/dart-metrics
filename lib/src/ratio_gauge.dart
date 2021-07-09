@@ -18,9 +18,7 @@ part of metrics;
 class RatioGauge implements Gauge<double> {
   final _Supplier<Ratio> _getRatio;
 
-  RatioGauge(this._getRatio) {
-    assert(_getRatio != null);
-  }
+  RatioGauge(this._getRatio);
 
   /// Returns the metric's current value.
   @override
@@ -32,7 +30,7 @@ class Ratio {
 
   Ratio(this.numerator, this.denominator);
 
-  double get value => denominator.isNaN || denominator.isInfinite || denominator == 0 ? double.NAN : (numerator / denominator);
+  double get value => denominator.isNaN || denominator.isInfinite || denominator == 0 ? double.nan : (numerator / denominator);
 
   @override
   String toString() => '$numerator:$denominator';

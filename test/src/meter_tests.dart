@@ -14,41 +14,43 @@
 
 library metrics.meter_test;
 
-import 'package:unittest/unittest.dart';
+import 'package:mockito/annotations.dart';
+import 'package:mockito/mockito.dart';
+import 'package:test/test.dart';
 import 'package:metrics/metrics.dart';
-import 'package:mock/mock.dart';
 
-import '../lib/mocks.dart';
+import 'meter_tests.mocks.dart';
 
-main() {
+@GenerateMocks([Clock])
+main() async {
+  group('meter', () {
+    test('starts out with no rates or count', () {
+      final clock = new MockClock();
+      when(clock.tick).thenReturn(0);
+      final meter = new Meter(clock);
 
-  test('starts out with no rates or count', () {
-    final clock = new MockClock();
-    clock.when(callsTo('get tick')).thenReturn(0);
-    final meter = new Meter(clock);
+      when(clock.tick).thenReturn(const Duration(seconds: 10).inMicroseconds);
 
-    clock.when(callsTo('get tick')).alwaysReturn(const Duration(seconds: 10).inMicroseconds);
+      expect(meter.count, equals(0));
+      expect(meter.meanRate, closeTo(0, 0.001));
+      expect(meter.oneMinuteRate, closeTo(0, 0.001));
+      expect(meter.fiveMinuteRate, closeTo(0, 0.001));
+      expect(meter.fifteenMinuteRate, closeTo(0, 0.001));
+    });
 
-    expect(meter.count, equals(0));
-    expect(meter.meanRate, closeTo(0, 0.001));
-    expect(meter.oneMinuteRate, closeTo(0, 0.001));
-    expect(meter.fiveMinuteRate, closeTo(0, 0.001));
-    expect(meter.fifteenMinuteRate, closeTo(0, 0.001));
-  });
+    test('marks events and updates rates and count', () {
+      final clock = new MockClock();
+      when(clock.tick).thenReturn(0);
+      final meter = new Meter(clock);
+      meter.mark();
 
-  test('marks events and updates rates and count', () {
-    final clock = new MockClock();
-    clock.when(callsTo('get tick')).thenReturn(0);
-    final meter = new Meter(clock);
+      when(clock.tick).thenReturn(const Duration(seconds: 10).inMicroseconds);
+      meter.mark(2);
 
-    clock.when(callsTo('get tick')).thenReturn(0).alwaysReturn(const Duration(seconds: 10).inMicroseconds);
-
-    meter.mark();
-    meter.mark(2);
-
-    expect(meter.meanRate, closeTo(0.3, 0.001));
-    expect(meter.oneMinuteRate, closeTo(0.1840, 0.001));
-    expect(meter.fiveMinuteRate, closeTo(0.1966, 0.001));
-    expect(meter.fifteenMinuteRate, closeTo(0.1988, 0.001));
+      expect(meter.meanRate, closeTo(0.3, 0.001));
+      expect(meter.oneMinuteRate, closeTo(0.1840, 0.001));
+      expect(meter.fiveMinuteRate, closeTo(0.1966, 0.001));
+      expect(meter.fifteenMinuteRate, closeTo(0.1988, 0.001));
+    });
   });
 }

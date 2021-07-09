@@ -23,7 +23,7 @@ class SlidingWindowReservoir implements Reservoir {
   /// Creates a new [SlidingWindowReservoir] which stores the last [size]
   /// measurements.
   SlidingWindowReservoir(int size)
-      : _measurements = new List<int>(size);
+      : _measurements = List.filled(size, 0);
 
   @override
   int get size => min(_count, _measurements.length);

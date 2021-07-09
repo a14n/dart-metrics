@@ -24,7 +24,7 @@ part of metrics;
 class ExponentiallyDecayingReservoir implements Reservoir {
   static const _DEFAULT_SIZE = 1028;
   static const _DEFAULT_ALPHA = 0.015;
-  static const _RESCALE_THRESHOLD = Duration.MICROSECONDS_PER_HOUR;
+  static const _RESCALE_THRESHOLD = Duration.microsecondsPerHour;
 
   static final _random = new Random();
 
@@ -32,8 +32,8 @@ class ExponentiallyDecayingReservoir implements Reservoir {
   final double _alpha;
   final int _size;
   int _count = 0;
-  int _startTime;
-  int _nextScaleTime;
+  late int _startTime;
+  late int _nextScaleTime;
   final Clock _clock;
 
   /// Creates a new [ExponentiallyDecayingReservoir].
@@ -45,8 +45,8 @@ class ExponentiallyDecayingReservoir implements Reservoir {
   /// [_size] is the number of samples to keep in the sampling reservoir
   /// [_alpha] is the exponential decay factor; the higher this is, the more biased the reservoir will be towards newer values
   /// [clock] is the clock used to timestamp samples and track rescaling
-  ExponentiallyDecayingReservoir([this._size = _DEFAULT_SIZE, this._alpha = _DEFAULT_ALPHA, Clock clock])
-      : _clock = clock != null ? clock : Clock.defaultClock {
+  ExponentiallyDecayingReservoir([this._size = _DEFAULT_SIZE, this._alpha = _DEFAULT_ALPHA, Clock? clock])
+      : _clock = clock ?? Clock.defaultClock {
     _startTime = _currentTimeInSeconds;
     _nextScaleTime = _clock.tick + _RESCALE_THRESHOLD;
   }
@@ -55,7 +55,7 @@ class ExponentiallyDecayingReservoir implements Reservoir {
   int get size => min(_size, _count);
 
   @override
-  void update(int value, [int timestamp]) {
+  void update(int value, [int? timestamp]) {
     if (timestamp == null) timestamp = _currentTimeInSeconds;
     _rescaleIfNeeded();
     final itemWeight = _weight(timestamp - _startTime);
@@ -67,7 +67,7 @@ class ExponentiallyDecayingReservoir implements Reservoir {
       _values[priority] = sample;
     } else {
       double first = _values.keys.first;
-      final WeightedSample oldValue = _values[priority];
+      final WeightedSample? oldValue = _values[priority];
       if (first < priority && oldValue == null) {
         _values[priority] = sample;
 
@@ -90,7 +90,7 @@ class ExponentiallyDecayingReservoir implements Reservoir {
   @override
   Snapshot get snapshot => new WeightedSnapshot(_values.values);
 
-  int get _currentTimeInSeconds => _clock.time ~/ Duration.MILLISECONDS_PER_SECOND;
+  int get _currentTimeInSeconds => _clock.time ~/ Duration.millisecondsPerSecond;
 
   double _weight(int t) => exp(_alpha * t);
 
@@ -121,7 +121,7 @@ class ExponentiallyDecayingReservoir implements Reservoir {
 
       final keys = new List<double>.from(_values.keys);
       for (final key in keys) {
-        final sample = _values.remove(key);
+        final sample = _values.remove(key)!;
         final newSample = new WeightedSample(sample.value, sample.weight * scalingFactor);
         _values[key * scalingFactor] = newSample;
       }

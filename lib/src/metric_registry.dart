@@ -17,7 +17,7 @@ part of metrics;
 /// A registry of metric instances.
 class MetricRegistry implements MetricSet {
   /// Concatenates elements to form a dotted name, eliding any null values or empty strings.
-  static String name(List<String> names) => names.where((e) => e != null && e.isNotEmpty).join('.');
+  static String name(List<String?> names) => names.where((e) => e != null && e.isNotEmpty).join('.');
 
   /// Concatenates a class name and elements to form a dotted name, eliding any null values or empty strings.
   static String nameWithType(Type t, List<String> names) => name([t.toString()]..addAll(names));
@@ -28,9 +28,7 @@ class MetricRegistry implements MetricSet {
   final _metricRemovedController = new StreamController<NamedMetric>.broadcast();
 
   /// Creates a new [MetricRegistry].
-  MetricRegistry() {
-    _metrics = buildMap();
-  }
+  MetricRegistry(): _metrics = buildMap();
 
   Stream<NamedMetric> get onMetricAdded => _metricAddedController.stream;
   Stream<NamedMetric> get onMetricRemoved => _metricRemovedController.stream;
@@ -40,14 +38,14 @@ class MetricRegistry implements MetricSet {
    * to create a [MetricRegistry] with space- or time-bounded metric lifecycles, for
    * example.
    */
-  Map<String, Metric> buildMap() => <String, Metric>{};
+  static Map<String, Metric> buildMap() => <String, Metric>{};
 
   /**
    * Given a [Metric], registers it under the given [name].
    *
    * Throws [ArgumentError] if the [name] is already registered.
    */
-  /*<T extends Metric> T*/Metric register(String name, /*T*/Metric metric) {
+  T register<T extends Metric>(String name, T metric) {
     if (metric is MetricSet) {
       _registerAll(name, metric);
     } else {
@@ -82,7 +80,7 @@ class MetricRegistry implements MetricSet {
 
   /// Removes the metric with the given [name].
   bool remove(String name) {
-    final Metric metric = _metrics.remove(name);
+    final Metric? metric = _metrics.remove(name);
     if (metric != null) {
       _onMetricRemoved(name, metric);
       return true;
@@ -92,42 +90,42 @@ class MetricRegistry implements MetricSet {
 
   /// Removes all metrics which match the given [test].
   void removeMatching(MetricFilter test) =>
-      _metrics.keys.where((name) => test(name, _metrics[name])).toList().forEach(remove);
+      _metrics.keys.where((name) => test(name, _metrics[name]!)).toList().forEach(remove);
 
 
   /// A set of the names of all the metrics in the registry.
   Set<String> get names => _metrics.keys.toSet();
 
   /// Returns a map of all the gauges in the registry and their names which match the given [where].
-  Map<String, Gauge> getGauges({MetricFilter where}) =>
+  Map<String, Gauge> getGauges({MetricFilter? where}) =>
       _getMetrics((name, metric) => metric is Gauge && (where == null || where(name, metric)));
 
   /// Returns a map of all the counters in the registry and their names which match the given [where].
-  Map<String, Counter> getCounters({MetricFilter where}) =>
+  Map<String, Counter> getCounters({MetricFilter? where}) =>
       _getMetrics((name, metric) => metric is Counter && (where == null || where(name, metric)));
 
   /// Returns a map of all the histograms in the registry and their names which match the given [where].
-  Map<String, Histogram> getHistograms({MetricFilter where}) =>
+  Map<String, Histogram> getHistograms({MetricFilter? where}) =>
       _getMetrics((name, metric) => metric is Histogram && (where == null || where(name, metric)));
 
   /// Returns a map of all the meters in the registry and their names which match the given [where].
-  Map<String, Meter> getMeters({MetricFilter where}) =>
+  Map<String, Meter> getMeters({MetricFilter? where}) =>
       _getMetrics((name, metric) => metric is Meter && (where == null || where(name, metric)));
 
   /// Returns a map of all the timers in the registry and their names which match the given [where].
-  Map<String, Timer> getTimers({MetricFilter where}) =>
+  Map<String, Timer> getTimers({MetricFilter? where}) =>
       _getMetrics((name, metric) => metric is Timer && (where == null || where(name, metric)));
 
-  /*<T extends Metric> T*/ Metric _getOrAdd(String name, _MetricBuilder/*<T>*/ builder) {
-    final Metric metric = _metrics[name];
-    if (builder.isInstance(metric)) {
+  T _getOrAdd<T extends Metric>(String name, _MetricBuilder<T> builder) {
+    final Metric? metric = _metrics[name];
+    if (metric is T) {
       return metric;
     } else if (metric == null) {
       try {
         return register(name, builder.newMetric());
       } on ArgumentError {
-        final Metric added = _metrics[name];
-        if (builder.isInstance(added)) {
+        final Metric? added = _metrics[name];
+        if (added is T) {
           return added;
         }
       }
@@ -135,11 +133,11 @@ class MetricRegistry implements MetricSet {
     throw new ArgumentError("$name is already used for a different type of metric");
   }
 
-  /*<T extends Metric> Map<String, T>*/Map<String, dynamic> _getMetrics(MetricFilter test) {
-    final timers = <String, dynamic>{};
+  Map<String, T> _getMetrics<T extends Metric>(MetricFilter test) {
+    final timers = <String, T>{};
     for (String name in _metrics.keys) {
-      final metric = _metrics[name];
-      if (test(name, metric)) {
+      final metric = _metrics[name]!;
+      if (test(name, metric) && metric is T) {
         timers[name] = metric;
       }
     }
@@ -170,9 +168,9 @@ class MetricRegistry implements MetricSet {
     _metricRemovedController.add(new NamedMetric(name, metric));
   }
 
-  void _registerAll(String prefix, MetricSet metrics) {
+  void _registerAll(String? prefix, MetricSet metrics) {
     for (String metricName in metrics.metrics.keys) {
-      final metric = metrics.metrics[metricName];
+      final metric = metrics.metrics[metricName]!;
       if (metric is MetricSet) {
         _registerAll(name([prefix, metricName]), metric);
       } else {
@@ -197,8 +195,6 @@ class _MetricBuilder<T extends Metric> {
   _MetricBuilder(T createNewInstance()) : _createNewInstance = createNewInstance;
 
   T newMetric() => _createNewInstance();
-
-  bool isInstance(Metric metric) => metric is T;
 }
 
 class NamedMetric<T extends Metric> {
