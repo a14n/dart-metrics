@@ -8,10 +8,9 @@ environment:
   sdk: ">=2.12.0 <3.0.0"
 
 dependencies:
-  path: '1.8.0'
-  logging: '1.0.1'
+  path: ^1.8.0
+  logging: ^1.0.1
 
 dev_dependencies:
-  mockito: any
-  build_runner: any
+  mocktail: any
   test: any

@@ -22,8 +22,7 @@ import 'package:metrics/metrics_graphite.dart';
 import 'package:test/test.dart';
 
 main() {
-  group('graphite', () {
-
+  group('', () {
     late ServerSocket serverSocket;
     late Graphite graphite;
 
@@ -48,26 +47,25 @@ main() {
 
     test('connects to graphite', () {
       int con = 0;
-      serverSocket.listen((s) => utf8.decodeStream(s)
-          .then((_) => con++)
-          .then((_) => s.close()));
-      graphite.connect()
+      serverSocket.listen((s) =>
+          utf8.decodeStream(s).then((_) => con++).then((_) => s.close()));
+      graphite
+          .connect()
           .then((_) => graphite.close())
           .then((_) => serverSocket.close())
           .then(expectAsync1((_) => expect(con, equals(1))));
     });
 
     test('disconnects from graphite', () {
-      serverSocket.listen((s) => utf8.decodeStream(s)
-          .then((_) => s.close()));
-      graphite.connect()
+      serverSocket.listen((s) => utf8.decodeStream(s).then((_) => s.close()));
+      graphite
+          .connect()
           .then((_) => graphite.close())
           .then(expectAsync1((_) => expect(graphite.isConnected, isFalse)));
     });
 
     test('does not allow double connections', () {
-      serverSocket.listen((s) => utf8.decodeStream(s)
-          .then((_) => s.close()));
+      serverSocket.listen((s) => utf8.decodeStream(s).then((_) => s.close()));
       graphite.connect().then(expectAsync1((_) {
         expect(() => graphite.connect(), throwsStateError);
       }));
@@ -75,10 +73,12 @@ main() {
 
     test('writes values to graphite', () {
       final line = new Completer<String>();
-      serverSocket.listen((s) => utf8.decodeStream(s)
+      serverSocket.listen((s) => utf8
+          .decodeStream(s)
           .then((datas) => line.complete(datas))
           .then((_) => s.close()));
-      graphite.connect()
+      graphite
+          .connect()
           .then((_) => graphite.send('name', 'value', 100))
           .then((_) => graphite.close())
           .then((_) => line.future)
@@ -87,10 +87,12 @@ main() {
 
     test('sanitizes names', () {
       final line = new Completer<String>();
-      serverSocket.listen((s) => utf8.decodeStream(s)
+      serverSocket.listen((s) => utf8
+          .decodeStream(s)
           .then((datas) => line.complete(datas))
           .then((_) => s.close()));
-      graphite.connect()
+      graphite
+          .connect()
           .then((_) => graphite.send('name woo', 'value', 100))
           .then((_) => graphite.close())
           .then((_) => line.future)
@@ -99,19 +101,20 @@ main() {
 
     test('sanitizes values', () {
       final line = new Completer<String>();
-      serverSocket.listen((s) => utf8.decodeStream(s)
+      serverSocket.listen((s) => utf8
+          .decodeStream(s)
           .then((datas) => line.complete(datas))
           .then((_) => s.close()));
-      graphite.connect()
+      graphite
+          .connect()
           .then((_) => graphite.send('name', 'value woo', 100))
           .then((_) => graphite.close())
           .then((_) => line.future)
           .then(expectAsync1((s) => expect(s, equals('name value-woo 100\n'))));
     });
-
   });
 }
 
-Future<ServerSocket> startServer(int port)
-    => ServerSocket.bind('localhost', port)
-                   .catchError((_) => startServer(port + 1));
+Future<ServerSocket> startServer(int port) =>
+    ServerSocket.bind('localhost', port)
+        .catchError((_) => startServer(port + 1));

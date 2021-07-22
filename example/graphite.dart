@@ -8,7 +8,7 @@ main() {
   final registry = new MetricRegistry();
 
   // start a console reporter
-  final m = new GraphiteReporter(registry, new Graphite('localhost', 2003))..start(const Duration(seconds: 5));
+  new GraphiteReporter(registry, new Graphite('localhost', 2003))..start(const Duration(seconds: 5));
 
   // periodically execute something
   new Timer.periodic(const Duration(milliseconds: 500), (_){

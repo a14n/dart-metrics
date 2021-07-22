@@ -33,9 +33,9 @@ import 'src/sliding_window_reservoir_tests.dart' as sliding_window_reservoir_tes
 import 'src/uniform_snapshot_tests.dart' as uniform_snapshot_test;
 import 'src/weighted_snapshot_tests.dart' as weighted_snapshot_test;
 
-import 'src/csv_reporter_tests.dart' as csv_reporter_test;
+import 'src/standalone/csv_reporter_tests.dart' as csv_reporter_test;
 
-import 'src/graphite_tests.dart' as graphite_test;
+import 'src/graphite/graphite_tests.dart' as graphite_test;
 
 main() {
   cached_gauge_test.main();

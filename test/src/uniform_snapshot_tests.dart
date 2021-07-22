@@ -17,18 +17,18 @@ library metrics.uniform_snapshot_test;
 import 'package:test/test.dart';
 import 'package:metrics/metrics.dart';
 
-
 main() {
-  group('uniform snapshot', () {
+  group('', () {
     late Snapshot snapshot;
 
     setUp(() {
-      snapshot = new WeightedSnapshot(
-          [new WeightedSample(5, 1.0),
-           new WeightedSample(1, 2.0),
-           new WeightedSample(2, 3.0),
-           new WeightedSample(3, 2.0),
-           new WeightedSample(4, 2.0),]);
+      snapshot = new WeightedSnapshot([
+        new WeightedSample(5, 1.0),
+        new WeightedSample(1, 2.0),
+        new WeightedSample(2, 3.0),
+        new WeightedSample(3, 2.0),
+        new WeightedSample(4, 2.0),
+      ]);
     });
 
     test('small quantiles are the first value', () {
@@ -117,18 +117,18 @@ main() {
     });
 
     test('calculates a stdDev of zero for an singleton snapshot', () {
-      final singleItemSnapshot = new WeightedSnapshot([new WeightedSample(1, 1.0)]);
+      final singleItemSnapshot =
+          new WeightedSnapshot([new WeightedSample(1, 1.0)]);
       expect(singleItemSnapshot.stdDev, equals(0));
     });
 
     test('expect no overflow for low weights', () {
-      final singleItemSnapshot = new WeightedSnapshot(
-          [new WeightedSample(1, double.minPositive),
-           new WeightedSample(2, double.minPositive),
-           new WeightedSample(3, double.minPositive),]);
+      final singleItemSnapshot = new WeightedSnapshot([
+        new WeightedSample(1, double.minPositive),
+        new WeightedSample(2, double.minPositive),
+        new WeightedSample(3, double.minPositive),
+      ]);
       expect(singleItemSnapshot.mean, equals(2));
     });
-
   });
-
 }

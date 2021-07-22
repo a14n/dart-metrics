@@ -7,7 +7,7 @@ main() {
   final registry = new MetricRegistry();
 
   // start a console reporter
-  final m = new ConsoleReporter(registry)..start(const Duration(seconds: 5));
+  new ConsoleReporter(registry)..start(const Duration(seconds: 5));
 
   // periodically execute something
   new Timer.periodic(const Duration(milliseconds: 500), (_){

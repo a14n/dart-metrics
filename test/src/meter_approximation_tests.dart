@@ -19,46 +19,43 @@ import 'package:metrics/metrics.dart';
 import 'package:metrics/test/manual_clock.dart';
 
 main() {
-  group('meter approximation', ()
-  {
-    [15, 60, 600, 6000].forEach((ratePerMinute) {
-      group('at rate of $ratePerMinute', () {
+  [15, 60, 600, 6000].forEach((ratePerMinute) {
+    group('at rate of $ratePerMinute', () {
+      test('control meter 1 minute mean approximation', () {
+        final Meter meter = _simulateMetronome(
+            const Duration(milliseconds: 62934),
+            const Duration(minutes: 3),
+            ratePerMinute);
 
-        test('control meter 1 minute mean approximation', () {
-          final Meter meter = _simulateMetronome(
-              const Duration(milliseconds: 62934),
-              const Duration(minutes: 3),
-              ratePerMinute);
+        expect(meter.oneMinuteRate * 60,
+            closeTo(ratePerMinute, 0.1 * ratePerMinute));
+      });
 
-          expect(meter.oneMinuteRate * 60,
-              closeTo(ratePerMinute, 0.1 * ratePerMinute));
-        });
+      test('control meter 5 minute mean approximation', () {
+        final Meter meter = _simulateMetronome(
+            const Duration(milliseconds: 62934),
+            const Duration(minutes: 13),
+            ratePerMinute);
 
-        test('control meter 5 minute mean approximation', () {
-          final Meter meter = _simulateMetronome(
-              const Duration(milliseconds: 62934),
-              const Duration(minutes: 13),
-              ratePerMinute);
+        expect(meter.fiveMinuteRate * 60,
+            closeTo(ratePerMinute, 0.1 * ratePerMinute));
+      });
 
-          expect(meter.fiveMinuteRate * 60,
-              closeTo(ratePerMinute, 0.1 * ratePerMinute));
-        });
+      test('control meter 15 minute mean approximation', () {
+        final Meter meter = _simulateMetronome(
+            const Duration(milliseconds: 62934),
+            const Duration(minutes: 38),
+            ratePerMinute);
 
-        test('control meter 15 minute mean approximation', () {
-          final Meter meter = _simulateMetronome(
-              const Duration(milliseconds: 62934),
-              const Duration(minutes: 38),
-              ratePerMinute);
-
-          expect(meter.fifteenMinuteRate * 60,
-              closeTo(ratePerMinute, 0.1 * ratePerMinute));
-        });
+        expect(meter.fifteenMinuteRate * 60,
+            closeTo(ratePerMinute, 0.1 * ratePerMinute));
       });
     });
   });
 }
 
-Meter _simulateMetronome(Duration introDelay, Duration duration, int ratePerMinute) {
+Meter _simulateMetronome(
+    Duration introDelay, Duration duration, int ratePerMinute) {
   final clock = new ManualClock();
   final meter = new Meter(clock);
 

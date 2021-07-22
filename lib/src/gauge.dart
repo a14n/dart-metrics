@@ -31,9 +31,7 @@ abstract class Gauge<T> extends Metric {
 class _Gauge<T> implements Gauge<T> {
   final _Supplier<T> _getValue;
 
-  _Gauge(this._getValue) {
-    assert(_getValue != null);
-  }
+  _Gauge(this._getValue);
 
   @override
   T get value => _getValue();

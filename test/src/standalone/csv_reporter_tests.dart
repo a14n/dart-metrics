@@ -12,28 +12,38 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-library metrics.console_reporter_test;
+library metrics.standalone.csv_reporter_test;
 
-import 'package:test/test.dart';
-import 'package:metrics/metrics.dart';
+import 'dart:io';
+
+import 'package:metrics/metrics_standalone.dart';
 import 'package:mocktail/mocktail.dart';
+import 'package:path/path.dart' as p;
+import 'package:test/test.dart';
 
-import '../lib/mocks.dart';
+import '../../lib/mocks.dart';
 
 main() {
   group('', () {
-    late StringBuffer output;
-    late ConsoleReporter reporter;
-    final DateTime datetime =
-        new DateTime.fromMillisecondsSinceEpoch(1363568676000);
+    late Directory dataDir;
+    late CsvReporter reporter;
+
+    getFileContents(String name) =>
+        new File(p.join(dataDir.path, name)).readAsStringSync();
 
     setUp(() {
       final registry = new MockMetricRegistry();
       final clock = new MockClock();
-      when(() => clock.time).thenReturn(datetime.millisecondsSinceEpoch);
+      when(() => clock.time).thenReturn(19910191000);
 
-      output = new StringBuffer();
-      reporter = new ConsoleReporter(registry, output: output, clock: clock);
+      dataDir =
+          new Directory('tmp-${new DateTime.now().millisecondsSinceEpoch}')
+            ..createSync();
+      reporter = new CsvReporter(registry, dataDir, clock: clock);
+    });
+
+    tearDown(() {
+      dataDir.deleteSync(recursive: true);
     });
 
     test('reports gauge values', () {
@@ -42,14 +52,9 @@ main() {
 
       reporter.reportMetrics(gauges: {'gauge': gauge});
 
-      expect(output.toString(), equals('''
-${datetime.toIso8601String()} ========================================================
-
--- Gauges ----------------------------------------------------------------------
-gauge
-             value = 1
-
-
+      expect(getFileContents('gauge.csv'), equals('''
+t,value
+19910191,1
 '''));
     });
 
@@ -59,14 +64,9 @@ gauge
 
       reporter.reportMetrics(counters: {'test.counter': counter});
 
-      expect(output.toString(), equals('''
-${datetime.toIso8601String()} ========================================================
-
--- Counters --------------------------------------------------------------------
-test.counter
-             count = 100
-
-
+      expect(getFileContents('test.counter.csv'), equals('''
+t,count
+19910191,100
 '''));
     });
 
@@ -90,24 +90,9 @@ test.counter
 
       reporter.reportMetrics(histograms: {'test.histogram': histogram});
 
-      expect(output.toString(), equals('''
-${datetime.toIso8601String()} ========================================================
-
--- Histograms ------------------------------------------------------------------
-test.histogram
-             count = 1
-               min = 4
-               max = 2
-              mean = 3.00
-            stddev = 5.00
-            median = 6.00
-              75% <= 7.00
-              95% <= 8.00
-              98% <= 9.00
-              99% <= 10.00
-            99.9% <= 11.00
-
-
+      expect(getFileContents('test.histogram.csv'), equals('''
+t,count,max,mean,min,stddev,p50,p75,p95,p98,p99,p999
+19910191,1,2,3.0,4,5.0,6.0,7.0,8.0,9.0,10.0,11.0
 '''));
     });
 
@@ -121,18 +106,9 @@ test.histogram
 
       reporter.reportMetrics(meters: {'test.meter': meter});
 
-      expect(output.toString(), equals('''
-${datetime.toIso8601String()} ========================================================
-
--- Meters ----------------------------------------------------------------------
-test.meter
-             count = 1
-         mean rate = 2.00 events/second
-     1-minute rate = 3.00 events/second
-     5-minute rate = 4.00 events/second
-    15-minute rate = 5.00 events/second
-
-
+      expect(getFileContents('test.meter.csv'), equals('''
+t,count,mean_rate,m1_rate,m5_rate,m15_rate,rate_unit
+19910191,1,2.0,3.0,4.0,5.0,events/second
 '''));
     });
 
@@ -170,28 +146,9 @@ test.meter
 
       reporter.reportMetrics(timers: {'test.another.timer': timer});
 
-      expect(output.toString(), equals('''
-${datetime.toIso8601String()} ========================================================
-
--- Timers ----------------------------------------------------------------------
-test.another.timer
-             count = 1
-         mean rate = 2.00 calls/second
-     1-minute rate = 3.00 calls/second
-     5-minute rate = 4.00 calls/second
-    15-minute rate = 5.00 calls/second
-               min = 300.00 milliseconds
-               max = 100.00 milliseconds
-              mean = 200.00 milliseconds
-            stddev = 400.00 milliseconds
-            median = 500.00 milliseconds
-              75% <= 600.00 milliseconds
-              95% <= 700.00 milliseconds
-              98% <= 800.00 milliseconds
-              99% <= 900.00 milliseconds
-            99.9% <= 1000.00 milliseconds
-
-
+      expect(getFileContents('test.another.timer.csv'), equals('''
+t,count,max,mean,min,stddev,p50,p75,p95,p98,p99,p999,mean_rate,m1_rate,m5_rate,m15_rate,rate_unit,duration_unit
+19910191,1,100.0,200.0,300.0,400.0,500.0,600.0,700.0,800.0,900.0,1000.0,2.0,3.0,4.0,5.0,calls/second,milliseconds
 '''));
     });
   });

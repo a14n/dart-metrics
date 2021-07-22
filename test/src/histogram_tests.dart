@@ -14,42 +14,38 @@
 
 library metrics.histogram_test;
 
-import 'package:mockito/annotations.dart';
-import 'package:mockito/mockito.dart';
-import 'package:test/test.dart';
 import 'package:metrics/metrics.dart';
+import 'package:mocktail/mocktail.dart';
+import 'package:test/test.dart';
 
-import 'histogram_tests.mocks.dart';
+import '../lib/mocks.dart';
 
-@GenerateMocks([Reservoir, Snapshot])
 main() {
-  group('histogram', () {
-    test('updates the count on updates', () {
-      final reservoir = new MockReservoir();
-      final histogram = new Histogram(reservoir);
+  test('updates the count on updates', () {
+    final reservoir = new MockReservoir();
+    final histogram = new Histogram(reservoir);
 
-      expect(histogram.count, equals(0));
-      histogram.update(1);
-      expect(histogram.count, equals(1));
-    });
+    expect(histogram.count, equals(0));
+    histogram.update(1);
+    expect(histogram.count, equals(1));
+  });
 
-    test('returns the snapshot from the reservoir', () {
-      final reservoir = new MockReservoir();
-      final snapshot = new MockSnapshot();
-      final histogram = new Histogram(reservoir);
+  test('returns the snapshot from the reservoir', () {
+    final reservoir = new MockReservoir();
+    final snapshot = new MockSnapshot();
+    final histogram = new Histogram(reservoir);
 
-      when(reservoir.snapshot).thenReturn(snapshot);
+    when(() => reservoir.snapshot).thenReturn(snapshot);
 
-      expect(histogram.snapshot, equals(snapshot));
-    });
+    expect(histogram.snapshot, equals(snapshot));
+  });
 
-    test('updates the reservoir', () {
-      final reservoir = new MockReservoir();
-      final histogram = new Histogram(reservoir);
+  test('updates the reservoir', () {
+    final reservoir = new MockReservoir();
+    final histogram = new Histogram(reservoir);
 
-      histogram.update(1);
+    histogram.update(1);
 
-      verify(reservoir.update(1)).called(1);
-    });
+    verify(() => reservoir.update(1)).called(1);
   });
 }

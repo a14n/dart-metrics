@@ -18,13 +18,11 @@ import 'package:test/test.dart';
 import 'package:metrics/metrics.dart';
 
 main() {
-  group('derivative gauge', () {
-    test('returns a transformed value', () {
-      final gauge1 = new Gauge<String>(() => 'woo');
-      final gauge2 = new DerivativeGauge<String, int>(
-          gauge1, (String s) => s.length);
+  test('returns a transformed value', () {
+    final gauge1 = new Gauge<String>(() => 'woo');
+    final gauge2 =
+        new DerivativeGauge<String, int>(gauge1, (String s) => s.length);
 
-      expect(gauge2.value, equals(3));
-    });
+    expect(gauge2.value, equals(3));
   });
 }

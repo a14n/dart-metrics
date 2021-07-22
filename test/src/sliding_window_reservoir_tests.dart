@@ -17,10 +17,8 @@ library metrics.sliding_window_reservoir_test;
 import 'package:test/test.dart';
 import 'package:metrics/metrics.dart';
 
-
 main() {
-  group('sliding window reservoir', () {
-
+  group('', () {
     late SlidingWindowReservoir reservoir;
 
     setUp(() {
@@ -42,6 +40,5 @@ main() {
 
       expect(reservoir.snapshot.values, unorderedEquals([2, 3, 4]));
     });
-
   });
 }
