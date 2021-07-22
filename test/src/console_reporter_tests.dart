@@ -25,19 +25,19 @@ main() {
     late StringBuffer output;
     late ConsoleReporter reporter;
     final DateTime datetime =
-        new DateTime.fromMillisecondsSinceEpoch(1363568676000);
+        DateTime.fromMillisecondsSinceEpoch(1363568676000);
 
     setUp(() {
-      final registry = new MockMetricRegistry();
-      final clock = new MockClock();
+      final registry = MockMetricRegistry();
+      final clock = MockClock();
       when(() => clock.time).thenReturn(datetime.millisecondsSinceEpoch);
 
-      output = new StringBuffer();
-      reporter = new ConsoleReporter(registry, output: output, clock: clock);
+      output = StringBuffer();
+      reporter = ConsoleReporter(registry, output: output, clock: clock);
     });
 
     test('reports gauge values', () {
-      final gauge = new MockGauge();
+      final gauge = MockGauge();
       when(() => gauge.value).thenReturn(1);
 
       reporter.reportMetrics(gauges: {'gauge': gauge});
@@ -54,7 +54,7 @@ gauge
     });
 
     test('reports counter values', () {
-      final counter = new MockCounter();
+      final counter = MockCounter();
       when(() => counter.count).thenReturn(100);
 
       reporter.reportMetrics(counters: {'test.counter': counter});
@@ -71,10 +71,10 @@ test.counter
     });
 
     test('reports histogram values', () {
-      final histogram = new MockHistogram();
+      final histogram = MockHistogram();
       when(() => histogram.count).thenReturn(1);
 
-      final snapshot = new MockSnapshot();
+      final snapshot = MockSnapshot();
       when(() => snapshot.max).thenReturn(2);
       when(() => snapshot.mean).thenReturn(3.0);
       when(() => snapshot.min).thenReturn(4);
@@ -112,7 +112,7 @@ test.histogram
     });
 
     test('reports meter values', () {
-      final meter = new MockMeter();
+      final meter = MockMeter();
       when(() => meter.count).thenReturn(1);
       when(() => meter.meanRate).thenReturn(2.0);
       when(() => meter.oneMinuteRate).thenReturn(3.0);
@@ -137,14 +137,14 @@ test.meter
     });
 
     test('reports timer values', () {
-      final timer = new MockTimer();
+      final timer = MockTimer();
       when(() => timer.count).thenReturn(1);
       when(() => timer.meanRate).thenReturn(2.0);
       when(() => timer.oneMinuteRate).thenReturn(3.0);
       when(() => timer.fiveMinuteRate).thenReturn(4.0);
       when(() => timer.fifteenMinuteRate).thenReturn(5.0);
 
-      final snapshot = new MockSnapshot();
+      final snapshot = MockSnapshot();
       when(() => snapshot.max)
           .thenReturn(const Duration(milliseconds: 100).inMicroseconds);
       when(() => snapshot.mean).thenReturn(

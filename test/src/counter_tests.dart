@@ -19,30 +19,30 @@ import 'package:metrics/metrics.dart';
 
 main() {
   test('start at zero', () {
-    final counter = new Counter();
+    final counter = Counter();
     expect(counter.count, equals(0));
   });
 
   test('increments by one', () {
-    final counter = new Counter();
+    final counter = Counter();
     counter.inc();
     expect(counter.count, equals(1));
   });
 
   test('increments by an arbitrary delta', () {
-    final counter = new Counter();
+    final counter = Counter();
     counter.inc(12);
     expect(counter.count, equals(12));
   });
 
   test('decrements by one', () {
-    final counter = new Counter();
+    final counter = Counter();
     counter.dec();
     expect(counter.count, equals(-1));
   });
 
   test('decrements by an arbitrary delta', () {
-    final counter = new Counter();
+    final counter = Counter();
     counter.dec(12);
     expect(counter.count, equals(-12));
   });

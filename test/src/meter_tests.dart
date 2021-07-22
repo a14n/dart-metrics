@@ -22,9 +22,9 @@ import '../lib/mocks.dart';
 
 main() {
   test('starts out with no rates or count', () {
-    final clock = new MockClock();
+    final clock = MockClock();
     when(() => clock.tick).thenReturn(0);
-    final meter = new Meter(clock);
+    final meter = Meter(clock);
 
     when(() => clock.tick)
         .thenReturn(const Duration(seconds: 10).inMicroseconds);
@@ -37,9 +37,9 @@ main() {
   });
 
   test('marks events and updates rates and count', () {
-    final clock = new MockClock();
+    final clock = MockClock();
     when(() => clock.tick).thenReturn(0);
-    final meter = new Meter(clock);
+    final meter = Meter(clock);
     meter.mark();
     when(() => clock.tick)
         .thenReturn(const Duration(seconds: 10).inMicroseconds);

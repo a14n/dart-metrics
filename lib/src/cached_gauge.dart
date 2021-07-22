@@ -28,7 +28,6 @@ class CachedGauge<T> implements Gauge<T> {
       : _clock = clock ?? Clock.defaultClock,
         _timeoutInMicroseconds = timeout.inMilliseconds * 1000;
 
-
   @override
   T get value {
     if (_shouldLoad()) _value = _getValue();

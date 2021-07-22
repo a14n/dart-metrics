@@ -19,13 +19,12 @@ class UniformSnapshot extends Snapshot {
   final List<int> _values;
 
   /// Create a new [Snapshot] with the given values.
-  UniformSnapshot(List<int> values)
-      : _values = values.toList(growable: false);
+  UniformSnapshot(List<int> values) : _values = values.toList(growable: false);
 
   @override
   double getValue(num quantile) {
     if (quantile < 0.0 || quantile > 1.0) {
-      throw new ArgumentError("$quantile is not in [0..1]");
+      throw ArgumentError("$quantile is not in [0..1]");
     }
 
     if (_values.isEmpty) return 0.0;
@@ -53,17 +52,17 @@ class UniformSnapshot extends Snapshot {
   int get min => _values.isEmpty ? 0 : _values.first;
 
   @override
-  double get mean => _values.isEmpty ? 0.0 :
-    (_values.reduce((a,b) => a + b) / _values.length);
+  double get mean => _values.isEmpty
+      ? 0.0
+      : (_values.reduce((a, b) => a + b) / _values.length);
 
   @override
   double get stdDev {
     if (_values.isEmpty) return 0.0;
 
     final mean = this.mean;
-    final sum = _values.map((e) => e - mean)
-                       .map((e) => e * e)
-                       .reduce((a, b) => a + b);
+    final sum =
+        _values.map((e) => e - mean).map((e) => e * e).reduce((a, b) => a + b);
 
     final variance = sum / (_values.length - 1);
     return sqrt(variance);

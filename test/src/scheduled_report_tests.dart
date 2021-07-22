@@ -43,16 +43,16 @@ class SpyScheduledReporter extends ScheduledReporter {
   }
 }
 
-final gauge = new MockGauge();
-final counter = new MockCounter();
-final histogram = new MockHistogram();
-final meter = new MockMeter();
-final timer = new MockTimer();
+final gauge = MockGauge();
+final counter = MockCounter();
+final histogram = MockHistogram();
+final meter = MockMeter();
+final timer = MockTimer();
 
 main() {
-  final registry = new MetricRegistry();
-  final reporter = new SpyScheduledReporter(
-      registry, TimeUnit.SECONDS, TimeUnit.MILLISECONDS);
+  final registry = MetricRegistry();
+  final reporter =
+      SpyScheduledReporter(registry, TimeUnit.SECONDS, TimeUnit.MILLISECONDS);
 
   test('polls periodically', () {
     registry.register("gauge", gauge);
@@ -63,7 +63,7 @@ main() {
 
     reporter.start(const Duration(milliseconds: 200));
 
-    new a.Future.delayed(const Duration(milliseconds: 500), expectAsync0(() {
+    a.Future.delayed(const Duration(milliseconds: 500), expectAsync0(() {
       expect(reporter._count, equals(2));
     })).whenComplete(() {
       reporter.stop();

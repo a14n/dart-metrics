@@ -22,7 +22,7 @@ main() {
     late SlidingWindowReservoir reservoir;
 
     setUp(() {
-      reservoir = new SlidingWindowReservoir(3);
+      reservoir = SlidingWindowReservoir(3);
     });
 
     test('handles small data streams', () {

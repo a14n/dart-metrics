@@ -20,7 +20,8 @@ import 'src/console_reporter_tests.dart' as console_reporter_test;
 import 'src/counter_tests.dart' as counter_test;
 import 'src/derivative_gauge_tests.dart' as derivative_gauge_test;
 import 'src/ewma_tests.dart' as ewma_test;
-import 'src/exponentially_decaying_reservoir_tests.dart' as exponentially_decaying_reservoir_test;
+import 'src/exponentially_decaying_reservoir_tests.dart'
+    as exponentially_decaying_reservoir_test;
 import 'src/histogram_tests.dart' as histogram_test;
 import 'src/log_reporter_tests.dart' as log_reporter_test;
 import 'src/meter_approximation_tests.dart' as meter_approximation_test;
@@ -28,8 +29,10 @@ import 'src/meter_tests.dart' as meter_test;
 import 'src/metric_registry_tests.dart' as metric_registry_test;
 import 'src/ratio_gauge_tests.dart' as ratio_gauge_test;
 import 'src/scheduled_report_tests.dart' as scheduled_report_test;
-import 'src/sliding_time_window_reservoir_tests.dart' as sliding_time_window_reservoir_test;
-import 'src/sliding_window_reservoir_tests.dart' as sliding_window_reservoir_test;
+import 'src/sliding_time_window_reservoir_tests.dart'
+    as sliding_time_window_reservoir_test;
+import 'src/sliding_window_reservoir_tests.dart'
+    as sliding_window_reservoir_test;
 import 'src/uniform_snapshot_tests.dart' as uniform_snapshot_test;
 import 'src/weighted_snapshot_tests.dart' as weighted_snapshot_test;
 

@@ -18,33 +18,32 @@ import 'package:test/test.dart';
 import 'package:metrics/metrics.dart';
 
 main() {
-
   test('ratios are human readable', () {
-    final ratio = new Ratio(100, 200);
+    final ratio = Ratio(100, 200);
 
     expect(ratio.toString(), equals('100:200'));
   });
 
   test('calculates the ratio of the numerator to the denominator', () {
-    final regular = new RatioGauge(() => new Ratio(2, 4));
+    final regular = RatioGauge(() => Ratio(2, 4));
 
     expect(regular.value, equals(0.5));
   });
 
   test('handles divide by zero issues', () {
-    final regular = new RatioGauge(() => new Ratio(100, 0));
+    final regular = RatioGauge(() => Ratio(100, 0));
 
     expect(regular.value, isNaN);
   });
 
   test('handles infinite denominators', () {
-    final regular = new RatioGauge(() => new Ratio(10, double.infinity));
+    final regular = RatioGauge(() => Ratio(10, double.infinity));
 
     expect(regular.value, isNaN);
   });
 
   test('handles NaN denominators', () {
-    final regular = new RatioGauge(() => new Ratio(10, double.nan));
+    final regular = RatioGauge(() => Ratio(10, double.nan));
 
     expect(regular.value, isNaN);
   });

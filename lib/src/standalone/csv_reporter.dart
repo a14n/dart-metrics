@@ -19,23 +19,27 @@ class CsvReporter extends ScheduledReporter {
   final Directory _directory;
   final Clock _clock;
 
-  factory CsvReporter(MetricRegistry registry, Directory directory, {Clock? clock, TimeUnit? rateUnit, TimeUnit? durationUnit, MetricFilter? where})
-      => new CsvReporter._(registry,
-          directory,
-          clock ?? Clock.defaultClock,
-          rateUnit ?? TimeUnit.SECONDS,
-          durationUnit ?? TimeUnit.MILLISECONDS,
+  factory CsvReporter(MetricRegistry registry, Directory directory,
+          {Clock? clock,
+          TimeUnit? rateUnit,
+          TimeUnit? durationUnit,
+          MetricFilter? where}) =>
+      CsvReporter._(registry, directory, clock ?? Clock.defaultClock,
+          rateUnit ?? TimeUnit.SECONDS, durationUnit ?? TimeUnit.MILLISECONDS,
           where: where);
 
-  CsvReporter._(MetricRegistry registry, this._directory, this._clock, TimeUnit rateUnit, TimeUnit durationUnit, {MetricFilter? where})
+  CsvReporter._(MetricRegistry registry, this._directory, this._clock,
+      TimeUnit rateUnit, TimeUnit durationUnit,
+      {MetricFilter? where})
       : super(registry, rateUnit, durationUnit, where: where);
 
   @override
-  void reportMetrics({Map<String, Gauge>? gauges,
-                      Map<String, Counter>? counters,
-                      Map<String, Histogram>? histograms,
-                      Map<String, Meter>? meters,
-                      Map<String, Timer>? timers}) {
+  void reportMetrics(
+      {Map<String, Gauge>? gauges,
+      Map<String, Counter>? counters,
+      Map<String, Histogram>? histograms,
+      Map<String, Meter>? meters,
+      Map<String, Timer>? timers}) {
     final timeInSeconds = _clock.time ~/ 1000;
 
     if (gauges != null) {
@@ -129,13 +133,14 @@ class CsvReporter extends ScheduledReporter {
   }
 
   void _report(int timeInSeconds, String name, Map<String, dynamic> datas) {
-    final file = new File(p.join(_directory.path, '$name.csv'));
+    final file = File(p.join(_directory.path, '$name.csv'));
     final fileAlreadyExists = file.existsSync();
     if (!fileAlreadyExists) {
       file
         ..createSync()
         ..writeAsStringSync('t,${datas.keys.join(',')}\n');
     }
-    file.writeAsStringSync('$timeInSeconds,${datas.values.join(',')}\n', mode: FileMode.append, flush: true);
+    file.writeAsStringSync('$timeInSeconds,${datas.values.join(',')}\n',
+        mode: FileMode.append, flush: true);
   }
 }

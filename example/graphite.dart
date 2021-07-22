@@ -5,13 +5,14 @@ import 'package:metrics/metrics.dart' show MetricRegistry;
 
 main() {
   // create a registry
-  final registry = new MetricRegistry();
+  final registry = MetricRegistry();
 
   // start a console reporter
-  new GraphiteReporter(registry, new Graphite('localhost', 2003))..start(const Duration(seconds: 5));
+  GraphiteReporter(registry, Graphite('localhost', 2003))
+      .start(const Duration(seconds: 5));
 
   // periodically execute something
-  new Timer.periodic(const Duration(milliseconds: 500), (_){
+  Timer.periodic(const Duration(milliseconds: 500), (_) {
     registry.counter('counter').inc();
   });
 }

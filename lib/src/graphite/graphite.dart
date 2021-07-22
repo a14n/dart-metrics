@@ -29,13 +29,13 @@ class Graphite implements GraphiteSender {
 
   @override
   Future connect() {
-    if (_socket != null) throw new StateError('Already connected');
+    if (_socket != null) throw StateError('Already connected');
     return _socket = Socket.connect(host, port);
   }
 
   @override
   Future send(String name, String value, int timeInSeconds) {
-    sanitize(String s) => s.replaceAll(new RegExp(r'\s+'), '-');
+    sanitize(String s) => s.replaceAll(RegExp(r'\s+'), '-');
     if (!isConnected) connect();
     return _socket!.then((sock) {
       sock.writeln('${sanitize(name)} ${sanitize(value)} $timeInSeconds');
@@ -47,7 +47,7 @@ class Graphite implements GraphiteSender {
 
   @override
   Future flush() {
-    if (_socket == null) return new Future.value();
+    if (_socket == null) return Future.value();
     return _socket!.then((s) => s.flush());
   }
 
@@ -59,7 +59,7 @@ class Graphite implements GraphiteSender {
 
   @override
   Future close() {
-    if (_socket == null) return new Future.value();
+    if (_socket == null) return Future.value();
     final sock = _socket!;
     _socket = null;
     return sock.then((s) => Future.wait([s.drain(), s.close()]));

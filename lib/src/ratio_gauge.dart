@@ -30,7 +30,10 @@ class Ratio {
 
   Ratio(this.numerator, this.denominator);
 
-  double get value => denominator.isNaN || denominator.isInfinite || denominator == 0 ? double.nan : (numerator / denominator);
+  double get value =>
+      denominator.isNaN || denominator.isInfinite || denominator == 0
+          ? double.nan
+          : (numerator / denominator);
 
   @override
   String toString() => '$numerator:$denominator';

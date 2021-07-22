@@ -22,7 +22,7 @@ import 'package:metrics/metrics.dart';
 main() {
   test('caches the value for the given period', () {
     int i = 1;
-    final gauge = new CachedGauge(() => i++, const Duration(milliseconds: 100));
+    final gauge = CachedGauge(() => i++, const Duration(milliseconds: 100));
 
     expect(gauge.value, equals(1));
     expect(gauge.value, equals(1));
@@ -30,10 +30,10 @@ main() {
 
   test('reloads the cached value after the given period', () {
     int i = 1;
-    final gauge = new CachedGauge(() => i++, const Duration(milliseconds: 100));
+    final gauge = CachedGauge(() => i++, const Duration(milliseconds: 100));
 
     expect(gauge.value, equals(1));
-    new Future.delayed(const Duration(milliseconds: 150), expectAsync0((){
+    Future.delayed(const Duration(milliseconds: 150), expectAsync0(() {
       expect(gauge.value, equals(2));
       expect(gauge.value, equals(2));
     }));

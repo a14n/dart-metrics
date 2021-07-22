@@ -22,8 +22,8 @@ import '../lib/mocks.dart';
 
 main() {
   test('updates the count on updates', () {
-    final reservoir = new MockReservoir();
-    final histogram = new Histogram(reservoir);
+    final reservoir = MockReservoir();
+    final histogram = Histogram(reservoir);
 
     expect(histogram.count, equals(0));
     histogram.update(1);
@@ -31,9 +31,9 @@ main() {
   });
 
   test('returns the snapshot from the reservoir', () {
-    final reservoir = new MockReservoir();
-    final snapshot = new MockSnapshot();
-    final histogram = new Histogram(reservoir);
+    final reservoir = MockReservoir();
+    final snapshot = MockSnapshot();
+    final histogram = Histogram(reservoir);
 
     when(() => reservoir.snapshot).thenReturn(snapshot);
 
@@ -41,8 +41,8 @@ main() {
   });
 
   test('updates the reservoir', () {
-    final reservoir = new MockReservoir();
-    final histogram = new Histogram(reservoir);
+    final reservoir = MockReservoir();
+    final histogram = Histogram(reservoir);
 
     histogram.update(1);
 

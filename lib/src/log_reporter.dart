@@ -21,23 +21,28 @@ class LogReporter extends ScheduledReporter {
   final Logger _logger;
   final Level _logLevel;
 
-  factory LogReporter(MetricRegistry registry, {Logger? logger, Level? level, TimeUnit? rateUnit, TimeUnit? durationUnit, MetricFilter? where})
-      => new LogReporter._(registry,
-          logger ?? new Logger('metrics'),
-          level ?? Level.INFO,
-          rateUnit ?? TimeUnit.SECONDS,
-          durationUnit ?? TimeUnit.MILLISECONDS,
+  factory LogReporter(MetricRegistry registry,
+          {Logger? logger,
+          Level? level,
+          TimeUnit? rateUnit,
+          TimeUnit? durationUnit,
+          MetricFilter? where}) =>
+      LogReporter._(registry, logger ?? Logger('metrics'), level ?? Level.INFO,
+          rateUnit ?? TimeUnit.SECONDS, durationUnit ?? TimeUnit.MILLISECONDS,
           where: where);
 
-  LogReporter._(MetricRegistry registry, this._logger, this._logLevel, TimeUnit rateUnit, TimeUnit durationUnit, {MetricFilter? where})
+  LogReporter._(MetricRegistry registry, this._logger, this._logLevel,
+      TimeUnit rateUnit, TimeUnit durationUnit,
+      {MetricFilter? where})
       : super(registry, rateUnit, durationUnit, where: where);
 
   @override
-  void reportMetrics({Map<String, Gauge>? gauges,
-                      Map<String, Counter>? counters,
-                      Map<String, Histogram>? histograms,
-                      Map<String, Meter>? meters,
-                      Map<String, Timer>? timers}) {
+  void reportMetrics(
+      {Map<String, Gauge>? gauges,
+      Map<String, Counter>? counters,
+      Map<String, Histogram>? histograms,
+      Map<String, Meter>? meters,
+      Map<String, Timer>? timers}) {
     if (gauges != null) {
       gauges.forEach((name, gauge) {
         logGauge(name, gauge);
@@ -129,6 +134,7 @@ class LogReporter extends ScheduledReporter {
   }
 
   void _log(String type, String name, Map<String, dynamic> datas) {
-    _logger.log(_logLevel, 'type=$type, name=$name, ${datas.keys.map((k) => '$k=${datas[k]}').join(', ')}') ;
+    _logger.log(_logLevel,
+        'type=$type, name=$name, ${datas.keys.map((k) => '$k=${datas[k]}').join(', ')}');
   }
 }

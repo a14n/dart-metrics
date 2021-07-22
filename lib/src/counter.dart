@@ -23,7 +23,6 @@ class Counter implements Metric, Counting {
     _count += n;
   }
 
-
   /// Decrement the counter by [n] or `1` if ommitted.
   void dec([int n = 1]) {
     _count -= n;

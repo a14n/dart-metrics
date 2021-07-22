@@ -16,7 +16,6 @@ part of metrics;
 
 /// A statistical snapshot of a [Snapshot].
 abstract class Snapshot {
-
   /// Returns the value at the given [quantile] (between 0 and 1).
   double getValue(num quantile);
 

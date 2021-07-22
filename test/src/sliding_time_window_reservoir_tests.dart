@@ -26,9 +26,9 @@ main() {
     late SlidingTimeWindowReservoir reservoir;
 
     setUp(() {
-      clock = new MockClock();
-      reservoir = new SlidingTimeWindowReservoir(
-          const Duration(microseconds: 10), clock);
+      clock = MockClock();
+      reservoir =
+          SlidingTimeWindowReservoir(const Duration(microseconds: 10), clock);
     });
 
     test('stores measurements with duplicate ticks', () {

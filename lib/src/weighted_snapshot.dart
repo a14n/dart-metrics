@@ -22,18 +22,19 @@ class WeightedSnapshot extends Snapshot {
 
   /// Create a new [Snapshot] with the given [values].
   WeightedSnapshot(Iterable<WeightedSample> values) {
-    final List<WeightedSample> copy = new List<WeightedSample>.from(values)
-        ..sort((o1, o2) {
-          if (o1.value > o2.value) return 1;
-          if (o1.value < o2.value) return -1;
-          return 0;
-        });
+    final List<WeightedSample> copy = List<WeightedSample>.from(values)
+      ..sort((o1, o2) {
+        if (o1.value > o2.value) return 1;
+        if (o1.value < o2.value) return -1;
+        return 0;
+      });
 
-    this._values = new List<int>.filled(copy.length, 0);
-    this._normWeights = new List<double>.filled(copy.length, 0.0);
-    this._quantiles = new List<double>.filled(copy.length, 0.0);
+    this._values = List<int>.filled(copy.length, 0);
+    this._normWeights = List<double>.filled(copy.length, 0.0);
+    this._quantiles = List<double>.filled(copy.length, 0.0);
 
-    final sumWeight = copy.fold(0.0, (double sum, WeightedSample sample) => sum + sample.weight);
+    final sumWeight = copy.fold(
+        0.0, (double sum, WeightedSample sample) => sum + sample.weight);
 
     for (int i = 0; i < copy.length; i++) {
       _values[i] = copy[i].value;
@@ -48,7 +49,7 @@ class WeightedSnapshot extends Snapshot {
   @override
   double getValue(num quantile) {
     if (quantile < 0.0 || quantile > 1.0) {
-      throw new ArgumentError("$quantile is not in [0..1]");
+      throw ArgumentError("$quantile is not in [0..1]");
     }
 
     if (_values.isEmpty) return 0.0;
@@ -69,7 +70,7 @@ class WeightedSnapshot extends Snapshot {
   int get size => _values.length;
 
   @override
-  List<int> get values => new List<int>.from(_values);
+  List<int> get values => List<int>.from(_values);
 
   @override
   int get max => _values.isEmpty ? 0 : _values.last;

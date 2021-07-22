@@ -35,21 +35,21 @@ void testLevel(Level level) {
     late LogReporter reporter;
 
     setUp(() {
-      final registry = new MockMetricRegistry();
-      logger = new MockLogger();
+      final registry = MockMetricRegistry();
+      logger = MockLogger();
 
-      reporter = new LogReporter(registry, logger: logger, level: level);
+      reporter = LogReporter(registry, logger: logger, level: level);
     });
 
     test('reports gauge values at $level', () {
-      reporter.reportMetrics(gauges: {'gauge': new Gauge(() => 'value')});
+      reporter.reportMetrics(gauges: {'gauge': Gauge(() => 'value')});
 
       verify(() => logger.log(level, 'type=GAUGE, name=gauge, value=value'))
           .called(1);
     });
 
     test('reports counter values at $level', () {
-      final counter = new MockCounter();
+      final counter = MockCounter();
       when(() => counter.count).thenReturn(100);
 
       reporter.reportMetrics(counters: {'test.counter': counter});
@@ -60,10 +60,10 @@ void testLevel(Level level) {
     });
 
     test('reports histogram values at $level', () {
-      final histogram = new MockHistogram();
+      final histogram = MockHistogram();
       when(() => histogram.count).thenReturn(1);
 
-      final snapshot = new MockSnapshot();
+      final snapshot = MockSnapshot();
       when(() => snapshot.max).thenReturn(2);
       when(() => snapshot.mean).thenReturn(3.0);
       when(() => snapshot.min).thenReturn(4);
@@ -85,7 +85,7 @@ void testLevel(Level level) {
     });
 
     test('reports meter values at $level', () {
-      final meter = new MockMeter();
+      final meter = MockMeter();
       when(() => meter.count).thenReturn(1);
       when(() => meter.meanRate).thenReturn(2.0);
       when(() => meter.oneMinuteRate).thenReturn(3.0);
@@ -100,14 +100,14 @@ void testLevel(Level level) {
     });
 
     test('reports timer values at $level', () {
-      final timer = new MockTimer();
+      final timer = MockTimer();
       when(() => timer.count).thenReturn(1);
       when(() => timer.meanRate).thenReturn(2.0);
       when(() => timer.oneMinuteRate).thenReturn(3.0);
       when(() => timer.fiveMinuteRate).thenReturn(4.0);
       when(() => timer.fifteenMinuteRate).thenReturn(5.0);
 
-      final snapshot = new MockSnapshot();
+      final snapshot = MockSnapshot();
       when(() => snapshot.max)
           .thenReturn(const Duration(milliseconds: 100).inMicroseconds);
       when(() => snapshot.mean).thenReturn(

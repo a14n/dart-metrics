@@ -23,7 +23,8 @@ part of metrics;
 /// - [EMA](http://en.wikipedia.org/wiki/Moving_average#Exponential_moving_average)
 class EWMA {
   static const _INTERVAL_IN_SECONDS = 5;
-  static final _INTERVAL_IN_MINUTES = _INTERVAL_IN_SECONDS / Duration.secondsPerMinute;
+  static final _INTERVAL_IN_MINUTES =
+      _INTERVAL_IN_SECONDS / Duration.secondsPerMinute;
 
   static final _M1_ALPHA = 1 - exp(-_INTERVAL_IN_MINUTES / 1.0);
   static final _M5_ALPHA = 1 - exp(-_INTERVAL_IN_MINUTES / 5.0);

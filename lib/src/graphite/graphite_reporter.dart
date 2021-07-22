@@ -16,14 +16,20 @@ part of metrics_graphite;
 
 /// A reporter which publishes metric values to a Graphite server.
 class GraphiteReporter extends ScheduledReporter {
-  static final _log = new Logger('GraphiteReporter');
+  static final _log = Logger('GraphiteReporter');
 
   final Clock _clock;
   final String? _prefix;
   final GraphiteSender _graphite;
 
-  factory GraphiteReporter(MetricRegistry registry, GraphiteSender graphite, {String? prefix, Clock? clock, TimeUnit? rateUnit, TimeUnit? durationUnit, MetricFilter? where})
-      => new GraphiteReporter._(registry,
+  factory GraphiteReporter(MetricRegistry registry, GraphiteSender graphite,
+          {String? prefix,
+          Clock? clock,
+          TimeUnit? rateUnit,
+          TimeUnit? durationUnit,
+          MetricFilter? where}) =>
+      GraphiteReporter._(
+          registry,
           graphite,
           prefix,
           clock ?? Clock.defaultClock,
@@ -31,15 +37,18 @@ class GraphiteReporter extends ScheduledReporter {
           durationUnit ?? TimeUnit.MILLISECONDS,
           where: where);
 
-  GraphiteReporter._(MetricRegistry registry, this._graphite, this._prefix, this._clock, TimeUnit rateUnit, TimeUnit durationUnit, {MetricFilter? where})
+  GraphiteReporter._(MetricRegistry registry, this._graphite, this._prefix,
+      this._clock, TimeUnit rateUnit, TimeUnit durationUnit,
+      {MetricFilter? where})
       : super(registry, rateUnit, durationUnit, where: where);
 
   @override
-  void reportMetrics({Map<String, Gauge>? gauges,
-                      Map<String, Counter>? counters,
-                      Map<String, Histogram>? histograms,
-                      Map<String, Meter>? meters,
-                      Map<String, Timer>? timers}) {
+  void reportMetrics(
+      {Map<String, Gauge>? gauges,
+      Map<String, Counter>? counters,
+      Map<String, Histogram>? histograms,
+      Map<String, Meter>? meters,
+      Map<String, Timer>? timers}) {
     final timeInSeconds = _clock.time ~/ 1000;
 
     try {
@@ -162,7 +171,8 @@ class GraphiteReporter extends ScheduledReporter {
 
   void _report(int timeInSeconds, String name, Map<String, dynamic> datas) {
     datas.forEach((k, v) {
-      _graphite.send(MetricRegistry.name([_prefix, name, k]), v.toString(), timeInSeconds);
+      _graphite.send(
+          MetricRegistry.name([_prefix, name, k]), v.toString(), timeInSeconds);
     });
   }
 }

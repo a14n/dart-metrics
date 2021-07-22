@@ -29,17 +29,16 @@ main() {
     late CsvReporter reporter;
 
     getFileContents(String name) =>
-        new File(p.join(dataDir.path, name)).readAsStringSync();
+        File(p.join(dataDir.path, name)).readAsStringSync();
 
     setUp(() {
-      final registry = new MockMetricRegistry();
-      final clock = new MockClock();
+      final registry = MockMetricRegistry();
+      final clock = MockClock();
       when(() => clock.time).thenReturn(19910191000);
 
-      dataDir =
-          new Directory('tmp-${new DateTime.now().millisecondsSinceEpoch}')
-            ..createSync();
-      reporter = new CsvReporter(registry, dataDir, clock: clock);
+      dataDir = Directory('tmp-${DateTime.now().millisecondsSinceEpoch}')
+        ..createSync();
+      reporter = CsvReporter(registry, dataDir, clock: clock);
     });
 
     tearDown(() {
@@ -47,7 +46,7 @@ main() {
     });
 
     test('reports gauge values', () {
-      final gauge = new MockGauge();
+      final gauge = MockGauge();
       when(() => gauge.value).thenReturn(1);
 
       reporter.reportMetrics(gauges: {'gauge': gauge});
@@ -59,7 +58,7 @@ t,value
     });
 
     test('reports counter values', () {
-      final counter = new MockCounter();
+      final counter = MockCounter();
       when(() => counter.count).thenReturn(100);
 
       reporter.reportMetrics(counters: {'test.counter': counter});
@@ -71,10 +70,10 @@ t,count
     });
 
     test('reports histogram values', () {
-      final histogram = new MockHistogram();
+      final histogram = MockHistogram();
       when(() => histogram.count).thenReturn(1);
 
-      final snapshot = new MockSnapshot();
+      final snapshot = MockSnapshot();
       when(() => snapshot.max).thenReturn(2);
       when(() => snapshot.mean).thenReturn(3.0);
       when(() => snapshot.min).thenReturn(4);
@@ -97,7 +96,7 @@ t,count,max,mean,min,stddev,p50,p75,p95,p98,p99,p999
     });
 
     test('reports meter values', () {
-      final meter = new MockMeter();
+      final meter = MockMeter();
       when(() => meter.count).thenReturn(1);
       when(() => meter.meanRate).thenReturn(2.0);
       when(() => meter.oneMinuteRate).thenReturn(3.0);
@@ -113,14 +112,14 @@ t,count,mean_rate,m1_rate,m5_rate,m15_rate,rate_unit
     });
 
     test('reports timer values', () {
-      final timer = new MockTimer();
+      final timer = MockTimer();
       when(() => timer.count).thenReturn(1);
       when(() => timer.meanRate).thenReturn(2.0);
       when(() => timer.oneMinuteRate).thenReturn(3.0);
       when(() => timer.fiveMinuteRate).thenReturn(4.0);
       when(() => timer.fifteenMinuteRate).thenReturn(5.0);
 
-      final snapshot = new MockSnapshot();
+      final snapshot = MockSnapshot();
       when(() => snapshot.max)
           .thenReturn(const Duration(milliseconds: 100).inMicroseconds);
       when(() => snapshot.mean).thenReturn(

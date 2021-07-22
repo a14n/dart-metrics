@@ -26,7 +26,7 @@ class ExponentiallyDecayingReservoir implements Reservoir {
   static const _DEFAULT_ALPHA = 0.015;
   static const _RESCALE_THRESHOLD = Duration.microsecondsPerHour;
 
-  static final _random = new Random();
+  static final _random = Random();
 
   final _values = <double, WeightedSample>{};
   final double _alpha;
@@ -45,7 +45,8 @@ class ExponentiallyDecayingReservoir implements Reservoir {
   /// [_size] is the number of samples to keep in the sampling reservoir
   /// [_alpha] is the exponential decay factor; the higher this is, the more biased the reservoir will be towards newer values
   /// [clock] is the clock used to timestamp samples and track rescaling
-  ExponentiallyDecayingReservoir([this._size = _DEFAULT_SIZE, this._alpha = _DEFAULT_ALPHA, Clock? clock])
+  ExponentiallyDecayingReservoir(
+      [this._size = _DEFAULT_SIZE, this._alpha = _DEFAULT_ALPHA, Clock? clock])
       : _clock = clock ?? Clock.defaultClock {
     _startTime = _currentTimeInSeconds;
     _nextScaleTime = _clock.tick + _RESCALE_THRESHOLD;
@@ -59,7 +60,7 @@ class ExponentiallyDecayingReservoir implements Reservoir {
     if (timestamp == null) timestamp = _currentTimeInSeconds;
     _rescaleIfNeeded();
     final itemWeight = _weight(timestamp - _startTime);
-    final sample = new WeightedSample(value, itemWeight);
+    final sample = WeightedSample(value, itemWeight);
     final priority = itemWeight / _random.nextDouble();
 
     final newCount = ++_count;
@@ -88,9 +89,10 @@ class ExponentiallyDecayingReservoir implements Reservoir {
   }
 
   @override
-  Snapshot get snapshot => new WeightedSnapshot(_values.values);
+  Snapshot get snapshot => WeightedSnapshot(_values.values);
 
-  int get _currentTimeInSeconds => _clock.time ~/ Duration.millisecondsPerSecond;
+  int get _currentTimeInSeconds =>
+      _clock.time ~/ Duration.millisecondsPerSecond;
 
   double _weight(int t) => exp(_alpha * t);
 
@@ -119,10 +121,11 @@ class ExponentiallyDecayingReservoir implements Reservoir {
       _startTime = _currentTimeInSeconds;
       final scalingFactor = exp(-_alpha * (_startTime - oldStartTime));
 
-      final keys = new List<double>.from(_values.keys);
+      final keys = List<double>.from(_values.keys);
       for (final key in keys) {
         final sample = _values.remove(key)!;
-        final newSample = new WeightedSample(sample.value, sample.weight * scalingFactor);
+        final newSample =
+            WeightedSample(sample.value, sample.weight * scalingFactor);
         _values[key * scalingFactor] = newSample;
       }
 

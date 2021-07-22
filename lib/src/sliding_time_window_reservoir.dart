@@ -33,13 +33,13 @@ class SlidingTimeWindowReservoir implements Reservoir {
   @override
   int get size {
     _trim();
-    return measurements.values.fold(0, (t,e) => t + e.length);
+    return measurements.values.fold(0, (t, e) => t + e.length);
   }
 
   @override
   Snapshot get snapshot {
     _trim();
-    return new UniformSnapshot(measurements.values.expand((e) => e).toList());
+    return UniformSnapshot(measurements.values.expand((e) => e).toList());
   }
 
   @override
@@ -53,6 +53,9 @@ class SlidingTimeWindowReservoir implements Reservoir {
 
   void _trim() {
     final tick = clock.tick;
-    measurements.keys.takeWhile((t) => t <= tick - window.inMicroseconds).toList().forEach(measurements.remove);
+    measurements.keys
+        .takeWhile((t) => t <= tick - window.inMicroseconds)
+        .toList()
+        .forEach(measurements.remove);
   }
 }

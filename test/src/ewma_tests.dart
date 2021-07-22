@@ -17,11 +17,11 @@ library metrics.ewma_test;
 import 'package:test/test.dart';
 import 'package:metrics/metrics.dart';
 
-const oneSecond = const Duration(seconds: 1);
+const oneSecond = Duration(seconds: 1);
 
 main() {
   test('a one minute EWMA with a value of three', () {
-    final ewma = new EWMA.oneMinuteEWMA();
+    final ewma = EWMA.oneMinuteEWMA();
     ewma.update(3);
     ewma.tick();
 
@@ -59,7 +59,7 @@ main() {
   });
 
   test('a five minute EWMA with a value of three', () {
-    final ewma = new EWMA.fiveMinuteEWMA();
+    final ewma = EWMA.fiveMinuteEWMA();
     ewma.update(3);
     ewma.tick();
 
@@ -97,7 +97,7 @@ main() {
   });
 
   test('a fifteen minute EWMA with a value of three', () {
-    final ewma = new EWMA.fifteenMinuteEWMA();
+    final ewma = EWMA.fifteenMinuteEWMA();
     ewma.update(3);
     ewma.tick();
 

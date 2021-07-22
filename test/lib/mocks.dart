@@ -17,32 +17,22 @@ library metrics.lib.mocks;
 import 'package:metrics/metrics.dart';
 import 'package:mocktail/mocktail.dart';
 
-class MockMetric extends Mock implements Metric {
-}
+class MockMetric extends Mock implements Metric {}
 
-class MockMetricRegistry extends Mock implements MetricRegistry {
-}
+class MockMetricRegistry extends Mock implements MetricRegistry {}
 
-class MockClock extends Mock implements Clock {
-}
+class MockClock extends Mock implements Clock {}
 
-class MockGauge extends MockMetric implements Gauge {
-}
+class MockGauge extends MockMetric implements Gauge {}
 
-class MockCounter extends MockMetric implements Counter {
-}
+class MockCounter extends MockMetric implements Counter {}
 
-class MockHistogram extends MockMetric implements Histogram {
-}
+class MockHistogram extends MockMetric implements Histogram {}
 
-class MockSnapshot extends Mock implements Snapshot {
-}
+class MockSnapshot extends Mock implements Snapshot {}
 
-class MockMeter extends MockMetric implements Meter {
-}
+class MockMeter extends MockMetric implements Meter {}
 
-class MockTimer extends MockMetric implements Timer {
-}
+class MockTimer extends MockMetric implements Timer {}
 
-class MockReservoir extends Mock implements Reservoir {
-}
+class MockReservoir extends Mock implements Reservoir {}

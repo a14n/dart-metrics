@@ -17,7 +17,6 @@ part of metrics;
 /// A timer metric which aggregates timing durations and provides duration statistics, plus
 /// throughput statistics via [Meter].
 class Timer implements Metered, Sampling {
-
   late Meter _meter;
   late Histogram _histogram;
   late Clock _clock;
@@ -25,8 +24,8 @@ class Timer implements Metered, Sampling {
   /// Creates a new [Timer] that uses the given [reservoir] and [clock].
   Timer([Reservoir? reservoir, Clock? clock]) {
     _clock = clock ?? Clock.defaultClock;
-    _meter = new Meter(_clock);
-    _histogram = new Histogram(reservoir ?? new ExponentiallyDecayingReservoir());
+    _meter = Meter(_clock);
+    _histogram = Histogram(reservoir ?? ExponentiallyDecayingReservoir());
   }
 
   /// Adds a recorded [duration].
@@ -43,7 +42,7 @@ class Timer implements Metered, Sampling {
   }
 
   /// Returns a new [TimerContext].
-  TimerContext get time => new TimerContext(this, _clock);
+  TimerContext get time => TimerContext(this, _clock);
 
   @override
   int get count => _histogram.count;
@@ -79,9 +78,9 @@ class TimerContext {
   final Clock _clock;
   final int _startTime;
 
-  TimerContext(this._timer, Clock clock) :
-      _clock = clock,
-      _startTime = clock.tick;
+  TimerContext(this._timer, Clock clock)
+      : _clock = clock,
+        _startTime = clock.tick;
 
   /// Updates the timer with the difference between current and start time.
   ///
@@ -89,7 +88,7 @@ class TimerContext {
   /// Returns the elapsed time in microseconds.
   int stop() {
     final elapsed = _clock.tick - _startTime;
-    _timer.update(new Duration(microseconds: elapsed));
+    _timer.update(Duration(microseconds: elapsed));
     return elapsed;
   }
 }

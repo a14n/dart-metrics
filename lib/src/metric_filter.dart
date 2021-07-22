@@ -15,4 +15,4 @@
 part of metrics;
 
 /// A filter used to determine whether or not a metric should be reported, among other things.
-typedef bool MetricFilter(String name, Metric metric);
+typedef MetricFilter = bool Function(String name, Metric metric);

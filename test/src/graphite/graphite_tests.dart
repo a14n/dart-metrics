@@ -29,7 +29,7 @@ main() {
     setUp(() {
       return startServer(9000).then((ss) {
         serverSocket = ss;
-        graphite = new Graphite(serverSocket.address, serverSocket.port);
+        graphite = Graphite(serverSocket.address, serverSocket.port);
       });
     });
 
@@ -72,7 +72,7 @@ main() {
     });
 
     test('writes values to graphite', () {
-      final line = new Completer<String>();
+      final line = Completer<String>();
       serverSocket.listen((s) => utf8
           .decodeStream(s)
           .then((datas) => line.complete(datas))
@@ -86,7 +86,7 @@ main() {
     });
 
     test('sanitizes names', () {
-      final line = new Completer<String>();
+      final line = Completer<String>();
       serverSocket.listen((s) => utf8
           .decodeStream(s)
           .then((datas) => line.complete(datas))
@@ -100,7 +100,7 @@ main() {
     });
 
     test('sanitizes values', () {
-      final line = new Completer<String>();
+      final line = Completer<String>();
       serverSocket.listen((s) => utf8
           .decodeStream(s)
           .then((datas) => line.complete(datas))

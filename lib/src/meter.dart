@@ -21,9 +21,9 @@ part of metrics;
 class Meter implements Metered {
   static final _TICK_INTERVAL = const Duration(seconds: 5).inMicroseconds;
 
-  final _m1Rate = new EWMA.oneMinuteEWMA();
-  final _m5Rate = new EWMA.fiveMinuteEWMA();
-  final _m15Rate = new EWMA.fifteenMinuteEWMA();
+  final _m1Rate = EWMA.oneMinuteEWMA();
+  final _m5Rate = EWMA.fiveMinuteEWMA();
+  final _m15Rate = EWMA.fifteenMinuteEWMA();
 
   int _count = 0;
   final int _startTime;
@@ -33,9 +33,9 @@ class Meter implements Metered {
   /// Creates a new [Meter].
   Meter([Clock? clock]) : this._(clock ?? Clock.defaultClock);
 
-  Meter._(Clock clock) :
-      _clock = clock,
-      _startTime = clock.tick {
+  Meter._(Clock clock)
+      : _clock = clock,
+        _startTime = clock.tick {
     _lastTick = _startTime;
   }
 

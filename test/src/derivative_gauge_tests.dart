@@ -19,9 +19,8 @@ import 'package:metrics/metrics.dart';
 
 main() {
   test('returns a transformed value', () {
-    final gauge1 = new Gauge<String>(() => 'woo');
-    final gauge2 =
-        new DerivativeGauge<String, int>(gauge1, (String s) => s.length);
+    final gauge1 = Gauge<String>(() => 'woo');
+    final gauge2 = DerivativeGauge<String, int>(gauge1, (String s) => s.length);
 
     expect(gauge2.value, equals(3));
   });

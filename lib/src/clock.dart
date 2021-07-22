@@ -20,17 +20,15 @@ abstract class Clock {
   int get tick;
 
   /// Returns the current time in milliseconds.
-  int get time => new DateTime.now().millisecondsSinceEpoch;
+  int get time => DateTime.now().millisecondsSinceEpoch;
 
-  static final Clock _DEFAULT = new StopwatchClock();
+  static final Clock _DEFAULT = StopwatchClock();
 
-  /**
-   * The default clock to use.
-   *
-   * @return the default {@link Clock} instance
-   *
-   * @see Clock.UserTimeClock
-   */
+  /// The default clock to use.
+  ///
+  /// @return the default {@link Clock} instance
+  ///
+  /// @see Clock.UserTimeClock
   static Clock get defaultClock => _DEFAULT;
 }
 
@@ -42,8 +40,8 @@ class FakeTickClock extends Clock {
 
 /// A clock implementation which returns the current time in epoch microseconds.
 class StopwatchClock extends Clock {
-  final _sw = new Stopwatch()..start();
-  final _microsecondsSinceEpoch = new DateTime.now().millisecondsSinceEpoch *
+  final _sw = Stopwatch()..start();
+  final _microsecondsSinceEpoch = DateTime.now().millisecondsSinceEpoch *
       Duration.microsecondsPerMillisecond;
 
   @override

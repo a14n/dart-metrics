@@ -18,7 +18,7 @@ part of metrics;
 ///
 ///  See [ConsoleReporter], [CsvReporter], [LogReporter]
 abstract class ScheduledReporter implements Reporter {
-  static final log = new Logger("ScheduledReporter");
+  static final log = Logger("ScheduledReporter");
 
   final MetricRegistry _registry;
   final MetricFilter? where;
@@ -28,11 +28,12 @@ abstract class ScheduledReporter implements Reporter {
   a.Timer? _timer;
 
   /// Creates a new [ScheduledReporter] instance.
-  ScheduledReporter(this._registry, this.rateUnit, this.durationUnit, {this.where});
+  ScheduledReporter(this._registry, this.rateUnit, this.durationUnit,
+      {this.where});
 
   /// Starts the reporter polling at the given [period] (the amount of time between polls).
   void start(Duration period) {
-    _timer = new a.Timer.periodic(period, (_) {
+    _timer = a.Timer.periodic(period, (_) {
       try {
         report();
       } catch (e) {
@@ -58,26 +59,29 @@ abstract class ScheduledReporter implements Reporter {
         timers: _registry.getTimers(where: where));
   }
 
-
   /// Called periodically by the polling thread. Subclasses should report all the given metrics.
-  void reportMetrics({Map<String, Gauge> gauges,
-                      Map<String, Counter> counters,
-                      Map<String, Histogram> histograms,
-                      Map<String, Meter> meters,
-                      Map<String, Timer> timers});
+  void reportMetrics(
+      {Map<String, Gauge> gauges,
+      Map<String, Counter> counters,
+      Map<String, Histogram> histograms,
+      Map<String, Meter> meters,
+      Map<String, Timer> timers});
 
-  double convertDuration(num duration) => duration / durationUnit._duration.inMicroseconds;
+  double convertDuration(num duration) =>
+      duration / durationUnit._duration.inMicroseconds;
 
   double convertRate(double rate) => rate * rateUnit._duration.inSeconds;
 }
 
 class TimeUnit {
-  static const MICROSECONDS = const TimeUnit._('microsecond', const Duration(microseconds: 1));
-  static const MILLISECONDS = const TimeUnit._('millisecond', const Duration(milliseconds: 1));
-  static const SECONDS = const TimeUnit._('second', const Duration(seconds: 1));
-  static const MINUTES = const TimeUnit._('minute', const Duration(minutes: 1));
-  static const HOURS = const TimeUnit._('hour', const Duration(hours: 1));
-  static const DAYS = const TimeUnit._('day', const Duration(days: 1));
+  static const MICROSECONDS =
+      TimeUnit._('microsecond', Duration(microseconds: 1));
+  static const MILLISECONDS =
+      TimeUnit._('millisecond', Duration(milliseconds: 1));
+  static const SECONDS = TimeUnit._('second', Duration(seconds: 1));
+  static const MINUTES = TimeUnit._('minute', Duration(minutes: 1));
+  static const HOURS = TimeUnit._('hour', Duration(hours: 1));
+  static const DAYS = TimeUnit._('day', Duration(days: 1));
 
   final String name;
   final Duration _duration;

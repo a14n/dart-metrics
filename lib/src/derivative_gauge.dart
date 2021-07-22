@@ -14,7 +14,7 @@
 
 part of metrics;
 
-typedef T _Transfomer<F, T>(F value);
+typedef _Transfomer<F, T> = T Function(F value);
 
 /// A gauge whose value is derived from the value of another gauge.
 class DerivativeGauge<F, T> implements Gauge<T> {

@@ -22,12 +22,12 @@ main() {
     late Snapshot snapshot;
 
     setUp(() {
-      snapshot = new WeightedSnapshot([
-        new WeightedSample(5, 1.0),
-        new WeightedSample(1, 2.0),
-        new WeightedSample(2, 3.0),
-        new WeightedSample(3, 2.0),
-        new WeightedSample(4, 2.0),
+      snapshot = WeightedSnapshot([
+        WeightedSample(5, 1.0),
+        WeightedSample(1, 2.0),
+        WeightedSample(2, 3.0),
+        WeightedSample(3, 2.0),
+        WeightedSample(4, 2.0),
       ]);
     });
 
@@ -73,7 +73,7 @@ main() {
     });
 
     test('dumps to a sink', () {
-      final sb = new StringBuffer();
+      final sb = StringBuffer();
 
       snapshot.dump(sb);
 
@@ -97,36 +97,35 @@ main() {
     });
 
     test('calculates a min of zero for an empty snapshot', () {
-      final emptySnapshot = new WeightedSnapshot([]);
+      final emptySnapshot = WeightedSnapshot([]);
       expect(emptySnapshot.min, equals(0));
     });
 
     test('calculates a max of zero for an empty snapshot', () {
-      final emptySnapshot = new WeightedSnapshot([]);
+      final emptySnapshot = WeightedSnapshot([]);
       expect(emptySnapshot.max, equals(0));
     });
 
     test('calculates a mean of zero for an empty snapshot', () {
-      final emptySnapshot = new WeightedSnapshot([]);
+      final emptySnapshot = WeightedSnapshot([]);
       expect(emptySnapshot.mean, equals(0));
     });
 
     test('calculates a stdDev of zero for an empty snapshot', () {
-      final emptySnapshot = new WeightedSnapshot([]);
+      final emptySnapshot = WeightedSnapshot([]);
       expect(emptySnapshot.stdDev, equals(0));
     });
 
     test('calculates a stdDev of zero for an singleton snapshot', () {
-      final singleItemSnapshot =
-          new WeightedSnapshot([new WeightedSample(1, 1.0)]);
+      final singleItemSnapshot = WeightedSnapshot([WeightedSample(1, 1.0)]);
       expect(singleItemSnapshot.stdDev, equals(0));
     });
 
     test('expect no overflow for low weights', () {
-      final singleItemSnapshot = new WeightedSnapshot([
-        new WeightedSample(1, double.minPositive),
-        new WeightedSample(2, double.minPositive),
-        new WeightedSample(3, double.minPositive),
+      final singleItemSnapshot = WeightedSnapshot([
+        WeightedSample(1, double.minPositive),
+        WeightedSample(2, double.minPositive),
+        WeightedSample(3, double.minPositive),
       ]);
       expect(singleItemSnapshot.mean, equals(2));
     });

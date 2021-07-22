@@ -22,8 +22,7 @@ class SlidingWindowReservoir implements Reservoir {
 
   /// Creates a new [SlidingWindowReservoir] which stores the last [size]
   /// measurements.
-  SlidingWindowReservoir(int size)
-      : _measurements = List.filled(size, 0);
+  SlidingWindowReservoir(int size) : _measurements = List.filled(size, 0);
 
   @override
   int get size => min(_count, _measurements.length);
@@ -36,6 +35,6 @@ class SlidingWindowReservoir implements Reservoir {
   @override
   Snapshot get snapshot {
     final values = _measurements.sublist(0, size).toList(growable: false);
-    return new UniformSnapshot(values);
+    return UniformSnapshot(values);
   }
 }

@@ -56,8 +56,8 @@ main() {
 
 Meter _simulateMetronome(
     Duration introDelay, Duration duration, int ratePerMinute) {
-  final clock = new ManualClock();
-  final meter = new Meter(clock);
+  final clock = ManualClock();
+  final meter = Meter(clock);
 
   clock.addMicros(introDelay.inMicroseconds);
 

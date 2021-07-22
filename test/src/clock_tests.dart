@@ -19,25 +19,25 @@ import 'package:metrics/metrics.dart';
 
 main() {
   test('fake tick clock', () {
-    final clock = new FakeTickClock();
+    final clock = FakeTickClock();
 
-    expect(clock.time, closeTo(new DateTime.now().millisecondsSinceEpoch, 100));
+    expect(clock.time, closeTo(DateTime.now().millisecondsSinceEpoch, 100));
     expect(
         clock.tick,
         closeTo(
-            new DateTime.now().millisecondsSinceEpoch *
+            DateTime.now().millisecondsSinceEpoch *
                 Duration.microsecondsPerMillisecond,
             100 * Duration.microsecondsPerMillisecond));
   });
 
   test('stopwatch clock', () {
-    final clock = new StopwatchClock();
+    final clock = StopwatchClock();
 
-    expect(clock.time, closeTo(new DateTime.now().millisecondsSinceEpoch, 100));
+    expect(clock.time, closeTo(DateTime.now().millisecondsSinceEpoch, 100));
     expect(
         clock.tick,
         closeTo(
-            new DateTime.now().millisecondsSinceEpoch *
+            DateTime.now().millisecondsSinceEpoch *
                 Duration.microsecondsPerMillisecond,
             100 * Duration.microsecondsPerMillisecond));
   });

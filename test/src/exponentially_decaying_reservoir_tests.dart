@@ -19,9 +19,8 @@ import 'package:metrics/metrics.dart';
 import 'package:metrics/test/manual_clock.dart';
 
 main() {
-
   test('a reservoir of 100 out of 1000 elements', () {
-    final reservoir = new ExponentiallyDecayingReservoir(100, 0.99);
+    final reservoir = ExponentiallyDecayingReservoir(100, 0.99);
     for (int i = 0; i < 1000; i++) {
       reservoir.update(i);
     }
@@ -31,7 +30,7 @@ main() {
   });
 
   test('a reservoir of 100 out of 10 elements', () {
-    final reservoir = new ExponentiallyDecayingReservoir(100, 0.99);
+    final reservoir = ExponentiallyDecayingReservoir(100, 0.99);
     for (int i = 0; i < 10; i++) {
       reservoir.update(i);
     }
@@ -41,7 +40,7 @@ main() {
   });
 
   test('a heavily biased reservoir of 100 out of 1000 elements', () {
-    final reservoir = new ExponentiallyDecayingReservoir(1000, 0.01);
+    final reservoir = ExponentiallyDecayingReservoir(1000, 0.01);
     for (int i = 0; i < 100; i++) {
       reservoir.update(i);
     }
@@ -51,8 +50,8 @@ main() {
   });
 
   test('long periods of inactivity should not corrupt sampling state', () {
-    final clock = new ManualClock();
-    final reservoir = new ExponentiallyDecayingReservoir(10, 0.015, clock);
+    final clock = ManualClock();
+    final reservoir = ExponentiallyDecayingReservoir(10, 0.015, clock);
 
     // add 1000 values at a rate of 10 values/second
     for (int i = 0; i < 1000; i++) {
@@ -71,7 +70,6 @@ main() {
     expect(reservoir.snapshot.size, equals(2));
     _assertAllValuesBetween(reservoir, 1000, 3000);
 
-
     // add 1000 values at a rate of 10 values/second
     for (int i = 0; i < 1000; i++) {
       reservoir.update(3000 + i);
@@ -82,11 +80,12 @@ main() {
   });
 
   test('spot lift', () {
-    final clock = new ManualClock();
-    final reservoir = new ExponentiallyDecayingReservoir(1000, 0.015, clock);
+    final clock = ManualClock();
+    final reservoir = ExponentiallyDecayingReservoir(1000, 0.015, clock);
 
     final valuesRatePerMinute = 10;
-    final valuesIntervalMillis = Duration.millisecondsPerMinute ~/ valuesRatePerMinute;
+    final valuesIntervalMillis =
+        Duration.millisecondsPerMinute ~/ valuesRatePerMinute;
     // mode 1: steady regime for 120 minutes
     for (int i = 0; i < 120 * valuesRatePerMinute; i++) {
       reservoir.update(177);
@@ -104,11 +103,12 @@ main() {
   });
 
   test('spot fall', () {
-    final clock = new ManualClock();
-    final reservoir = new ExponentiallyDecayingReservoir(1000, 0.015, clock);
+    final clock = ManualClock();
+    final reservoir = ExponentiallyDecayingReservoir(1000, 0.015, clock);
 
     final valuesRatePerMinute = 10;
-    final valuesIntervalMillis = Duration.millisecondsPerMinute ~/ valuesRatePerMinute;
+    final valuesIntervalMillis =
+        Duration.millisecondsPerMinute ~/ valuesRatePerMinute;
     // mode 1: steady regime for 120 minutes
     for (int i = 0; i < 120 * valuesRatePerMinute; i++) {
       reservoir.update(9998);
@@ -126,8 +126,8 @@ main() {
   });
 
   test('quantilies should be based on weights', () {
-    final clock = new ManualClock();
-    final reservoir = new ExponentiallyDecayingReservoir(1000, 0.015, clock);
+    final clock = ManualClock();
+    final reservoir = ExponentiallyDecayingReservoir(1000, 0.015, clock);
 
     for (int i = 0; i < 40; i++) {
       reservoir.update(177);
@@ -147,13 +147,12 @@ main() {
     expect(reservoir.snapshot.median, equals(9999));
     expect(reservoir.snapshot.get75thPercentile(), equals(9999));
   });
-
 }
 
-void _assertAllValuesBetween(ExponentiallyDecayingReservoir reservoir, num min, num max) {
+void _assertAllValuesBetween(
+    ExponentiallyDecayingReservoir reservoir, num min, num max) {
   for (num i in reservoir.snapshot.values) {
     expect(i, greaterThanOrEqualTo(min));
     expect(i, lessThan(max));
   }
 }
-
