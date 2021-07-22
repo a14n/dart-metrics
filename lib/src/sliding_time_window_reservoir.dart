@@ -18,12 +18,12 @@ part of metrics;
 /// measurements made in the last _N_ seconds (or other time unit).
 class SlidingTimeWindowReservoir implements Reservoir {
   // only trim on updating once every N
-  static const TRIM_THRESHOLD = 256;
+  static const trimThreshold = 256;
 
   final Duration window;
   final Clock clock;
   final measurements = <int, List<int>>{};
-  int _trimCountDown = TRIM_THRESHOLD;
+  int _trimCountDown = trimThreshold;
 
   /// Creates a new [SlidingTimeWindowReservoir] with the given [clock] and
   /// [duration].
@@ -45,7 +45,7 @@ class SlidingTimeWindowReservoir implements Reservoir {
   @override
   void update(int value) {
     if (_trimCountDown-- <= 0) {
-      _trimCountDown = TRIM_THRESHOLD;
+      _trimCountDown = trimThreshold;
       _trim();
     }
     measurements.putIfAbsent(clock.tick, () => <int>[]).add(value);

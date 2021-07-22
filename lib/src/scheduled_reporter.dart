@@ -37,7 +37,7 @@ abstract class ScheduledReporter implements Reporter {
       try {
         report();
       } catch (e) {
-        log.warning('Exception thrown from ${this.runtimeType}#report.', e);
+        log.warning('Exception thrown from $runtimeType#report.', e);
       }
     });
   }
@@ -74,14 +74,14 @@ abstract class ScheduledReporter implements Reporter {
 }
 
 class TimeUnit {
-  static const MICROSECONDS =
+  static const microseconds =
       TimeUnit._('microsecond', Duration(microseconds: 1));
-  static const MILLISECONDS =
+  static const milliseconds =
       TimeUnit._('millisecond', Duration(milliseconds: 1));
-  static const SECONDS = TimeUnit._('second', Duration(seconds: 1));
-  static const MINUTES = TimeUnit._('minute', Duration(minutes: 1));
-  static const HOURS = TimeUnit._('hour', Duration(hours: 1));
-  static const DAYS = TimeUnit._('day', Duration(days: 1));
+  static const seconds = TimeUnit._('second', Duration(seconds: 1));
+  static const minutes = TimeUnit._('minute', Duration(minutes: 1));
+  static const hours = TimeUnit._('hour', Duration(hours: 1));
+  static const days = TimeUnit._('day', Duration(days: 1));
 
   final String name;
   final Duration _duration;

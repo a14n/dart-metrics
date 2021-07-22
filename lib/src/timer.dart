@@ -32,10 +32,10 @@ class Timer implements Metered, Sampling {
   void update(Duration duration) => _update(duration.inMicroseconds);
 
   /// Times and records the duration of event.
-  /*<T> T*/ timed(event()) {
+  T timed<T>(T Function() event) {
     final startTime = _clock.tick;
     try {
-      return event.call();
+      return event();
     } finally {
       _update(_clock.tick - startTime);
     }

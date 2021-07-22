@@ -19,7 +19,7 @@ import 'dart:async' as a show Timer;
 import 'package:test/test.dart';
 import 'package:metrics/metrics.dart';
 
-import '../lib/mocks.dart';
+import 'mocks.dart';
 
 final gauge = MockGauge();
 final counter = MockCounter();
@@ -28,8 +28,10 @@ final meter = MockMeter();
 final timer = MockTimer();
 
 class SimpleMetricSet extends MetricSet {
-  final Map<String, Metric> metrics;
   SimpleMetricSet(this.metrics);
+
+  @override
+  final Map<String, Metric> metrics;
 }
 
 main() {
@@ -262,7 +264,8 @@ void registeringAMetricTriggersANotification(MockMetric m) {
 }
 
 void accessingAMetricRegistersAndReusesTheMetric(
-    getFunction(MetricRegistry mr)) {
+  Function(MetricRegistry mr) getFunction,
+) {
   final registry = MetricRegistry();
 
   final metricsAdded = <NamedMetric>[];

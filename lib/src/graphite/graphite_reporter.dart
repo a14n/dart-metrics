@@ -33,8 +33,8 @@ class GraphiteReporter extends ScheduledReporter {
           graphite,
           prefix,
           clock ?? Clock.defaultClock,
-          rateUnit ?? TimeUnit.SECONDS,
-          durationUnit ?? TimeUnit.MILLISECONDS,
+          rateUnit ?? TimeUnit.seconds,
+          durationUnit ?? TimeUnit.milliseconds,
           where: where);
 
   GraphiteReporter._(MetricRegistry registry, this._graphite, this._prefix,

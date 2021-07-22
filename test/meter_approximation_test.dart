@@ -19,7 +19,7 @@ import 'package:metrics/metrics.dart';
 import 'package:metrics/test/manual_clock.dart';
 
 main() {
-  [15, 60, 600, 6000].forEach((ratePerMinute) {
+  for (var ratePerMinute in [15, 60, 600, 6000]) {
     group('at rate of $ratePerMinute', () {
       test('control meter 1 minute mean approximation', () {
         final Meter meter = _simulateMetronome(
@@ -51,7 +51,7 @@ main() {
             closeTo(ratePerMinute, 0.1 * ratePerMinute));
       });
     });
-  });
+  }
 }
 
 Meter _simulateMetronome(

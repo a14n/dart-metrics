@@ -19,7 +19,7 @@ import 'package:metrics/metrics.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:test/test.dart';
 
-import '../lib/mocks.dart';
+import 'mocks.dart';
 
 class MockLogger extends Mock implements Logger {}
 

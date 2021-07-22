@@ -22,13 +22,13 @@ part of metrics;
 /// - [UNIX Load Average Part 2: Not Your Average Average](http://www.teamquest.com/pdfs/whitepaper/ldavg2.pdf)
 /// - [EMA](http://en.wikipedia.org/wiki/Moving_average#Exponential_moving_average)
 class EWMA {
-  static const _INTERVAL_IN_SECONDS = 5;
-  static final _INTERVAL_IN_MINUTES =
-      _INTERVAL_IN_SECONDS / Duration.secondsPerMinute;
+  static const _intervalInSeconds = 5;
+  static final _intervalInMinutes =
+      _intervalInSeconds / Duration.secondsPerMinute;
 
-  static final _M1_ALPHA = 1 - exp(-_INTERVAL_IN_MINUTES / 1.0);
-  static final _M5_ALPHA = 1 - exp(-_INTERVAL_IN_MINUTES / 5.0);
-  static final _M15_ALPHA = 1 - exp(-_INTERVAL_IN_MINUTES / 15.0);
+  static final _m1Alpha = 1 - exp(-_intervalInMinutes / 1.0);
+  static final _m5Alpha = 1 - exp(-_intervalInMinutes / 5.0);
+  static final _m15Alpha = 1 - exp(-_intervalInMinutes / 15.0);
 
   bool _initialized = false;
   double _rate = 0.0;
@@ -39,17 +39,17 @@ class EWMA {
   /// Creates a new EWMA which is equivalent to the UNIX one minute load average
   /// and which expects to be ticked every 5 seconds.
   EWMA.oneMinuteEWMA()
-      : this(_M1_ALPHA, const Duration(seconds: _INTERVAL_IN_SECONDS));
+      : this(_m1Alpha, const Duration(seconds: _intervalInSeconds));
 
   /// Creates a new EWMA which is equivalent to the UNIX five minute load
   /// average and which expects to be ticked every 5 seconds.
   EWMA.fiveMinuteEWMA()
-      : this(_M5_ALPHA, const Duration(seconds: _INTERVAL_IN_SECONDS));
+      : this(_m5Alpha, const Duration(seconds: _intervalInSeconds));
 
   /// Creates a new EWMA which is equivalent to the UNIX fifteen minute load
   /// average and which expects to be ticked every 5 seconds.
   EWMA.fifteenMinuteEWMA()
-      : this(_M15_ALPHA, const Duration(seconds: _INTERVAL_IN_SECONDS));
+      : this(_m15Alpha, const Duration(seconds: _intervalInSeconds));
 
   /// Create a new EWMA with a specific smoothing constant [_alpha] and the
   /// expected tick interval [expectedTickInterval].

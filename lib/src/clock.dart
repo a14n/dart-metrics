@@ -22,14 +22,14 @@ abstract class Clock {
   /// Returns the current time in milliseconds.
   int get time => DateTime.now().millisecondsSinceEpoch;
 
-  static final Clock _DEFAULT = StopwatchClock();
+  static final Clock _default = StopwatchClock();
 
   /// The default clock to use.
   ///
   /// @return the default {@link Clock} instance
   ///
   /// @see Clock.UserTimeClock
-  static Clock get defaultClock => _DEFAULT;
+  static Clock get defaultClock => _default;
 }
 
 /// A clock implementation which returns the current time in epoch microseconds.

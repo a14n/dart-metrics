@@ -19,7 +19,7 @@ import 'dart:async' as a;
 import 'package:test/test.dart';
 import 'package:metrics/metrics.dart';
 
-import '../lib/mocks.dart';
+import 'mocks.dart';
 
 class SpyScheduledReporter extends ScheduledReporter {
   int _count = 0;
@@ -52,7 +52,7 @@ final timer = MockTimer();
 main() {
   final registry = MetricRegistry();
   final reporter =
-      SpyScheduledReporter(registry, TimeUnit.SECONDS, TimeUnit.MILLISECONDS);
+      SpyScheduledReporter(registry, TimeUnit.seconds, TimeUnit.milliseconds);
 
   test('polls periodically', () {
     registry.register("gauge", gauge);

@@ -22,9 +22,9 @@ part of metrics;
 /// See [Cormode et al. Forward Decay: A Practical Time Decay Model for Streaming Systems. ICDE '09:
 ///      Proceedings of the 2009 IEEE International Conference on Data Engineering (2009)](http://dimacs.rutgers.edu/~graham/pubs/papers/fwddecay.pdf)
 class ExponentiallyDecayingReservoir implements Reservoir {
-  static const _DEFAULT_SIZE = 1028;
-  static const _DEFAULT_ALPHA = 0.015;
-  static const _RESCALE_THRESHOLD = Duration.microsecondsPerHour;
+  static const _defaultSize = 1028;
+  static const _defaultAlpha = 0.015;
+  static const _rescaleThreshold = Duration.microsecondsPerHour;
 
   static final _random = Random();
 
@@ -46,10 +46,10 @@ class ExponentiallyDecayingReservoir implements Reservoir {
   /// [_alpha] is the exponential decay factor; the higher this is, the more biased the reservoir will be towards newer values
   /// [clock] is the clock used to timestamp samples and track rescaling
   ExponentiallyDecayingReservoir(
-      [this._size = _DEFAULT_SIZE, this._alpha = _DEFAULT_ALPHA, Clock? clock])
+      [this._size = _defaultSize, this._alpha = _defaultAlpha, Clock? clock])
       : _clock = clock ?? Clock.defaultClock {
     _startTime = _currentTimeInSeconds;
-    _nextScaleTime = _clock.tick + _RESCALE_THRESHOLD;
+    _nextScaleTime = _clock.tick + _rescaleThreshold;
   }
 
   @override
@@ -57,7 +57,7 @@ class ExponentiallyDecayingReservoir implements Reservoir {
 
   @override
   void update(int value, [int? timestamp]) {
-    if (timestamp == null) timestamp = _currentTimeInSeconds;
+    timestamp ??= _currentTimeInSeconds;
     _rescaleIfNeeded();
     final itemWeight = _weight(timestamp - _startTime);
     final sample = WeightedSample(value, itemWeight);
@@ -116,7 +116,7 @@ class ExponentiallyDecayingReservoir implements Reservoir {
    */
   void _rescale(int now, int next) {
     if (_nextScaleTime == next) {
-      _nextScaleTime = now + _RESCALE_THRESHOLD;
+      _nextScaleTime = now + _rescaleThreshold;
       final oldStartTime = _startTime;
       _startTime = _currentTimeInSeconds;
       final scalingFactor = exp(-_alpha * (_startTime - oldStartTime));

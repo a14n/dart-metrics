@@ -28,7 +28,7 @@ class LogReporter extends ScheduledReporter {
           TimeUnit? durationUnit,
           MetricFilter? where}) =>
       LogReporter._(registry, logger ?? Logger('metrics'), level ?? Level.INFO,
-          rateUnit ?? TimeUnit.SECONDS, durationUnit ?? TimeUnit.MILLISECONDS,
+          rateUnit ?? TimeUnit.seconds, durationUnit ?? TimeUnit.milliseconds,
           where: where);
 
   LogReporter._(MetricRegistry registry, this._logger, this._logLevel,

@@ -25,7 +25,7 @@ class CsvReporter extends ScheduledReporter {
           TimeUnit? durationUnit,
           MetricFilter? where}) =>
       CsvReporter._(registry, directory, clock ?? Clock.defaultClock,
-          rateUnit ?? TimeUnit.SECONDS, durationUnit ?? TimeUnit.MILLISECONDS,
+          rateUnit ?? TimeUnit.seconds, durationUnit ?? TimeUnit.milliseconds,
           where: where);
 
   CsvReporter._(MetricRegistry registry, this._directory, this._clock,

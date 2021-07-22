@@ -17,6 +17,7 @@ part of metrics;
 /// An object which maintains mean and exponentially-weighted rate.
 abstract class Metered implements Metric, Counting {
   /// Returns the number of events which have been marked.
+  @override
   int get count;
 
   /// Returns the fifteen-minute exponentially-weighted moving average rate at

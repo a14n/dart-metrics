@@ -19,7 +19,7 @@ part of metrics;
 ///
 ///  See [EWMA]
 class Meter implements Metered {
-  static final _TICK_INTERVAL = const Duration(seconds: 5).inMicroseconds;
+  static final _tickInterval = const Duration(seconds: 5).inMicroseconds;
 
   final _m1Rate = EWMA.oneMinuteEWMA();
   final _m5Rate = EWMA.fiveMinuteEWMA();
@@ -52,11 +52,11 @@ class Meter implements Metered {
     final oldTick = _lastTick;
     final newTick = _clock.tick;
     final age = newTick - oldTick;
-    if (age > _TICK_INTERVAL) {
-      final newIntervalStartTick = newTick - age % _TICK_INTERVAL;
+    if (age > _tickInterval) {
+      final newIntervalStartTick = newTick - age % _tickInterval;
       if (_lastTick == oldTick) {
         _lastTick = newIntervalStartTick;
-        final requiredTicks = age ~/ _TICK_INTERVAL;
+        final requiredTicks = age ~/ _tickInterval;
         for (int i = 0; i < requiredTicks; i++) {
           _m1Rate.tick();
           _m5Rate.tick();

@@ -22,9 +22,9 @@ class MetricRegistry implements MetricSet {
 
   /// Concatenates a class name and elements to form a dotted name, eliding any null values or empty strings.
   static String nameWithType(Type t, List<String> names) =>
-      name([t.toString()]..addAll(names));
+      name([t.toString(), ...names]);
 
-  Map<String, Metric> _metrics;
+  final Map<String, Metric> _metrics;
 
   final _metricAddedController = StreamController<NamedMetric>.broadcast();
   final _metricRemovedController = StreamController<NamedMetric>.broadcast();
@@ -63,17 +63,17 @@ class MetricRegistry implements MetricSet {
   void registerAll(MetricSet metrics) => _registerAll(null, metrics);
 
   /// Creates a new [Counter] and registers it under the given [name].
-  Counter counter(String name) => _getOrAdd(name, _MetricBuilder.COUNTERS);
+  Counter counter(String name) => _getOrAdd(name, _MetricBuilder.counters);
 
   /// Creates a new [Histogram] and registers it under the given [name].
   Histogram histogram(String name) =>
-      _getOrAdd(name, _MetricBuilder.HISTOGRAMS);
+      _getOrAdd(name, _MetricBuilder.histograms);
 
   /// Creates a new [Meter] and registers it under the given [name].
-  Meter meter(String name) => _getOrAdd(name, _MetricBuilder.METERS);
+  Meter meter(String name) => _getOrAdd(name, _MetricBuilder.meters);
 
   /// Creates a new [Timer] and registers it under the given name.
-  Timer timer(String name) => _getOrAdd(name, _MetricBuilder.TIMERS);
+  Timer timer(String name) => _getOrAdd(name, _MetricBuilder.timers);
 
   /// Removes the metric with the given [name].
   bool remove(String name) {
@@ -188,19 +188,15 @@ class MetricRegistry implements MetricSet {
 
 /// A quick and easy way of capturing the notion of default metrics.
 class _MetricBuilder<T extends Metric> {
-  static final _MetricBuilder<Counter> COUNTERS =
-      _MetricBuilder<Counter>(() => Counter());
-  static final _MetricBuilder<Histogram> HISTOGRAMS = _MetricBuilder<Histogram>(
+  static final counters = _MetricBuilder<Counter>(() => Counter());
+  static final histograms = _MetricBuilder<Histogram>(
       () => Histogram(ExponentiallyDecayingReservoir()));
-  static final _MetricBuilder<Meter> METERS =
-      _MetricBuilder<Meter>(() => Meter());
-  static final _MetricBuilder<Timer> TIMERS =
-      _MetricBuilder<Timer>(() => Timer());
+  static final meters = _MetricBuilder<Meter>(() => Meter());
+  static final timers = _MetricBuilder<Timer>(() => Timer());
 
-  Function _createNewInstance;
+  final T Function() _createNewInstance;
 
-  _MetricBuilder(T createNewInstance())
-      : _createNewInstance = createNewInstance;
+  _MetricBuilder(this._createNewInstance);
 
   T newMetric() => _createNewInstance();
 }

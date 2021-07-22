@@ -16,8 +16,8 @@ part of metrics;
 
 /// A reporter which outputs measurements with a [StringSink].
 class ConsoleReporter extends ScheduledReporter {
-  static const _CONSOLE_WIDTH = 80;
-  static const _LEFT_WIDTH = 20;
+  static const _consoleWidth = 80;
+  static const _leftWidth = 20;
 
   final StringSink _output;
   final Clock _clock;
@@ -32,8 +32,8 @@ class ConsoleReporter extends ScheduledReporter {
           registry,
           output ?? _PrintStringSink(),
           clock ?? Clock.defaultClock,
-          rateUnit ?? TimeUnit.SECONDS,
-          durationUnit ?? TimeUnit.MILLISECONDS,
+          rateUnit ?? TimeUnit.seconds,
+          durationUnit ?? TimeUnit.milliseconds,
           where: where);
 
   ConsoleReporter._(MetricRegistry registry, this._output, this._clock,
@@ -52,7 +52,7 @@ class ConsoleReporter extends ScheduledReporter {
     _printWithBanner(dateTime.toIso8601String(), '=');
     _output.writeln();
 
-    if (gauges != null && !gauges.isEmpty) {
+    if (gauges != null && gauges.isNotEmpty) {
       _printWithBanner("-- Gauges", '-');
       gauges.forEach((name, gauge) {
         _output.writeln(name);
@@ -61,7 +61,7 @@ class ConsoleReporter extends ScheduledReporter {
       _output.writeln();
     }
 
-    if (counters != null && !counters.isEmpty) {
+    if (counters != null && counters.isNotEmpty) {
       _printWithBanner("-- Counters", '-');
       counters.forEach((name, counter) {
         _output.writeln(name);
@@ -70,7 +70,7 @@ class ConsoleReporter extends ScheduledReporter {
       _output.writeln();
     }
 
-    if (histograms != null && !histograms.isEmpty) {
+    if (histograms != null && histograms.isNotEmpty) {
       _printWithBanner("-- Histograms", '-');
       histograms.forEach((name, histogram) {
         _output.writeln(name);
@@ -79,7 +79,7 @@ class ConsoleReporter extends ScheduledReporter {
       _output.writeln();
     }
 
-    if (meters != null && !meters.isEmpty) {
+    if (meters != null && meters.isNotEmpty) {
       _printWithBanner("-- Meters", '-');
       meters.forEach((name, meter) {
         _output.writeln(name);
@@ -88,7 +88,7 @@ class ConsoleReporter extends ScheduledReporter {
       _output.writeln();
     }
 
-    if (timers != null && !timers.isEmpty) {
+    if (timers != null && timers.isNotEmpty) {
       _printWithBanner("-- Timers", '-');
       timers.forEach((name, timer) {
         _output.writeln(name);
@@ -154,11 +154,11 @@ class ConsoleReporter extends ScheduledReporter {
   }
 
   void _printWithBanner(String s, String padding) {
-    _output.writeln((s + ' ').padRight(_CONSOLE_WIDTH, padding));
+    _output.writeln((s + ' ').padRight(_consoleWidth, padding));
   }
 
   void _printValue(String name, Object value) {
-    _output.writeln(name.padLeft(_LEFT_WIDTH) + ' $value');
+    _output.writeln(name.padLeft(_leftWidth) + ' $value');
   }
 }
 

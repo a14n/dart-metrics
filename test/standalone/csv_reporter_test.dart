@@ -21,7 +21,7 @@ import 'package:mocktail/mocktail.dart';
 import 'package:path/path.dart' as p;
 import 'package:test/test.dart';
 
-import '../../lib/mocks.dart';
+import '../mocks.dart';
 
 main() {
   group('', () {

@@ -29,9 +29,9 @@ class WeightedSnapshot extends Snapshot {
         return 0;
       });
 
-    this._values = List<int>.filled(copy.length, 0);
-    this._normWeights = List<double>.filled(copy.length, 0.0);
-    this._quantiles = List<double>.filled(copy.length, 0.0);
+    _values = List<int>.filled(copy.length, 0);
+    _normWeights = List<double>.filled(copy.length, 0.0);
+    _quantiles = List<double>.filled(copy.length, 0.0);
 
     final sumWeight = copy.fold(
         0.0, (double sum, WeightedSample sample) => sum + sample.weight);

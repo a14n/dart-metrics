@@ -16,7 +16,7 @@ part of metrics_graphite;
 
 /// A client to a Carbon server via TCP.
 class Graphite implements GraphiteSender {
-  final host;
+  final dynamic host;
   final int port;
 
   Future<Socket>? _socket;
