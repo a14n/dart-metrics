@@ -12,8 +12,6 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-library metrics.lib.mocks;
-
 import 'package:metrics/metrics.dart';
 import 'package:mocktail/mocktail.dart';
 

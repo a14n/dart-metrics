@@ -12,8 +12,6 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-library metrics.standalone.csv_reporter_test;
-
 import 'dart:io';
 
 import 'package:metrics/metrics_standalone.dart';

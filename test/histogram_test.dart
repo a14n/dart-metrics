@@ -12,8 +12,6 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-library metrics.histogram_test;
-
 import 'package:metrics/metrics.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:test/test.dart';
