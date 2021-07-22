@@ -1,6 +1,6 @@
 # Metrics
 
-[![Build Status](https://travis-ci.org/a14n/dart-metrics.svg)](https://travis-ci.org/a14n/dart-metrics)
+[![Build Status](https://github.com/a14n/dart-metrics/actions/workflows/dart.yml/badge.svg)](https://github.com/a14n/dart-metrics/actions/workflows/dart.yml)
 
 This project is a port of the [Metrics](https://dropwizard.github.io/metrics/) Java library.
 
