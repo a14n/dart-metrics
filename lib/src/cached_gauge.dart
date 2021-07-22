@@ -21,18 +21,18 @@ class CachedGauge<T> implements Gauge<T> {
   int _reloadAt = 0;
   final int _timeoutInMicroseconds;
 
-  T _value;
+  T? _value;
 
   /// Creates a new cached gauge with the given [clock] and [timeout] period.
-  CachedGauge(this._getValue, Duration timeout, [Clock clock])
-      : _clock = clock != null ? clock : Clock.defaultClock,
+  CachedGauge(this._getValue, Duration timeout, [Clock? clock])
+      : _clock = clock ?? Clock.defaultClock,
         _timeoutInMicroseconds = timeout.inMilliseconds * 1000;
 
 
   @override
   T get value {
     if (_shouldLoad()) _value = _getValue();
-    return _value;
+    return _value!;
   }
 
   bool _shouldLoad() {

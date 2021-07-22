@@ -27,11 +27,11 @@ class Meter implements Metered {
 
   int _count = 0;
   final int _startTime;
-  int _lastTick;
+  late int _lastTick;
   final Clock _clock;
 
   /// Creates a new [Meter].
-  Meter([Clock clock]) : this._(clock != null ? clock : Clock.defaultClock);
+  Meter([Clock? clock]) : this._(clock ?? Clock.defaultClock);
 
   Meter._(Clock clock) :
       _clock = clock,
@@ -87,7 +87,7 @@ class Meter implements Metered {
       return 0.0;
     } else {
       final elapsed = _clock.tick - _startTime;
-      return count / elapsed * Duration.MICROSECONDS_PER_SECOND;
+      return count / elapsed * Duration.microsecondsPerSecond;
     }
   }
 

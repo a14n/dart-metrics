@@ -37,14 +37,14 @@ abstract class Clock {
 /// A clock implementation which returns the current time in epoch microseconds.
 class FakeTickClock extends Clock {
   @override
-  int get tick => time * Duration.MICROSECONDS_PER_MILLISECOND;
+  int get tick => time * Duration.microsecondsPerMillisecond;
 }
 
 /// A clock implementation which returns the current time in epoch microseconds.
 class StopwatchClock extends Clock {
   final _sw = new Stopwatch()..start();
   final _microsecondsSinceEpoch = new DateTime.now().millisecondsSinceEpoch *
-      Duration.MICROSECONDS_PER_MILLISECOND;
+      Duration.microsecondsPerMillisecond;
 
   @override
   int get tick => _microsecondsSinceEpoch + _sw.elapsedMicroseconds;

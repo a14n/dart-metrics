@@ -37,5 +37,19 @@ They allows to export the collected datas. Currently there are :
 - a `LogReporter` that will use a `Logger` from the [logging package](https://pub.dartlang.org/packages/logging).
 - a `GraphiteReporter` that will send the metrics to [graphite](http://graphite.wikidot.com/).
 
+### Running the tests
+
+To run the tests, you first need to generate the Mockito mocks.
+
+To generate them using build_runner run the command
+```
+$ dart run build_runner build
+```
+
+Note that running this on Windows (at least at the time of writing this) there is a bug where it
+tries to have the imports use backslashes instead of forward slashes (probably because Windows uses
+backslashes in file paths), so it'll generate some bad mock files with `import '..\lib\mock.dart'`
+that you'll need to (at least for now) manually change to `import '../lib/mock.dart'`.
+
 ## License
 Apache 2.0

@@ -14,40 +14,42 @@
 
 library metrics.histogram_test;
 
-import 'package:unittest/unittest.dart';
+import 'package:mockito/annotations.dart';
+import 'package:mockito/mockito.dart';
+import 'package:test/test.dart';
 import 'package:metrics/metrics.dart';
-import 'package:mock/mock.dart';
 
-import '../lib/mocks.dart';
+import 'histogram_tests.mocks.dart';
 
+@GenerateMocks([Reservoir, Snapshot])
 main() {
+  group('histogram', () {
+    test('updates the count on updates', () {
+      final reservoir = new MockReservoir();
+      final histogram = new Histogram(reservoir);
 
-  test('updates the count on updates', () {
-    final reservoir = new MockReservoir();
-    final histogram = new Histogram(reservoir);
+      expect(histogram.count, equals(0));
+      histogram.update(1);
+      expect(histogram.count, equals(1));
+    });
 
-    expect(histogram.count, equals(0));
-    histogram.update(1);
-    expect(histogram.count, equals(1));
+    test('returns the snapshot from the reservoir', () {
+      final reservoir = new MockReservoir();
+      final snapshot = new MockSnapshot();
+      final histogram = new Histogram(reservoir);
+
+      when(reservoir.snapshot).thenReturn(snapshot);
+
+      expect(histogram.snapshot, equals(snapshot));
+    });
+
+    test('updates the reservoir', () {
+      final reservoir = new MockReservoir();
+      final histogram = new Histogram(reservoir);
+
+      histogram.update(1);
+
+      verify(reservoir.update(1)).called(1);
+    });
   });
-
-  test('returns the snapshot from the reservoir', () {
-    final reservoir = new MockReservoir();
-    final snapshot = new MockSnapshot();
-    final histogram = new Histogram(reservoir);
-
-    reservoir.when(callsTo('get snapshot')).thenReturn(snapshot);
-
-    expect(histogram.snapshot, equals(snapshot));
-  });
-
-  test('updates the reservoir', () {
-    final reservoir = new MockReservoir();
-    final histogram = new Histogram(reservoir);
-
-    histogram.update(1);
-
-    reservoir.getLogs(callsTo('update', 1)).verify(happenedExactly(1));
-  });
-
 }

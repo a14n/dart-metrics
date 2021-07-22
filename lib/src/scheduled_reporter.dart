@@ -21,18 +21,14 @@ abstract class ScheduledReporter implements Reporter {
   static final log = new Logger("ScheduledReporter");
 
   final MetricRegistry _registry;
-  final MetricFilter where;
+  final MetricFilter? where;
   final TimeUnit durationUnit;
   final TimeUnit rateUnit;
 
-  a.Timer _timer;
+  a.Timer? _timer;
 
   /// Creates a new [ScheduledReporter] instance.
-  ScheduledReporter(this._registry, this.rateUnit, this.durationUnit, {this.where}) {
-    assert(_registry != null);
-    assert(rateUnit != null);
-    assert(durationUnit != null);
-  }
+  ScheduledReporter(this._registry, this.rateUnit, this.durationUnit, {this.where});
 
   /// Starts the reporter polling at the given [period] (the amount of time between polls).
   void start(Duration period) {
@@ -47,7 +43,9 @@ abstract class ScheduledReporter implements Reporter {
 
   /// Stops the reporter.
   void stop() {
-    _timer.cancel();
+    if (_timer != null) {
+      _timer!.cancel();
+    }
   }
 
   /// Report the current values of all metrics in the registry.

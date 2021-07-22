@@ -22,13 +22,13 @@ class SlidingTimeWindowReservoir implements Reservoir {
 
   final Duration window;
   final Clock clock;
-  final Map measurements = <int, List<int>>{};
+  final measurements = <int, List<int>>{};
   int _trimCountDown = TRIM_THRESHOLD;
 
   /// Creates a new [SlidingTimeWindowReservoir] with the given [clock] and
   /// [duration].
-  SlidingTimeWindowReservoir(this.window, [Clock clock])
-      : clock = clock != null ? clock : Clock.defaultClock;
+  SlidingTimeWindowReservoir(this.window, [Clock? clock])
+      : clock = clock ?? Clock.defaultClock;
 
   @override
   int get size {
