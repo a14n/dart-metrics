@@ -22,51 +22,64 @@ part of metrics;
 /// - [UNIX Load Average Part 2: Not Your Average Average](http://www.teamquest.com/pdfs/whitepaper/ldavg2.pdf)
 /// - [EMA](http://en.wikipedia.org/wiki/Moving_average#Exponential_moving_average)
 class EWMA {
-  static const _intervalInSeconds = 5;
-  static final _intervalInMinutes =
-      _intervalInSeconds / Duration.secondsPerMinute;
+  /// Create a new EWMA with a specific smoothing constant [_alpha] and the
+  /// expected tick interval [_expectedTickInterval].
+  EWMA(this._alpha, this._expectedTickInterval);
 
-  static final _m1Alpha = 1 - exp(-_intervalInMinutes / 1.0);
-  static final _m5Alpha = 1 - exp(-_intervalInMinutes / 5.0);
-  static final _m15Alpha = 1 - exp(-_intervalInMinutes / 15.0);
+  final double _alpha;
+  final Duration _expectedTickInterval;
 
   bool _initialized = false;
   double _rate = 0.0;
 
   int _uncounted = 0;
-  double _alpha, _interval;
 
   /// Creates a new EWMA which is equivalent to the UNIX one minute load average
   /// and which expects to be ticked every 5 seconds.
   EWMA.oneMinuteEWMA()
-      : this(_m1Alpha, const Duration(seconds: _intervalInSeconds));
+      : this.likeUnixLoadAverage(
+          const Duration(minutes: 1),
+          const Duration(seconds: 5),
+        );
 
   /// Creates a new EWMA which is equivalent to the UNIX five minute load
   /// average and which expects to be ticked every 5 seconds.
   EWMA.fiveMinuteEWMA()
-      : this(_m5Alpha, const Duration(seconds: _intervalInSeconds));
+      : this.likeUnixLoadAverage(
+          const Duration(minutes: 5),
+          const Duration(seconds: 5),
+        );
 
   /// Creates a new EWMA which is equivalent to the UNIX fifteen minute load
   /// average and which expects to be ticked every 5 seconds.
   EWMA.fifteenMinuteEWMA()
-      : this(_m15Alpha, const Duration(seconds: _intervalInSeconds));
+      : this.likeUnixLoadAverage(
+          const Duration(minutes: 15),
+          const Duration(seconds: 5),
+        );
 
-  /// Create a new EWMA with a specific smoothing constant [_alpha] and the
-  /// expected tick interval [expectedTickInterval].
-  EWMA(this._alpha, Duration expectedTickInterval)
-      : _interval = expectedTickInterval.inMicroseconds.toDouble();
+  EWMA.likeUnixLoadAverage(
+    Duration unixLoadAverageDuration,
+    Duration expectedTickInterval,
+  ) : this(
+          1 -
+              exp(-expectedTickInterval.inMicroseconds /
+                  unixLoadAverageDuration.inMicroseconds),
+          expectedTickInterval,
+        );
 
   /// Update the moving average with a new value [n].
   void update(int n) {
     _uncounted += n;
   }
 
-  /// Mark the passage of time and decay the current rate accordingly.
+  /// Mark the passage of time (every microseconds) and decay the current rate accordingly.
   void tick() {
-    final instantRate = _uncounted / _interval;
+    final instantRate =
+        _uncounted / _expectedTickInterval.inMicroseconds.toDouble();
     _uncounted = 0;
     if (_initialized) {
-      _rate += (_alpha * (instantRate - _rate));
+      _rate += _alpha * (instantRate - _rate);
     } else {
       _rate = instantRate;
       _initialized = true;

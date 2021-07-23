@@ -16,28 +16,30 @@ part of metrics;
 
 /// A [Gauge] implementation which caches its value for a period of time.
 class CachedGauge<T> implements Gauge<T> {
-  final _Supplier<T> _getValue;
+  final T Function() _getValue;
   final Clock _clock;
-  int _reloadAt = 0;
-  final int _timeoutInMicroseconds;
+  DateTime _reloadAt;
+  final Duration timeout;
 
-  T? _value;
+  late T _value;
 
   /// Creates a new cached gauge with the given [clock] and [timeout] period.
-  CachedGauge(this._getValue, Duration timeout, [Clock? clock])
-      : _clock = clock ?? Clock.defaultClock,
-        _timeoutInMicroseconds = timeout.inMilliseconds * 1000;
+  CachedGauge(
+    this._getValue,
+    this.timeout, [
+    this._clock = const Clock(),
+  ]) : _reloadAt = _clock.now();
 
   @override
   T get value {
     if (_shouldLoad()) _value = _getValue();
-    return _value!;
+    return _value;
   }
 
   bool _shouldLoad() {
-    final time = _clock.tick;
-    if (time <= _reloadAt) return false;
-    _reloadAt = time + _timeoutInMicroseconds;
+    final now = _clock.now();
+    if (now.isBefore(_reloadAt)) return false;
+    _reloadAt = now.add(timeout);
     return true;
   }
 }

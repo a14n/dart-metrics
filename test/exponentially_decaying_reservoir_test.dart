@@ -12,14 +12,14 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import 'package:test/test.dart';
+import 'package:clock/clock.dart';
 import 'package:metrics/metrics.dart';
-import 'package:metrics/test/manual_clock.dart';
+import 'package:test/test.dart';
 
 main() {
   test('a reservoir of 100 out of 1000 elements', () {
     final reservoir = ExponentiallyDecayingReservoir(100, 0.99);
-    for (int i = 0; i < 1000; i++) {
+    for (var i = 0; i < 1000; i++) {
       reservoir.update(i);
     }
     expect(reservoir.size, equals(100));
@@ -29,7 +29,7 @@ main() {
 
   test('a reservoir of 100 out of 10 elements', () {
     final reservoir = ExponentiallyDecayingReservoir(100, 0.99);
-    for (int i = 0; i < 10; i++) {
+    for (var i = 0; i < 10; i++) {
       reservoir.update(i);
     }
     expect(reservoir.size, equals(10));
@@ -39,7 +39,7 @@ main() {
 
   test('a heavily biased reservoir of 100 out of 1000 elements', () {
     final reservoir = ExponentiallyDecayingReservoir(1000, 0.01);
-    for (int i = 0; i < 100; i++) {
+    for (var i = 0; i < 100; i++) {
       reservoir.update(i);
     }
     expect(reservoir.size, equals(100));
@@ -48,13 +48,16 @@ main() {
   });
 
   test('long periods of inactivity should not corrupt sampling state', () {
-    final clock = ManualClock();
+    var millisecondsSinceEpoch = 0;
+    final clock = Clock(
+      () => DateTime.fromMillisecondsSinceEpoch(millisecondsSinceEpoch),
+    );
     final reservoir = ExponentiallyDecayingReservoir(10, 0.015, clock);
 
     // add 1000 values at a rate of 10 values/second
-    for (int i = 0; i < 1000; i++) {
+    for (var i = 0; i < 1000; i++) {
       reservoir.update(1000 + i);
-      clock.addMillis(100);
+      millisecondsSinceEpoch += 100;
     }
     expect(reservoir.snapshot.size, equals(10));
     _assertAllValuesBetween(reservoir, 1000, 2000);
@@ -63,37 +66,40 @@ main() {
     // this should trigger a rescale. Note that the number of samples will be reduced to 2
     // because of the very small scaling factor that will make all existing priorities equal to
     // zero after rescale.
-    clock.addHours(15);
+    millisecondsSinceEpoch += Duration(hours: 15).inMilliseconds;
     reservoir.update(2000);
     expect(reservoir.snapshot.size, equals(2));
     _assertAllValuesBetween(reservoir, 1000, 3000);
 
     // add 1000 values at a rate of 10 values/second
-    for (int i = 0; i < 1000; i++) {
+    for (var i = 0; i < 1000; i++) {
       reservoir.update(3000 + i);
-      clock.addMillis(100);
+      millisecondsSinceEpoch += 100;
     }
     expect(reservoir.snapshot.size, equals(10));
     _assertAllValuesBetween(reservoir, 3000, 4000);
   });
 
   test('spot lift', () {
-    final clock = ManualClock();
+    var millisecondsSinceEpoch = 0;
+    final clock = Clock(
+      () => DateTime.fromMillisecondsSinceEpoch(millisecondsSinceEpoch),
+    );
     final reservoir = ExponentiallyDecayingReservoir(1000, 0.015, clock);
 
     final valuesRatePerMinute = 10;
     final valuesIntervalMillis =
         Duration.millisecondsPerMinute ~/ valuesRatePerMinute;
     // mode 1: steady regime for 120 minutes
-    for (int i = 0; i < 120 * valuesRatePerMinute; i++) {
+    for (var i = 0; i < 120 * valuesRatePerMinute; i++) {
       reservoir.update(177);
-      clock.addMillis(valuesIntervalMillis);
+      millisecondsSinceEpoch += valuesIntervalMillis;
     }
 
     // switching to mode 2: 10 minutes more with the same rate, but larger value
-    for (int i = 0; i < 10 * valuesRatePerMinute; i++) {
+    for (var i = 0; i < 10 * valuesRatePerMinute; i++) {
       reservoir.update(9999);
-      clock.addMillis(valuesIntervalMillis);
+      millisecondsSinceEpoch += valuesIntervalMillis;
     }
 
     // expect that quantiles should be more about mode 2 after 10 minutes
@@ -101,22 +107,25 @@ main() {
   });
 
   test('spot fall', () {
-    final clock = ManualClock();
+    var millisecondsSinceEpoch = 0;
+    final clock = Clock(
+      () => DateTime.fromMillisecondsSinceEpoch(millisecondsSinceEpoch),
+    );
     final reservoir = ExponentiallyDecayingReservoir(1000, 0.015, clock);
 
     final valuesRatePerMinute = 10;
     final valuesIntervalMillis =
         Duration.millisecondsPerMinute ~/ valuesRatePerMinute;
     // mode 1: steady regime for 120 minutes
-    for (int i = 0; i < 120 * valuesRatePerMinute; i++) {
+    for (var i = 0; i < 120 * valuesRatePerMinute; i++) {
       reservoir.update(9998);
-      clock.addMillis(valuesIntervalMillis);
+      millisecondsSinceEpoch += valuesIntervalMillis;
     }
 
     // switching to mode 2: 10 minutes more with the same rate, but smaller value
-    for (int i = 0; i < 10 * valuesRatePerMinute; i++) {
+    for (var i = 0; i < 10 * valuesRatePerMinute; i++) {
       reservoir.update(178);
-      clock.addMillis(valuesIntervalMillis);
+      millisecondsSinceEpoch += valuesIntervalMillis;
     }
 
     // expect that quantiles should be more about mode 2 after 10 minutes
@@ -124,16 +133,19 @@ main() {
   });
 
   test('quantilies should be based on weights', () {
-    final clock = ManualClock();
+    var millisecondsSinceEpoch = 0;
+    final clock = Clock(
+      () => DateTime.fromMillisecondsSinceEpoch(millisecondsSinceEpoch),
+    );
     final reservoir = ExponentiallyDecayingReservoir(1000, 0.015, clock);
 
-    for (int i = 0; i < 40; i++) {
+    for (var i = 0; i < 40; i++) {
       reservoir.update(177);
     }
 
-    clock.addSeconds(120);
+    millisecondsSinceEpoch += Duration(seconds: 120).inMilliseconds;
 
-    for (int i = 0; i < 10; i++) {
+    for (var i = 0; i < 10; i++) {
       reservoir.update(9999);
     }
 

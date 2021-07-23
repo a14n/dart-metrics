@@ -17,6 +17,7 @@ library metrics_graphite;
 import 'dart:async' show Future;
 import 'dart:io';
 
+import 'package:clock/clock.dart';
 import 'package:logging/logging.dart' show Logger;
 
 import 'package:metrics/metrics.dart';

@@ -12,38 +12,41 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import 'package:test/test.dart';
+import 'package:clock/clock.dart';
 import 'package:metrics/metrics.dart';
-import 'package:metrics/test/manual_clock.dart';
+import 'package:test/test.dart';
 
 main() {
   for (var ratePerMinute in [15, 60, 600, 6000]) {
     group('at rate of $ratePerMinute', () {
       test('control meter 1 minute mean approximation', () {
-        final Meter meter = _simulateMetronome(
-            const Duration(milliseconds: 62934),
-            const Duration(minutes: 3),
-            ratePerMinute);
+        final meter = _simulateMetronome(
+          const Duration(milliseconds: 62934),
+          const Duration(minutes: 3),
+          ratePerMinute,
+        );
 
         expect(meter.oneMinuteRate * 60,
             closeTo(ratePerMinute, 0.1 * ratePerMinute));
       });
 
       test('control meter 5 minute mean approximation', () {
-        final Meter meter = _simulateMetronome(
-            const Duration(milliseconds: 62934),
-            const Duration(minutes: 13),
-            ratePerMinute);
+        final meter = _simulateMetronome(
+          const Duration(milliseconds: 62934),
+          const Duration(minutes: 13),
+          ratePerMinute,
+        );
 
         expect(meter.fiveMinuteRate * 60,
             closeTo(ratePerMinute, 0.1 * ratePerMinute));
       });
 
       test('control meter 15 minute mean approximation', () {
-        final Meter meter = _simulateMetronome(
-            const Duration(milliseconds: 62934),
-            const Duration(minutes: 38),
-            ratePerMinute);
+        final meter = _simulateMetronome(
+          const Duration(milliseconds: 62934),
+          const Duration(minutes: 38),
+          ratePerMinute,
+        );
 
         expect(meter.fifteenMinuteRate * 60,
             closeTo(ratePerMinute, 0.1 * ratePerMinute));
@@ -53,17 +56,23 @@ main() {
 }
 
 Meter _simulateMetronome(
-    Duration introDelay, Duration duration, int ratePerMinute) {
-  final clock = ManualClock();
+  Duration introDelay,
+  Duration duration,
+  int ratePerMinute,
+) {
+  var microsecondsSinceEpoch = 0;
+  final clock = Clock(
+    () => DateTime.fromMicrosecondsSinceEpoch(microsecondsSinceEpoch),
+  );
   final meter = Meter(clock);
 
-  clock.addMicros(introDelay.inMicroseconds);
+  microsecondsSinceEpoch += introDelay.inMicroseconds;
 
-  final endTick = clock.tick + duration.inMicroseconds;
+  final endTime = clock.now().add(duration);
   final marksIntervalInMicros = Duration.microsecondsPerMinute ~/ ratePerMinute;
 
-  while (clock.tick <= endTick) {
-    clock.addMicros(marksIntervalInMicros);
+  while (clock.now().isBefore(endTime)) {
+    microsecondsSinceEpoch += marksIntervalInMicros;
     meter.mark();
   }
 

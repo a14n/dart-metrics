@@ -16,7 +16,7 @@ part of metrics;
 
 /// A [Gauge] which measures the ratio of one value to another.
 class RatioGauge implements Gauge<double> {
-  final _Supplier<Ratio> _getRatio;
+  final Ratio Function() _getRatio;
 
   RatioGauge(this._getRatio);
 

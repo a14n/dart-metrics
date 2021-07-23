@@ -19,12 +19,11 @@ part of metrics;
 /// forward-decaying priority reservoir sampling method to produce a statistically representative
 /// sampling reservoir, exponentially biased towards newer entries.
 ///
-/// See [Cormode et al. Forward Decay: A Practical Time Decay Model for Streaming Systems. ICDE '09:
-///      Proceedings of the 2009 IEEE International Conference on Data Engineering (2009)](http://dimacs.rutgers.edu/~graham/pubs/papers/fwddecay.pdf)
+/// See [Cormode et al. Forward Decay: A Practical Time Decay Model for Streaming Systems. ICDE '09: Proceedings of the 2009 IEEE International Conference on Data Engineering (2009)](http://dimacs.rutgers.edu/~graham/pubs/papers/fwddecay.pdf)
 class ExponentiallyDecayingReservoir implements Reservoir {
   static const _defaultSize = 1028;
   static const _defaultAlpha = 0.015;
-  static const _rescaleThreshold = Duration.microsecondsPerHour;
+  static const _rescaleThreshold = Duration(hours: 1);
 
   static final _random = Random();
 
@@ -32,8 +31,8 @@ class ExponentiallyDecayingReservoir implements Reservoir {
   final double _alpha;
   final int _size;
   int _count = 0;
-  late int _startTime;
-  late int _nextScaleTime;
+  DateTime _startTime;
+  DateTime _nextScaleTime;
   final Clock _clock;
 
   /// Creates a new [ExponentiallyDecayingReservoir].
@@ -45,21 +44,20 @@ class ExponentiallyDecayingReservoir implements Reservoir {
   /// [_size] is the number of samples to keep in the sampling reservoir
   /// [_alpha] is the exponential decay factor; the higher this is, the more biased the reservoir will be towards newer values
   /// [clock] is the clock used to timestamp samples and track rescaling
-  ExponentiallyDecayingReservoir(
-      [this._size = _defaultSize, this._alpha = _defaultAlpha, Clock? clock])
-      : _clock = clock ?? Clock.defaultClock {
-    _startTime = _currentTimeInSeconds;
-    _nextScaleTime = _clock.tick + _rescaleThreshold;
-  }
+  ExponentiallyDecayingReservoir([
+    this._size = _defaultSize,
+    this._alpha = _defaultAlpha,
+    this._clock = const Clock(),
+  ])  : _startTime = _clock.now(),
+        _nextScaleTime = _clock.now().add(_rescaleThreshold);
 
   @override
   int get size => min(_size, _count);
 
   @override
-  void update(int value, [int? timestamp]) {
-    timestamp ??= _currentTimeInSeconds;
+  void update(int value) {
     _rescaleIfNeeded();
-    final itemWeight = _weight(timestamp - _startTime);
+    final itemWeight = _weight(_clock.now().difference(_startTime).inSeconds);
     final sample = WeightedSample(value, itemWeight);
     final priority = itemWeight / _random.nextDouble();
 
@@ -67,8 +65,8 @@ class ExponentiallyDecayingReservoir implements Reservoir {
     if (newCount <= _size) {
       _values[priority] = sample;
     } else {
-      double first = _values.keys.first;
-      final WeightedSample? oldValue = _values[priority];
+      var first = _values.keys.first;
+      final oldValue = _values[priority];
       if (first < priority && oldValue == null) {
         _values[priority] = sample;
 
@@ -80,19 +78,8 @@ class ExponentiallyDecayingReservoir implements Reservoir {
     }
   }
 
-  void _rescaleIfNeeded() {
-    final now = _clock.tick;
-    final next = _nextScaleTime;
-    if (now >= next) {
-      _rescale(now, next);
-    }
-  }
-
   @override
   Snapshot get snapshot => WeightedSnapshot(_values.values);
-
-  int get _currentTimeInSeconds =>
-      _clock.time ~/ Duration.millisecondsPerSecond;
 
   double _weight(int t) => exp(_alpha * t);
 
@@ -114,12 +101,14 @@ class ExponentiallyDecayingReservoir implements Reservoir {
    * landmark L′ (and then use this new L′ at query time). This can be done with
    * a linear pass over whatever data structure is being used."
    */
-  void _rescale(int now, int next) {
-    if (_nextScaleTime == next) {
-      _nextScaleTime = now + _rescaleThreshold;
+  void _rescaleIfNeeded() {
+    final now = _clock.now();
+    if (now.isAfter(_nextScaleTime)) {
+      _nextScaleTime = now.add(_rescaleThreshold);
       final oldStartTime = _startTime;
-      _startTime = _currentTimeInSeconds;
-      final scalingFactor = exp(-_alpha * (_startTime - oldStartTime));
+      _startTime = now;
+      final scalingFactor =
+          exp(-_alpha * (_startTime.difference(oldStartTime).inSeconds));
 
       final keys = List<double>.from(_values.keys);
       for (final key in keys) {

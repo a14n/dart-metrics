@@ -19,7 +19,7 @@ abstract class GraphiteSender {
   Future connect();
 
   /// Sends the given measurement to the server.
-  void send(String name, String value, int timeInSeconds);
+  void send(String name, String value, DateTime time);
 
   /// Flushes buffer, if applicable.
   Future flush();

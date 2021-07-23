@@ -134,7 +134,7 @@ main() {
 }
 
 void elapseMinute(EWMA ewma) {
-  for (int i = 1; i <= 12; i++) {
+  for (var i = 1; i <= 12; i++) {
     ewma.tick();
   }
 }

@@ -18,10 +18,11 @@ import 'dart:async' show Stream, StreamController;
 import 'dart:async' as a show Timer;
 import 'dart:math' show exp, min, sqrt, Random;
 
+import 'package:clock/clock.dart';
 import 'package:logging/logging.dart' show Logger, Level;
+import 'package:meta/meta.dart';
 
 part 'src/cached_gauge.dart';
-part 'src/clock.dart';
 part 'src/console_reporter.dart';
 part 'src/counter.dart';
 part 'src/counting.dart';

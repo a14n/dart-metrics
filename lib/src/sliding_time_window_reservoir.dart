@@ -22,13 +22,16 @@ class SlidingTimeWindowReservoir implements Reservoir {
 
   final Duration window;
   final Clock clock;
-  final measurements = <int, List<int>>{};
+  @visibleForTesting
+  final measurements = <DateTime, List<int>>{};
   int _trimCountDown = trimThreshold;
 
   /// Creates a new [SlidingTimeWindowReservoir] with the given [clock] and
   /// [duration].
-  SlidingTimeWindowReservoir(this.window, [Clock? clock])
-      : clock = clock ?? Clock.defaultClock;
+  SlidingTimeWindowReservoir(
+    this.window, [
+    this.clock = const Clock(),
+  ]);
 
   @override
   int get size {
@@ -48,13 +51,13 @@ class SlidingTimeWindowReservoir implements Reservoir {
       _trimCountDown = trimThreshold;
       _trim();
     }
-    measurements.putIfAbsent(clock.tick, () => <int>[]).add(value);
+    measurements.putIfAbsent(clock.now(), () => <int>[]).add(value);
   }
 
   void _trim() {
-    final tick = clock.tick;
+    final time = clock.now();
     measurements.keys
-        .takeWhile((t) => t <= tick - window.inMicroseconds)
+        .takeWhile((t) => t.isBefore(time.subtract(window)))
         .toList()
         .forEach(measurements.remove);
   }

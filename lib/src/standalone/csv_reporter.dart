@@ -19,71 +19,74 @@ class CsvReporter extends ScheduledReporter {
   final Directory _directory;
   final Clock _clock;
 
-  factory CsvReporter(MetricRegistry registry, Directory directory,
-          {Clock? clock,
-          TimeUnit? rateUnit,
-          TimeUnit? durationUnit,
-          MetricFilter? where}) =>
-      CsvReporter._(registry, directory, clock ?? Clock.defaultClock,
-          rateUnit ?? TimeUnit.seconds, durationUnit ?? TimeUnit.milliseconds,
-          where: where);
+  factory CsvReporter(
+    MetricRegistry registry,
+    Directory directory, {
+    Clock clock = const Clock(),
+    TimeUnit? rateUnit,
+    TimeUnit? durationUnit,
+    MetricFilter? where,
+  }) =>
+      CsvReporter._(
+        registry,
+        directory,
+        clock,
+        rateUnit ?? TimeUnit.seconds,
+        durationUnit ?? TimeUnit.milliseconds,
+        where: where,
+      );
 
-  CsvReporter._(MetricRegistry registry, this._directory, this._clock,
-      TimeUnit rateUnit, TimeUnit durationUnit,
-      {MetricFilter? where})
-      : super(registry, rateUnit, durationUnit, where: where);
+  CsvReporter._(
+    MetricRegistry registry,
+    this._directory,
+    this._clock,
+    TimeUnit rateUnit,
+    TimeUnit durationUnit, {
+    MetricFilter? where,
+  }) : super(
+          registry,
+          rateUnit,
+          durationUnit,
+          where: where,
+        );
 
   @override
-  void reportMetrics(
-      {Map<String, Gauge>? gauges,
-      Map<String, Counter>? counters,
-      Map<String, Histogram>? histograms,
-      Map<String, Meter>? meters,
-      Map<String, Timer>? timers}) {
-    final timeInSeconds = _clock.time ~/ 1000;
-
-    if (gauges != null) {
-      gauges.forEach((name, gauge) {
-        reportGauge(timeInSeconds, name, gauge);
-      });
-    }
-
-    if (counters != null) {
-      counters.forEach((name, counter) {
-        reportCounter(timeInSeconds, name, counter);
-      });
-    }
-
-    if (histograms != null) {
-      histograms.forEach((name, histogram) {
-        reportHistogram(timeInSeconds, name, histogram);
-      });
-    }
-
-    if (meters != null) {
-      meters.forEach((name, meter) {
-        reportMeter(timeInSeconds, name, meter);
-      });
-    }
-
-    if (timers != null) {
-      timers.forEach((name, timer) {
-        reportTimer(timeInSeconds, name, timer);
-      });
-    }
+  void reportMetrics({
+    Map<String, Gauge>? gauges,
+    Map<String, Counter>? counters,
+    Map<String, Histogram>? histograms,
+    Map<String, Meter>? meters,
+    Map<String, Timer>? timers,
+  }) {
+    final time = _clock.now();
+    gauges?.forEach((name, gauge) {
+      reportGauge(time, name, gauge);
+    });
+    counters?.forEach((name, counter) {
+      reportCounter(time, name, counter);
+    });
+    histograms?.forEach((name, histogram) {
+      reportHistogram(time, name, histogram);
+    });
+    meters?.forEach((name, meter) {
+      reportMeter(time, name, meter);
+    });
+    timers?.forEach((name, timer) {
+      reportTimer(time, name, timer);
+    });
   }
 
-  void reportGauge(int timeInSeconds, String name, Gauge gauge) {
-    _report(timeInSeconds, name, {'value': gauge.value});
+  void reportGauge(DateTime time, String name, Gauge gauge) {
+    _report(time, name, {'value': gauge.value});
   }
 
-  void reportCounter(int timeInSeconds, String name, Counter counter) {
-    _report(timeInSeconds, name, {'count': counter.count});
+  void reportCounter(DateTime time, String name, Counter counter) {
+    _report(time, name, {'count': counter.count});
   }
 
-  void reportHistogram(int timeInSeconds, String name, Histogram histogram) {
+  void reportHistogram(DateTime time, String name, Histogram histogram) {
     final snapshot = histogram.snapshot;
-    _report(timeInSeconds, name, {
+    _report(time, name, {
       'count': histogram.count,
       'max': snapshot.max,
       'mean': snapshot.mean,
@@ -98,8 +101,8 @@ class CsvReporter extends ScheduledReporter {
     });
   }
 
-  void reportMeter(int timeInSeconds, String name, Meter meter) {
-    _report(timeInSeconds, name, {
+  void reportMeter(DateTime time, String name, Meter meter) {
+    _report(time, name, {
       'count': meter.count,
       'mean_rate': convertRate(meter.meanRate),
       'm1_rate': convertRate(meter.oneMinuteRate),
@@ -109,9 +112,9 @@ class CsvReporter extends ScheduledReporter {
     });
   }
 
-  void reportTimer(int timeInSeconds, String name, Timer timer) {
+  void reportTimer(DateTime time, String name, Timer timer) {
     final snapshot = timer.snapshot;
-    _report(timeInSeconds, name, {
+    _report(time, name, {
       'count': timer.count,
       'max': convertDuration(snapshot.max),
       'mean': convertDuration(snapshot.mean),
@@ -132,7 +135,7 @@ class CsvReporter extends ScheduledReporter {
     });
   }
 
-  void _report(int timeInSeconds, String name, Map<String, dynamic> datas) {
+  void _report(DateTime time, String name, Map<String, dynamic> datas) {
     final file = File(p.join(_directory.path, '$name.csv'));
     final fileAlreadyExists = file.existsSync();
     if (!fileAlreadyExists) {
@@ -140,6 +143,8 @@ class CsvReporter extends ScheduledReporter {
         ..createSync()
         ..writeAsStringSync('t,${datas.keys.join(',')}\n');
     }
+    var timeInSeconds =
+        time.millisecondsSinceEpoch ~/ Duration.millisecondsPerSecond;
     file.writeAsStringSync('$timeInSeconds,${datas.values.join(',')}\n',
         mode: FileMode.append, flush: true);
   }

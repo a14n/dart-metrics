@@ -14,22 +14,20 @@
 
 part of metrics;
 
-typedef _Supplier<T> = T Function();
-
 /// A gauge metric is an instantaneous reading of a particular value. To instrument a queue's depth,
 /// for example:
 ///
 ///     List l = [];
 ///     final gauge = new Gauge<int>(() => l.length);
 abstract class Gauge<T> extends Metric {
-  factory Gauge(_Supplier<T> _getValue) => _Gauge(_getValue);
+  factory Gauge(T Function() _getValue) => _Gauge(_getValue);
 
   /// Returns the metric's current value.
   T get value;
 }
 
 class _Gauge<T> implements Gauge<T> {
-  final _Supplier<T> _getValue;
+  final T Function() _getValue;
 
   _Gauge(this._getValue);
 

@@ -12,9 +12,9 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import 'package:test/test.dart';
 import 'package:metrics/metrics.dart';
 import 'package:mocktail/mocktail.dart';
+import 'package:test/test.dart';
 
 import 'mocks.dart';
 
@@ -25,12 +25,15 @@ main() {
 
     setUp(() {
       clock = MockClock();
-      reservoir =
-          SlidingTimeWindowReservoir(const Duration(microseconds: 10), clock);
+      reservoir = SlidingTimeWindowReservoir(
+        const Duration(microseconds: 10),
+        clock,
+      );
     });
 
     test('stores measurements with duplicate ticks', () {
-      when(() => clock.tick).thenReturn(20);
+      when(() => clock.now())
+          .thenReturn(DateTime.fromMicrosecondsSinceEpoch(20));
 
       reservoir.update(1);
       reservoir.update(2);
@@ -40,23 +43,87 @@ main() {
     });
 
     test('bounds measurements to a time window', () {
-      when(() => clock.tick).thenReturn(0);
+      when(() => clock.now())
+          .thenReturn(DateTime.fromMicrosecondsSinceEpoch(0));
       reservoir.update(1);
+      expect(
+        reservoir.measurements,
+        equals({
+          DateTime.fromMicrosecondsSinceEpoch(0): [1],
+        }),
+      );
+      expect(reservoir.size, equals(1));
 
-      when(() => clock.tick).thenReturn(5);
+      when(() => clock.now())
+          .thenReturn(DateTime.fromMicrosecondsSinceEpoch(5));
       reservoir.update(2);
-
-      when(() => clock.tick).thenReturn(10);
-      reservoir.update(3);
-
-      when(() => clock.tick).thenReturn(15);
-      reservoir.update(4);
-
-      when(() => clock.tick).thenReturn(20);
-      reservoir.update(5);
-
+      expect(
+        reservoir.measurements,
+        equals({
+          DateTime.fromMicrosecondsSinceEpoch(0): [1],
+          DateTime.fromMicrosecondsSinceEpoch(5): [2],
+        }),
+      );
       expect(reservoir.size, equals(2));
-      expect(reservoir.snapshot.values, unorderedEquals([4, 5]));
+
+      when(() => clock.now())
+          .thenReturn(DateTime.fromMicrosecondsSinceEpoch(10));
+      reservoir.update(3);
+      expect(
+        reservoir.measurements,
+        equals({
+          DateTime.fromMicrosecondsSinceEpoch(0): [1],
+          DateTime.fromMicrosecondsSinceEpoch(5): [2],
+          DateTime.fromMicrosecondsSinceEpoch(10): [3],
+        }),
+      );
+      expect(reservoir.size, equals(3));
+
+      when(() => clock.now())
+          .thenReturn(DateTime.fromMicrosecondsSinceEpoch(15));
+      reservoir.update(4);
+      expect(
+        reservoir.measurements,
+        equals({
+          DateTime.fromMicrosecondsSinceEpoch(0): [1],
+          DateTime.fromMicrosecondsSinceEpoch(5): [2],
+          DateTime.fromMicrosecondsSinceEpoch(10): [3],
+          DateTime.fromMicrosecondsSinceEpoch(15): [4],
+        }),
+      );
+      expect(reservoir.size, equals(3));
+      expect(
+        reservoir.measurements,
+        equals({
+          DateTime.fromMicrosecondsSinceEpoch(5): [2],
+          DateTime.fromMicrosecondsSinceEpoch(10): [3],
+          DateTime.fromMicrosecondsSinceEpoch(15): [4],
+        }),
+      );
+
+      when(() => clock.now())
+          .thenReturn(DateTime.fromMicrosecondsSinceEpoch(20));
+      reservoir.update(5);
+      expect(
+        reservoir.measurements,
+        equals({
+          DateTime.fromMicrosecondsSinceEpoch(5): [2],
+          DateTime.fromMicrosecondsSinceEpoch(10): [3],
+          DateTime.fromMicrosecondsSinceEpoch(15): [4],
+          DateTime.fromMicrosecondsSinceEpoch(20): [5],
+        }),
+      );
+      expect(reservoir.size, equals(3));
+      expect(
+        reservoir.measurements,
+        equals({
+          DateTime.fromMicrosecondsSinceEpoch(10): [3],
+          DateTime.fromMicrosecondsSinceEpoch(15): [4],
+          DateTime.fromMicrosecondsSinceEpoch(20): [5],
+        }),
+      );
+
+      expect(reservoir.snapshot.values, equals([3, 4, 5]));
     });
   });
 }

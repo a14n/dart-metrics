@@ -28,8 +28,12 @@ abstract class ScheduledReporter implements Reporter {
   a.Timer? _timer;
 
   /// Creates a new [ScheduledReporter] instance.
-  ScheduledReporter(this._registry, this.rateUnit, this.durationUnit,
-      {this.where});
+  ScheduledReporter(
+    this._registry,
+    this.rateUnit,
+    this.durationUnit, {
+    this.where,
+  });
 
   /// Starts the reporter polling at the given [period] (the amount of time between polls).
   void start(Duration period) {
@@ -52,20 +56,22 @@ abstract class ScheduledReporter implements Reporter {
   /// Report the current values of all metrics in the registry.
   void report() {
     reportMetrics(
-        gauges: _registry.getGauges(where: where),
-        counters: _registry.getCounters(where: where),
-        histograms: _registry.getHistograms(where: where),
-        meters: _registry.getMeters(where: where),
-        timers: _registry.getTimers(where: where));
+      gauges: _registry.getGauges(where: where),
+      counters: _registry.getCounters(where: where),
+      histograms: _registry.getHistograms(where: where),
+      meters: _registry.getMeters(where: where),
+      timers: _registry.getTimers(where: where),
+    );
   }
 
   /// Called periodically by the polling thread. Subclasses should report all the given metrics.
-  void reportMetrics(
-      {Map<String, Gauge> gauges,
-      Map<String, Counter> counters,
-      Map<String, Histogram> histograms,
-      Map<String, Meter> meters,
-      Map<String, Timer> timers});
+  void reportMetrics({
+    Map<String, Gauge> gauges,
+    Map<String, Counter> counters,
+    Map<String, Histogram> histograms,
+    Map<String, Meter> meters,
+    Map<String, Timer> timers,
+  });
 
   double convertDuration(num duration) =>
       duration / durationUnit._duration.inMicroseconds;

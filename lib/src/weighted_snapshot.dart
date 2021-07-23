@@ -22,7 +22,7 @@ class WeightedSnapshot extends Snapshot {
 
   /// Create a new [Snapshot] with the given [values].
   WeightedSnapshot(Iterable<WeightedSample> values) {
-    final List<WeightedSample> copy = List<WeightedSample>.from(values)
+    final copy = values.toList()
       ..sort((o1, o2) {
         if (o1.value > o2.value) return 1;
         if (o1.value < o2.value) return -1;
@@ -33,15 +33,15 @@ class WeightedSnapshot extends Snapshot {
     _normWeights = List<double>.filled(copy.length, 0.0);
     _quantiles = List<double>.filled(copy.length, 0.0);
 
-    final sumWeight = copy.fold(
-        0.0, (double sum, WeightedSample sample) => sum + sample.weight);
+    final sumWeight =
+        copy.fold<double>(0.0, (sum, sample) => sum + sample.weight);
 
-    for (int i = 0; i < copy.length; i++) {
+    for (var i = 0; i < copy.length; i++) {
       _values[i] = copy[i].value;
       _normWeights[i] = copy[i].weight / sumWeight;
     }
 
-    for (int i = 1; i < copy.length; i++) {
+    for (var i = 1; i < copy.length; i++) {
       _quantiles[i] = _quantiles[i - 1] + _normWeights[i - 1];
     }
   }
@@ -54,10 +54,10 @@ class WeightedSnapshot extends Snapshot {
 
     if (_values.isEmpty) return 0.0;
 
-    int posx = quantile is double ? _quantiles.indexOf(quantile) : -1;
+    var posx = quantile is double ? _quantiles.indexOf(quantile) : -1;
     if (posx < 0) {
       posx = 0;
-      for (int i = 0; i < _quantiles.length; i++) {
+      for (var i = 0; i < _quantiles.length; i++) {
         if (_quantiles[i] > quantile) break;
         posx = i;
       }
@@ -70,7 +70,7 @@ class WeightedSnapshot extends Snapshot {
   int get size => _values.length;
 
   @override
-  List<int> get values => List<int>.from(_values);
+  List<int> get values => _values.toList();
 
   @override
   int get max => _values.isEmpty ? 0 : _values.last;
@@ -82,8 +82,8 @@ class WeightedSnapshot extends Snapshot {
   double get mean {
     if (_values.isEmpty) return 0.0;
 
-    double sum = 0.0;
-    for (int i = 0; i < _values.length; i++) {
+    var sum = 0.0;
+    for (var i = 0; i < _values.length; i++) {
       sum += _values[i] * _normWeights[i];
     }
     return sum;
@@ -94,9 +94,9 @@ class WeightedSnapshot extends Snapshot {
     if (_values.isEmpty) return 0.0;
 
     final mean = this.mean;
-    num variance = 0.0;
+    var variance = 0.0;
 
-    for (int i = 0; i < _values.length; i++) {
+    for (var i = 0; i < _values.length; i++) {
       final diff = _values[i] - mean;
       variance += _normWeights[i] * diff * diff;
     }

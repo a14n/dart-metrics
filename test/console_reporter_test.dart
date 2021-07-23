@@ -22,13 +22,12 @@ main() {
   group('', () {
     late StringBuffer output;
     late ConsoleReporter reporter;
-    final DateTime datetime =
-        DateTime.fromMillisecondsSinceEpoch(1363568676000);
+    final datetime = DateTime.fromMillisecondsSinceEpoch(1363568676000);
 
     setUp(() {
       final registry = MockMetricRegistry();
       final clock = MockClock();
-      when(() => clock.time).thenReturn(datetime.millisecondsSinceEpoch);
+      when(() => clock.now()).thenReturn(datetime);
 
       output = StringBuffer();
       reporter = ConsoleReporter(registry, output: output, clock: clock);

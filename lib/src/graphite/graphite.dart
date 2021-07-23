@@ -34,7 +34,9 @@ class Graphite implements GraphiteSender {
   }
 
   @override
-  Future send(String name, String value, int timeInSeconds) {
+  Future send(String name, String value, DateTime time) {
+    var timeInSeconds =
+        time.millisecondsSinceEpoch ~/ Duration.millisecondsPerSecond;
     sanitize(String s) => s.replaceAll(RegExp(r'\s+'), '-');
     if (!isConnected) connect();
     return _socket!.then((sock) {

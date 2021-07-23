@@ -22,34 +22,46 @@ class ConsoleReporter extends ScheduledReporter {
   final StringSink _output;
   final Clock _clock;
 
-  factory ConsoleReporter(MetricRegistry registry,
-          {StringSink? output,
-          Clock? clock,
-          TimeUnit? rateUnit,
-          TimeUnit? durationUnit,
-          MetricFilter? where}) =>
+  factory ConsoleReporter(
+    MetricRegistry registry, {
+    StringSink? output,
+    Clock clock = const Clock(),
+    TimeUnit? rateUnit,
+    TimeUnit? durationUnit,
+    MetricFilter? where,
+  }) =>
       ConsoleReporter._(
-          registry,
-          output ?? _PrintStringSink(),
-          clock ?? Clock.defaultClock,
-          rateUnit ?? TimeUnit.seconds,
-          durationUnit ?? TimeUnit.milliseconds,
-          where: where);
+        registry,
+        output ?? _PrintStringSink(),
+        clock,
+        rateUnit ?? TimeUnit.seconds,
+        durationUnit ?? TimeUnit.milliseconds,
+        where: where,
+      );
 
-  ConsoleReporter._(MetricRegistry registry, this._output, this._clock,
-      TimeUnit rateUnit, TimeUnit durationUnit,
-      {MetricFilter? where})
-      : super(registry, rateUnit, durationUnit, where: where);
+  ConsoleReporter._(
+    MetricRegistry registry,
+    this._output,
+    this._clock,
+    TimeUnit rateUnit,
+    TimeUnit durationUnit, {
+    MetricFilter? where,
+  }) : super(
+          registry,
+          rateUnit,
+          durationUnit,
+          where: where,
+        );
 
   @override
-  void reportMetrics(
-      {Map<String, Gauge>? gauges,
-      Map<String, Counter>? counters,
-      Map<String, Histogram>? histograms,
-      Map<String, Meter>? meters,
-      Map<String, Timer>? timers}) {
-    final dateTime = DateTime.fromMillisecondsSinceEpoch(_clock.time);
-    _printWithBanner(dateTime.toIso8601String(), '=');
+  void reportMetrics({
+    Map<String, Gauge>? gauges,
+    Map<String, Counter>? counters,
+    Map<String, Histogram>? histograms,
+    Map<String, Meter>? meters,
+    Map<String, Timer>? timers,
+  }) {
+    _printWithBanner(_clock.now().toIso8601String(), '=');
     _output.writeln();
 
     if (gauges != null && gauges.isNotEmpty) {
@@ -131,7 +143,7 @@ class ConsoleReporter extends ScheduledReporter {
   }
 
   void _printTimer(Timer timer) {
-    final Snapshot snapshot = timer.snapshot;
+    final snapshot = timer.snapshot;
     _printValue('count =', timer.count);
     String f1(double v) =>
         '${convertRate(v).toStringAsFixed(2)} calls/${rateUnit.name}';
@@ -154,11 +166,11 @@ class ConsoleReporter extends ScheduledReporter {
   }
 
   void _printWithBanner(String s, String padding) {
-    _output.writeln((s + ' ').padRight(_consoleWidth, padding));
+    _output.writeln('$s '.padRight(_consoleWidth, padding));
   }
 
   void _printValue(String name, Object value) {
-    _output.writeln(name.padLeft(_leftWidth) + ' $value');
+    _output.writeln('${name.padLeft(_leftWidth)} $value');
   }
 }
 
@@ -166,7 +178,7 @@ class ConsoleReporter extends ScheduledReporter {
 ///
 /// The underliing [print] is call only on [_PrintStringSink.writeln].
 class _PrintStringSink implements StringSink {
-  StringBuffer sb = StringBuffer();
+  final sb = StringBuffer();
 
   @override
   void write(Object? obj) {

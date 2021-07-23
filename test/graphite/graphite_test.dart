@@ -24,11 +24,9 @@ main() {
     late ServerSocket serverSocket;
     late Graphite graphite;
 
-    setUp(() {
-      return startServer(9000).then((ss) {
-        serverSocket = ss;
-        graphite = Graphite(serverSocket.address, serverSocket.port);
-      });
+    setUp(() async {
+      serverSocket = await startServer(9000);
+      graphite = Graphite(serverSocket.address, serverSocket.port);
     });
 
     tearDown(() => Future.wait([serverSocket.close(), graphite.close()]));
@@ -44,7 +42,7 @@ main() {
     });
 
     test('connects to graphite', () {
-      int con = 0;
+      var con = 0;
       serverSocket.listen((s) =>
           utf8.decodeStream(s).then((_) => con++).then((_) => s.close()));
       graphite
@@ -77,7 +75,11 @@ main() {
           .then((_) => s.close()));
       graphite
           .connect()
-          .then((_) => graphite.send('name', 'value', 100))
+          .then((_) => graphite.send(
+              'name',
+              'value',
+              DateTime.fromMillisecondsSinceEpoch(
+                  100 * Duration.millisecondsPerSecond)))
           .then((_) => graphite.close())
           .then((_) => line.future)
           .then(expectAsync1((s) => expect(s, equals('name value 100\n'))));
@@ -91,7 +93,11 @@ main() {
           .then((_) => s.close()));
       graphite
           .connect()
-          .then((_) => graphite.send('name woo', 'value', 100))
+          .then((_) => graphite.send(
+              'name woo',
+              'value',
+              DateTime.fromMillisecondsSinceEpoch(
+                  100 * Duration.millisecondsPerSecond)))
           .then((_) => graphite.close())
           .then((_) => line.future)
           .then(expectAsync1((s) => expect(s, equals('name-woo value 100\n'))));
@@ -105,7 +111,11 @@ main() {
           .then((_) => s.close()));
       graphite
           .connect()
-          .then((_) => graphite.send('name', 'value woo', 100))
+          .then((_) => graphite.send(
+              'name',
+              'value woo',
+              DateTime.fromMillisecondsSinceEpoch(
+                  100 * Duration.millisecondsPerSecond)))
           .then((_) => graphite.close())
           .then((_) => line.future)
           .then(expectAsync1((s) => expect(s, equals('name value-woo 100\n'))));

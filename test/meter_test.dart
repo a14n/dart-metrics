@@ -12,20 +12,22 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import 'package:test/test.dart';
 import 'package:metrics/metrics.dart';
 import 'package:mocktail/mocktail.dart';
+import 'package:test/test.dart';
 
 import 'mocks.dart';
 
 main() {
+  final zeroTime = DateTime.fromMicrosecondsSinceEpoch(0);
+
   test('starts out with no rates or count', () {
     final clock = MockClock();
-    when(() => clock.tick).thenReturn(0);
+    when(() => clock.now()).thenReturn(zeroTime);
     final meter = Meter(clock);
 
-    when(() => clock.tick)
-        .thenReturn(const Duration(seconds: 10).inMicroseconds);
+    when(() => clock.now())
+        .thenReturn(zeroTime.add(const Duration(seconds: 10)));
 
     expect(meter.count, equals(0));
     expect(meter.meanRate, closeTo(0, 0.001));
@@ -36,11 +38,11 @@ main() {
 
   test('marks events and updates rates and count', () {
     final clock = MockClock();
-    when(() => clock.tick).thenReturn(0);
+    when(() => clock.now()).thenReturn(zeroTime);
     final meter = Meter(clock);
     meter.mark();
-    when(() => clock.tick)
-        .thenReturn(const Duration(seconds: 10).inMicroseconds);
+    when(() => clock.now())
+        .thenReturn(zeroTime.add(const Duration(seconds: 10)));
     meter.mark(2);
 
     expect(meter.meanRate, closeTo(0.3, 0.001));

@@ -19,25 +19,27 @@ part of metrics;
 class Timer implements Metered, Sampling {
   late Meter _meter;
   late Histogram _histogram;
-  late Clock _clock;
+  final Clock _clock;
 
   /// Creates a new [Timer] that uses the given [reservoir] and [clock].
-  Timer([Reservoir? reservoir, Clock? clock]) {
-    _clock = clock ?? Clock.defaultClock;
+  Timer([
+    Reservoir? reservoir,
+    this._clock = const Clock(),
+  ]) {
     _meter = Meter(_clock);
     _histogram = Histogram(reservoir ?? ExponentiallyDecayingReservoir());
   }
 
   /// Adds a recorded [duration].
-  void update(Duration duration) => _update(duration.inMicroseconds);
+  void update(Duration duration) => _update(duration);
 
   /// Times and records the duration of event.
   T timed<T>(T Function() event) {
-    final startTime = _clock.tick;
+    final startTime = _clock.now();
     try {
       return event();
     } finally {
-      _update(_clock.tick - startTime);
+      _update(_clock.now().difference(startTime));
     }
   }
 
@@ -62,9 +64,9 @@ class Timer implements Metered, Sampling {
   @override
   Snapshot get snapshot => _histogram.snapshot;
 
-  void _update(int duration) {
-    if (duration >= 0) {
-      _histogram.update(duration);
+  void _update(Duration duration) {
+    if (!duration.isNegative) {
+      _histogram.update(duration.inMicroseconds);
       _meter.mark();
     }
   }
@@ -76,19 +78,19 @@ class Timer implements Metered, Sampling {
 class TimerContext {
   final Timer _timer;
   final Clock _clock;
-  final int _startTime;
+  final DateTime _startTime;
 
   TimerContext(this._timer, Clock clock)
       : _clock = clock,
-        _startTime = clock.tick;
+        _startTime = clock.now();
 
   /// Updates the timer with the difference between current and start time.
   ///
   /// Call to this method will not reset the start time. Multiple calls result in multiple updates.
   /// Returns the elapsed time in microseconds.
-  int stop() {
-    final elapsed = _clock.tick - _startTime;
-    _timer.update(Duration(microseconds: elapsed));
+  Duration stop() {
+    final elapsed = _clock.now().difference(_startTime);
+    _timer.update(elapsed);
     return elapsed;
   }
 }

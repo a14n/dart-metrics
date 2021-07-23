@@ -22,70 +22,78 @@ class GraphiteReporter extends ScheduledReporter {
   final String? _prefix;
   final GraphiteSender _graphite;
 
-  factory GraphiteReporter(MetricRegistry registry, GraphiteSender graphite,
-          {String? prefix,
-          Clock? clock,
-          TimeUnit? rateUnit,
-          TimeUnit? durationUnit,
-          MetricFilter? where}) =>
+  factory GraphiteReporter(
+    MetricRegistry registry,
+    GraphiteSender graphite, {
+    String? prefix,
+    Clock clock = const Clock(),
+    TimeUnit? rateUnit,
+    TimeUnit? durationUnit,
+    MetricFilter? where,
+  }) =>
       GraphiteReporter._(
-          registry,
-          graphite,
-          prefix,
-          clock ?? Clock.defaultClock,
-          rateUnit ?? TimeUnit.seconds,
-          durationUnit ?? TimeUnit.milliseconds,
-          where: where);
+        registry,
+        graphite,
+        prefix,
+        clock,
+        rateUnit ?? TimeUnit.seconds,
+        durationUnit ?? TimeUnit.milliseconds,
+        where: where,
+      );
 
-  GraphiteReporter._(MetricRegistry registry, this._graphite, this._prefix,
-      this._clock, TimeUnit rateUnit, TimeUnit durationUnit,
-      {MetricFilter? where})
-      : super(registry, rateUnit, durationUnit, where: where);
+  GraphiteReporter._(
+    MetricRegistry registry,
+    this._graphite,
+    this._prefix,
+    this._clock,
+    TimeUnit rateUnit,
+    TimeUnit durationUnit, {
+    MetricFilter? where,
+  }) : super(
+          registry,
+          rateUnit,
+          durationUnit,
+          where: where,
+        );
 
   @override
-  void reportMetrics(
-      {Map<String, Gauge>? gauges,
-      Map<String, Counter>? counters,
-      Map<String, Histogram>? histograms,
-      Map<String, Meter>? meters,
-      Map<String, Timer>? timers}) {
-    final timeInSeconds = _clock.time ~/ 1000;
-
+  void reportMetrics({
+    Map<String, Gauge>? gauges,
+    Map<String, Counter>? counters,
+    Map<String, Histogram>? histograms,
+    Map<String, Meter>? meters,
+    Map<String, Timer>? timers,
+  }) {
+    final time = _clock.now();
     try {
       if (!_graphite.isConnected) {
         _graphite.connect();
       }
-
       if (gauges != null) {
         gauges.forEach((name, gauge) {
-          reportGauge(timeInSeconds, name, gauge);
+          reportGauge(time, name, gauge);
         });
       }
-
       if (counters != null) {
         counters.forEach((name, counter) {
-          reportCounter(timeInSeconds, name, counter);
+          reportCounter(time, name, counter);
         });
       }
-
       if (histograms != null) {
         histograms.forEach((name, histogram) {
-          reportHistogram(timeInSeconds, name, histogram);
+          reportHistogram(time, name, histogram);
         });
       }
-
       if (meters != null) {
         meters.forEach((name, meter) {
-          reportMeter(timeInSeconds, name, meter);
+          reportMeter(time, name, meter);
         });
       }
-
       if (timers != null) {
         timers.forEach((name, timer) {
-          reportTimer(timeInSeconds, name, timer);
+          reportTimer(time, name, timer);
         });
       }
-
       _graphite.flush();
     } on IOException catch (e) {
       _log.warning("Unable to report to Graphite", e);
@@ -110,17 +118,17 @@ class GraphiteReporter extends ScheduledReporter {
     }
   }
 
-  void reportGauge(int timeInSeconds, String name, Gauge gauge) {
-    _report(timeInSeconds, name, {'value': gauge.value});
+  void reportGauge(DateTime time, String name, Gauge gauge) {
+    _report(time, name, {'value': gauge.value});
   }
 
-  void reportCounter(int timeInSeconds, String name, Counter counter) {
-    _report(timeInSeconds, name, {'count': counter.count});
+  void reportCounter(DateTime time, String name, Counter counter) {
+    _report(time, name, {'count': counter.count});
   }
 
-  void reportHistogram(int timeInSeconds, String name, Histogram histogram) {
+  void reportHistogram(DateTime time, String name, Histogram histogram) {
     final snapshot = histogram.snapshot;
-    _report(timeInSeconds, name, {
+    _report(time, name, {
       'count': histogram.count,
       'max': snapshot.max,
       'mean': snapshot.mean,
@@ -135,8 +143,8 @@ class GraphiteReporter extends ScheduledReporter {
     });
   }
 
-  void reportMeter(int timeInSeconds, String name, Meter meter) {
-    _report(timeInSeconds, name, {
+  void reportMeter(DateTime time, String name, Meter meter) {
+    _report(time, name, {
       'count': meter.count,
       'mean_rate': convertRate(meter.meanRate),
       'm1_rate': convertRate(meter.oneMinuteRate),
@@ -146,9 +154,9 @@ class GraphiteReporter extends ScheduledReporter {
     });
   }
 
-  void reportTimer(int timeInSeconds, String name, Timer timer) {
+  void reportTimer(DateTime time, String name, Timer timer) {
     final snapshot = timer.snapshot;
-    _report(timeInSeconds, name, {
+    _report(time, name, {
       'count': timer.count,
       'max': convertDuration(snapshot.max),
       'mean': convertDuration(snapshot.mean),
@@ -169,10 +177,13 @@ class GraphiteReporter extends ScheduledReporter {
     });
   }
 
-  void _report(int timeInSeconds, String name, Map<String, dynamic> datas) {
+  void _report(DateTime time, String name, Map<String, dynamic> datas) {
     datas.forEach((k, v) {
       _graphite.send(
-          MetricRegistry.name([_prefix, name, k]), v.toString(), timeInSeconds);
+        MetricRegistry.name([_prefix, name, k]),
+        v.toString(),
+        time,
+      );
     });
   }
 }

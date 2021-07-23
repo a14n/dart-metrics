@@ -32,7 +32,8 @@ main() {
     setUp(() {
       final registry = MockMetricRegistry();
       final clock = MockClock();
-      when(() => clock.time).thenReturn(19910191000);
+      when(() => clock.now())
+          .thenReturn(DateTime.fromMillisecondsSinceEpoch(19910191000));
 
       dataDir = Directory('tmp-${DateTime.now().millisecondsSinceEpoch}')
         ..createSync();

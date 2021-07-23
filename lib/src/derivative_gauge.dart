@@ -14,12 +14,10 @@
 
 part of metrics;
 
-typedef _Transfomer<F, T> = T Function(F value);
-
 /// A gauge whose value is derived from the value of another gauge.
 class DerivativeGauge<F, T> implements Gauge<T> {
   final Gauge<F> _base;
-  final _Transfomer<F, T> _transform;
+  final T Function(F value) _transform;
 
   DerivativeGauge(this._base, this._transform);
 

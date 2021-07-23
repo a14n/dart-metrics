@@ -19,25 +19,23 @@ part of metrics;
 ///
 ///  See [EWMA]
 class Meter implements Metered {
-  static final _tickInterval = const Duration(seconds: 5).inMicroseconds;
+  static final _tickInterval = const Duration(seconds: 5);
 
   final _m1Rate = EWMA.oneMinuteEWMA();
   final _m5Rate = EWMA.fiveMinuteEWMA();
   final _m15Rate = EWMA.fifteenMinuteEWMA();
 
   int _count = 0;
-  final int _startTime;
-  late int _lastTick;
+  final DateTime _startTime;
+  DateTime _lastTime;
   final Clock _clock;
 
   /// Creates a new [Meter].
-  Meter([Clock? clock]) : this._(clock ?? Clock.defaultClock);
-
-  Meter._(Clock clock)
-      : _clock = clock,
-        _startTime = clock.tick {
-    _lastTick = _startTime;
-  }
+  Meter([
+    Clock clock = const Clock(),
+  ])  : _clock = clock,
+        _startTime = clock.now(),
+        _lastTime = clock.now();
 
   /// Mark the occurrence of [n] number of events.
   void mark([int n = 1]) {
@@ -49,19 +47,17 @@ class Meter implements Metered {
   }
 
   void _tickIfNecessary() {
-    final oldTick = _lastTick;
-    final newTick = _clock.tick;
-    final age = newTick - oldTick;
+    final now = _clock.now();
+    final age = now.difference(_lastTime);
     if (age > _tickInterval) {
-      final newIntervalStartTick = newTick - age % _tickInterval;
-      if (_lastTick == oldTick) {
-        _lastTick = newIntervalStartTick;
-        final requiredTicks = age ~/ _tickInterval;
-        for (int i = 0; i < requiredTicks; i++) {
-          _m1Rate.tick();
-          _m5Rate.tick();
-          _m15Rate.tick();
-        }
+      final newIntervalStartTick = now.microsecondsSinceEpoch -
+          age.inMicroseconds % _tickInterval.inMicroseconds;
+      _lastTime = DateTime.fromMicrosecondsSinceEpoch(newIntervalStartTick);
+      final requiredTicks = age.inMicroseconds ~/ _tickInterval.inMicroseconds;
+      for (var i = 0; i < requiredTicks; i++) {
+        _m1Rate.tick();
+        _m5Rate.tick();
+        _m15Rate.tick();
       }
     }
   }
@@ -86,8 +82,8 @@ class Meter implements Metered {
     if (count == 0) {
       return 0.0;
     } else {
-      final elapsed = _clock.tick - _startTime;
-      return count / elapsed * Duration.microsecondsPerSecond;
+      final elapsed = _clock.now().difference(_startTime);
+      return count / elapsed.inSeconds;
     }
   }
 

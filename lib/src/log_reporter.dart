@@ -21,20 +21,36 @@ class LogReporter extends ScheduledReporter {
   final Logger _logger;
   final Level _logLevel;
 
-  factory LogReporter(MetricRegistry registry,
-          {Logger? logger,
-          Level? level,
-          TimeUnit? rateUnit,
-          TimeUnit? durationUnit,
-          MetricFilter? where}) =>
-      LogReporter._(registry, logger ?? Logger('metrics'), level ?? Level.INFO,
-          rateUnit ?? TimeUnit.seconds, durationUnit ?? TimeUnit.milliseconds,
-          where: where);
+  factory LogReporter(
+    MetricRegistry registry, {
+    Logger? logger,
+    Level? level,
+    TimeUnit? rateUnit,
+    TimeUnit? durationUnit,
+    MetricFilter? where,
+  }) =>
+      LogReporter._(
+        registry,
+        logger ?? Logger('metrics'),
+        level ?? Level.INFO,
+        rateUnit ?? TimeUnit.seconds,
+        durationUnit ?? TimeUnit.milliseconds,
+        where: where,
+      );
 
-  LogReporter._(MetricRegistry registry, this._logger, this._logLevel,
-      TimeUnit rateUnit, TimeUnit durationUnit,
-      {MetricFilter? where})
-      : super(registry, rateUnit, durationUnit, where: where);
+  LogReporter._(
+    MetricRegistry registry,
+    this._logger,
+    this._logLevel,
+    TimeUnit rateUnit,
+    TimeUnit durationUnit, {
+    MetricFilter? where,
+  }) : super(
+          registry,
+          rateUnit,
+          durationUnit,
+          where: where,
+        );
 
   @override
   void reportMetrics(
@@ -43,35 +59,21 @@ class LogReporter extends ScheduledReporter {
       Map<String, Histogram>? histograms,
       Map<String, Meter>? meters,
       Map<String, Timer>? timers}) {
-    if (gauges != null) {
-      gauges.forEach((name, gauge) {
-        logGauge(name, gauge);
-      });
-    }
-
-    if (counters != null) {
-      counters.forEach((name, counter) {
-        logCounter(name, counter);
-      });
-    }
-
-    if (histograms != null) {
-      histograms.forEach((name, histogram) {
-        logHistogram(name, histogram);
-      });
-    }
-
-    if (meters != null) {
-      meters.forEach((name, meter) {
-        logMeter(name, meter);
-      });
-    }
-
-    if (timers != null) {
-      timers.forEach((name, timer) {
-        logTimer(name, timer);
-      });
-    }
+    gauges?.forEach((name, gauge) {
+      logGauge(name, gauge);
+    });
+    counters?.forEach((name, counter) {
+      logCounter(name, counter);
+    });
+    histograms?.forEach((name, histogram) {
+      logHistogram(name, histogram);
+    });
+    meters?.forEach((name, meter) {
+      logMeter(name, meter);
+    });
+    timers?.forEach((name, timer) {
+      logTimer(name, timer);
+    });
   }
 
   void logGauge(String name, Gauge gauge) {
@@ -134,7 +136,9 @@ class LogReporter extends ScheduledReporter {
   }
 
   void _log(String type, String name, Map<String, dynamic> datas) {
-    _logger.log(_logLevel,
-        'type=$type, name=$name, ${datas.keys.map((k) => '$k=${datas[k]}').join(', ')}');
+    _logger.log(
+      _logLevel,
+      'type=$type, name=$name, ${datas.keys.map((k) => '$k=${datas[k]}').join(', ')}',
+    );
   }
 }

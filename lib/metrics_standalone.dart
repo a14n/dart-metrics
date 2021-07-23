@@ -16,6 +16,7 @@ library metrics_standalone;
 
 import 'dart:io';
 
+import 'package:clock/clock.dart';
 import 'package:path/path.dart' as p;
 
 import 'package:metrics/metrics.dart';

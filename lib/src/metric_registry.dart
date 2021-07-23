@@ -77,7 +77,7 @@ class MetricRegistry implements MetricSet {
 
   /// Removes the metric with the given [name].
   bool remove(String name) {
-    final Metric? metric = _metrics.remove(name);
+    final metric = _metrics.remove(name);
     if (metric != null) {
       _onMetricRemoved(name, metric);
       return true;
@@ -120,14 +120,14 @@ class MetricRegistry implements MetricSet {
           metric is Timer && (where == null || where(name, metric)));
 
   T _getOrAdd<T extends Metric>(String name, _MetricBuilder<T> builder) {
-    final Metric? metric = _metrics[name];
+    final metric = _metrics[name];
     if (metric is T) {
       return metric;
     } else if (metric == null) {
       try {
         return register(name, builder.newMetric());
       } on ArgumentError {
-        final Metric? added = _metrics[name];
+        final added = _metrics[name];
         if (added is T) {
           return added;
         }
@@ -138,7 +138,7 @@ class MetricRegistry implements MetricSet {
 
   Map<String, T> _getMetrics<T extends Metric>(MetricFilter test) {
     final timers = <String, T>{};
-    for (String name in _metrics.keys) {
+    for (final name in _metrics.keys) {
       final metric = _metrics[name]!;
       if (test(name, metric) && metric is T) {
         timers[name] = metric;
@@ -172,7 +172,7 @@ class MetricRegistry implements MetricSet {
   }
 
   void _registerAll(String? prefix, MetricSet metrics) {
-    for (String metricName in metrics.metrics.keys) {
+    for (final metricName in metrics.metrics.keys) {
       final metric = metrics.metrics[metricName]!;
       if (metric is MetricSet) {
         _registerAll(name([prefix, metricName]), metric);
