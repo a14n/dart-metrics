@@ -12,14 +12,15 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import 'package:test/test.dart';
+import 'package:expector/expector.dart';
 import 'package:metrics/metrics.dart';
+import 'package:test/test.dart' hide expect;
 
 main() {
   test('returns a transformed value', () {
     final gauge1 = Gauge<String>(() => 'woo');
     final gauge2 = DerivativeGauge<String, int>(gauge1, (String s) => s.length);
 
-    expect(gauge2.value, equals(3));
+    expectThat(gauge2.value).equals(3);
   });
 }

@@ -14,10 +14,11 @@
 
 import 'dart:io';
 
+import 'package:expector/expector.dart';
 import 'package:metrics/metrics_standalone.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:path/path.dart' as p;
-import 'package:test/test.dart';
+import 'package:test/test.dart' hide expect;
 
 import '../mocks.dart';
 
@@ -50,10 +51,10 @@ main() {
 
       reporter.reportMetrics(gauges: {'gauge': gauge});
 
-      expect(getFileContents('gauge.csv'), equals('''
+      expectThat(getFileContents('gauge.csv')).equals('''
 t,value
 19910191,1
-'''));
+''');
     });
 
     test('reports counter values', () {
@@ -62,10 +63,10 @@ t,value
 
       reporter.reportMetrics(counters: {'test.counter': counter});
 
-      expect(getFileContents('test.counter.csv'), equals('''
+      expectThat(getFileContents('test.counter.csv')).equals('''
 t,count
 19910191,100
-'''));
+''');
     });
 
     test('reports histogram values', () {
@@ -88,10 +89,10 @@ t,count
 
       reporter.reportMetrics(histograms: {'test.histogram': histogram});
 
-      expect(getFileContents('test.histogram.csv'), equals('''
+      expectThat(getFileContents('test.histogram.csv')).equals('''
 t,count,max,mean,min,stddev,p50,p75,p95,p98,p99,p999
 19910191,1,2,3.0,4,5.0,6.0,7.0,8.0,9.0,10.0,11.0
-'''));
+''');
     });
 
     test('reports meter values', () {
@@ -104,10 +105,10 @@ t,count,max,mean,min,stddev,p50,p75,p95,p98,p99,p999
 
       reporter.reportMetrics(meters: {'test.meter': meter});
 
-      expect(getFileContents('test.meter.csv'), equals('''
+      expectThat(getFileContents('test.meter.csv')).equals('''
 t,count,mean_rate,m1_rate,m5_rate,m15_rate,rate_unit
 19910191,1,2.0,3.0,4.0,5.0,events/second
-'''));
+''');
     });
 
     test('reports timer values', () {
@@ -144,10 +145,10 @@ t,count,mean_rate,m1_rate,m5_rate,m15_rate,rate_unit
 
       reporter.reportMetrics(timers: {'test.another.timer': timer});
 
-      expect(getFileContents('test.another.timer.csv'), equals('''
+      expectThat(getFileContents('test.another.timer.csv')).equals('''
 t,count,max,mean,min,stddev,p50,p75,p95,p98,p99,p999,mean_rate,m1_rate,m5_rate,m15_rate,rate_unit,duration_unit
 19910191,1,100.0,200.0,300.0,400.0,500.0,600.0,700.0,800.0,900.0,1000.0,2.0,3.0,4.0,5.0,calls/second,milliseconds
-'''));
+''');
     });
   });
 }

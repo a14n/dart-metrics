@@ -12,8 +12,9 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import 'package:test/test.dart';
+import 'package:expector/expector.dart';
 import 'package:metrics/metrics.dart';
+import 'package:test/test.dart' hide expect;
 
 main() {
   group('', () {
@@ -27,7 +28,7 @@ main() {
       reservoir.update(1);
       reservoir.update(2);
 
-      expect(reservoir.snapshot.values, unorderedEquals([1, 2]));
+      expectThat(reservoir.snapshot.values).equals([1, 2]);
     });
 
     test('big quantiles are the last value', () {
@@ -36,7 +37,7 @@ main() {
       reservoir.update(3);
       reservoir.update(4);
 
-      expect(reservoir.snapshot.values, unorderedEquals([2, 3, 4]));
+      expectThat(reservoir.snapshot.values).equals([4, 2, 3]);
     });
   });
 }

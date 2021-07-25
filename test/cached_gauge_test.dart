@@ -14,26 +14,27 @@
 
 import 'dart:async';
 
-import 'package:test/test.dart';
+import 'package:expector/expector.dart';
 import 'package:metrics/metrics.dart';
+import 'package:test/test.dart' hide expect;
 
 main() {
   test('caches the value for the given period', () {
     var i = 1;
     final gauge = CachedGauge(() => i++, const Duration(milliseconds: 100));
 
-    expect(gauge.value, equals(1));
-    expect(gauge.value, equals(1));
+    expectThat(gauge.value).equals(1);
+    expectThat(gauge.value).equals(1);
   });
 
   test('reloads the cached value after the given period', () {
     var i = 1;
     final gauge = CachedGauge(() => i++, const Duration(milliseconds: 100));
 
-    expect(gauge.value, equals(1));
+    expectThat(gauge.value).equals(1);
     Future.delayed(const Duration(milliseconds: 150), expectAsync0(() {
-      expect(gauge.value, equals(2));
-      expect(gauge.value, equals(2));
+      expectThat(gauge.value).equals(2);
+      expectThat(gauge.value).equals(2);
     }));
   });
 }

@@ -14,8 +14,9 @@
 
 import 'dart:async' as a show Timer;
 
-import 'package:test/test.dart';
+import 'package:expector/expector.dart';
 import 'package:metrics/metrics.dart';
+import 'package:test/test.dart' hide expect;
 
 import 'mocks.dart';
 
@@ -94,7 +95,7 @@ main() {
 
     registry.register('gauge', gauge);
 
-    expect(registry.getGauges(), containsPair('gauge', gauge));
+    expectThat(registry.getGauges()).containsPair('gauge', gauge);
   });
 
   test('has a map of registered counters', () {
@@ -102,7 +103,7 @@ main() {
 
     registry.register('counter', counter);
 
-    expect(registry.getCounters(), containsPair('counter', counter));
+    expectThat(registry.getCounters()).containsPair('counter', counter);
   });
 
   test('has a map of registered histograms', () {
@@ -110,7 +111,7 @@ main() {
 
     registry.register('histogram', histogram);
 
-    expect(registry.getHistograms(), containsPair('histogram', histogram));
+    expectThat(registry.getHistograms()).containsPair('histogram', histogram);
   });
 
   test('has a map of registered meters', () {
@@ -118,7 +119,7 @@ main() {
 
     registry.register('meter', meter);
 
-    expect(registry.getMeters(), containsPair('meter', meter));
+    expectThat(registry.getMeters()).containsPair('meter', meter);
   });
 
   test('has a map of registered timers', () {
@@ -126,7 +127,7 @@ main() {
 
     registry.register('timer', timer);
 
-    expect(registry.getTimers(), containsPair('timer', timer));
+    expectThat(registry.getTimers()).containsPair('timer', timer);
   });
 
   test('has a set of registered metric names', () {
@@ -138,8 +139,8 @@ main() {
     registry.register('meter', meter);
     registry.register('timer', timer);
 
-    expect(registry.names,
-        unorderedEquals(['gauge', 'counter', 'histogram', 'meter', 'timer']));
+    expectThat(registry.names)
+        .equals({'gauge', 'counter', 'histogram', 'meter', 'timer'});
   });
 
   test('registers multiple metrics', () {
@@ -149,7 +150,7 @@ main() {
 
     registry.registerAll(metrics);
 
-    expect(registry.names, unorderedEquals(['gauge', 'counter']));
+    expectThat(registry.names).equals({'gauge', 'counter'});
   });
 
   test('registers multiple metrics with a prefix', () {
@@ -159,7 +160,7 @@ main() {
 
     registry.register('my', metrics);
 
-    expect(registry.names, unorderedEquals(['my.gauge', 'my.counter']));
+    expectThat(registry.names).equals({'my.gauge', 'my.counter'});
   });
 
   test('registers recursive metric sets', () {
@@ -172,7 +173,7 @@ main() {
 
     registry.register('my', metrics);
 
-    expect(registry.names, unorderedEquals(['my.inner.gauge', 'my.counter']));
+    expectThat(registry.names).equals({'my.inner.gauge', 'my.counter'});
   });
 
   test('registers metrics from another registry', () {
@@ -182,33 +183,33 @@ main() {
     registry2.register('gauge', gauge);
     registry1.register('nested', registry2);
 
-    expect(registry1.names, unorderedEquals(['nested.gauge']));
+    expectThat(registry1.names).equals({'nested.gauge'});
   });
 
   test('concatenates strings to form a dotted name', () {
-    expect(
-        MetricRegistry.name(['one', 'two', 'three']), equals('one.two.three'));
+    expectThat(MetricRegistry.name(['one', 'two', 'three']))
+        .equals('one.two.three');
   });
 
   test('elides null values from names when only one null passed in', () {
-    expect(MetricRegistry.name(['one', null]), equals('one'));
+    expectThat(MetricRegistry.name(['one', null])).equals('one');
   });
 
   test('elides null values from names when many nulls passed in', () {
-    expect(MetricRegistry.name(['one', null, null]), equals('one'));
+    expectThat(MetricRegistry.name(['one', null, null])).equals('one');
   });
 
   test('elides null values from names when null and not null passed in', () {
-    expect(MetricRegistry.name(['one', null, 'three']), equals('one.three'));
+    expectThat(MetricRegistry.name(['one', null, 'three'])).equals('one.three');
   });
 
   test('elides empty strings from names', () {
-    expect(MetricRegistry.name(['one', '', 'three']), equals('one.three'));
+    expectThat(MetricRegistry.name(['one', '', 'three'])).equals('one.three');
   });
 
   test('concatenates class names with strings to form a dotted name', () {
-    expect(MetricRegistry.nameWithType(String, ['one', 'two']),
-        equals('String.one.two'));
+    expectThat(MetricRegistry.nameWithType(String, ['one', 'two']))
+        .equals('String.one.two');
   });
 
   test('removes metrics matching a filter', () {
@@ -221,26 +222,19 @@ main() {
     registry.timer('timer-2');
     registry.histogram('histogram-1');
 
-    expect(
-        registry.names, unorderedEquals(['timer-1', 'timer-2', 'histogram-1']));
+    expectThat(registry.names).equals({'timer-1', 'timer-2', 'histogram-1'});
 
     registry.removeMatching((name, _) => name.endsWith("1"));
 
-    expect(registry.names, isNot(contains(['timer-1', 'histogram-1'])));
-    expect(registry.names, unorderedEquals(['timer-2']));
+    expectThat(registry.names).equals({'timer-2'});
 
     a.Timer.run(expectAsync0(() {
-      expect(metricsRemoved, hasLength(2));
-      expect(
-          metricsRemoved
-              .where((nm) => nm.name == 'timer-1' && nm.metric is Timer)
-              .length,
-          equals(1));
-      expect(
-          metricsRemoved
-              .where((nm) => nm.name == 'histogram-1' && nm.metric is Histogram)
-              .length,
-          equals(1));
+      expectThat(metricsRemoved).hasLength(2);
+      expectThat(metricsRemoved.where(
+          (nm) => nm.name == 'timer-1' && nm.metric is Timer)).hasLength(1);
+      expectThat(metricsRemoved.where(
+              (nm) => nm.name == 'histogram-1' && nm.metric is Histogram))
+          .hasLength(1);
     }));
   });
 }
@@ -251,18 +245,17 @@ void registeringAMetricTriggersANotification(MockMetric m) {
   final metricsAdded = <NamedMetric>[];
   registry.onMetricAdded.listen(metricsAdded.add);
 
-  expect(registry.register('thing', m), equals(m));
+  expectThat(registry.register('thing', m)).equals(m);
 
   a.Timer.run(expectAsync0(() {
-    expect(metricsAdded, hasLength(1));
-    expect(
-        metricsAdded.where((nm) => nm.name == 'thing' && nm.metric == m).length,
-        equals(1));
+    expectThat(metricsAdded).hasLength(1);
+    expectThat(metricsAdded.where((nm) => nm.name == 'thing' && nm.metric == m))
+        .hasLength(1);
   }));
 }
 
 void accessingAMetricRegistersAndReusesTheMetric(
-  Function(MetricRegistry mr) getFunction,
+  Metric Function(String name) Function(MetricRegistry mr) getFunction,
 ) {
   final registry = MetricRegistry();
 
@@ -273,15 +266,13 @@ void accessingAMetricRegistersAndReusesTheMetric(
   final m1 = createMetric('thing');
   final m2 = createMetric('thing');
 
-  expect(m1, same(m2));
+  expectThat(m1).isIdenticalTo(m2);
 
   a.Timer.run(expectAsync0(() {
-    expect(metricsAdded, hasLength(1));
-    expect(
-        metricsAdded
-            .where((nm) => nm.name == 'thing' && nm.metric == m1)
-            .length,
-        equals(1));
+    expectThat(metricsAdded).hasLength(1);
+    expectThat(
+            metricsAdded.where((nm) => nm.name == 'thing' && nm.metric == m1))
+        .hasLength(1);
   }));
 }
 
@@ -293,14 +284,12 @@ void removingAMetricTriggersANotification(MockMetric m) {
 
   registry.register('thing', m);
 
-  expect(registry.remove('thing'), equals(true));
+  expectThat(registry.remove('thing')).isTrue;
 
   a.Timer.run(expectAsync0(() {
-    expect(metricsRemoved, hasLength(1));
-    expect(
-        metricsRemoved
-            .where((nm) => nm.name == 'thing' && nm.metric == m)
-            .length,
-        equals(1));
+    expectThat(metricsRemoved).hasLength(1);
+    expectThat(
+            metricsRemoved.where((nm) => nm.name == 'thing' && nm.metric == m))
+        .hasLength(1);
   }));
 }

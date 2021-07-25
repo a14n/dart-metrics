@@ -12,9 +12,10 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import 'package:test/test.dart';
+import 'package:expector/expector.dart';
 import 'package:metrics/metrics.dart';
 import 'package:mocktail/mocktail.dart';
+import 'package:test/test.dart' hide expect;
 
 import 'mocks.dart';
 
@@ -39,7 +40,7 @@ main() {
 
       reporter.reportMetrics(gauges: {'gauge': gauge});
 
-      expect(output.toString(), equals('''
+      expectThat(output.toString()).equals('''
 ${datetime.toIso8601String()} ========================================================
 
 -- Gauges ----------------------------------------------------------------------
@@ -47,7 +48,7 @@ gauge
              value = 1
 
 
-'''));
+''');
     });
 
     test('reports counter values', () {
@@ -56,7 +57,7 @@ gauge
 
       reporter.reportMetrics(counters: {'test.counter': counter});
 
-      expect(output.toString(), equals('''
+      expectThat(output.toString()).equals('''
 ${datetime.toIso8601String()} ========================================================
 
 -- Counters --------------------------------------------------------------------
@@ -64,7 +65,7 @@ test.counter
              count = 100
 
 
-'''));
+''');
     });
 
     test('reports histogram values', () {
@@ -87,7 +88,7 @@ test.counter
 
       reporter.reportMetrics(histograms: {'test.histogram': histogram});
 
-      expect(output.toString(), equals('''
+      expectThat(output.toString()).equals('''
 ${datetime.toIso8601String()} ========================================================
 
 -- Histograms ------------------------------------------------------------------
@@ -105,7 +106,7 @@ test.histogram
             99.9% <= 11.00
 
 
-'''));
+''');
     });
 
     test('reports meter values', () {
@@ -118,7 +119,7 @@ test.histogram
 
       reporter.reportMetrics(meters: {'test.meter': meter});
 
-      expect(output.toString(), equals('''
+      expectThat(output.toString()).equals('''
 ${datetime.toIso8601String()} ========================================================
 
 -- Meters ----------------------------------------------------------------------
@@ -130,7 +131,7 @@ test.meter
     15-minute rate = 5.00 events/second
 
 
-'''));
+''');
     });
 
     test('reports timer values', () {
@@ -167,7 +168,7 @@ test.meter
 
       reporter.reportMetrics(timers: {'test.another.timer': timer});
 
-      expect(output.toString(), equals('''
+      expectThat(output.toString()).equals('''
 ${datetime.toIso8601String()} ========================================================
 
 -- Timers ----------------------------------------------------------------------
@@ -189,7 +190,7 @@ test.another.timer
             99.9% <= 1000.00 milliseconds
 
 
-'''));
+''');
     });
   });
 }

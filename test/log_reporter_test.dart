@@ -15,7 +15,7 @@
 import 'package:logging/logging.dart';
 import 'package:metrics/metrics.dart';
 import 'package:mocktail/mocktail.dart';
-import 'package:test/test.dart';
+import 'package:test/test.dart' hide expect;
 
 import 'mocks.dart';
 

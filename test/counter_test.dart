@@ -12,36 +12,37 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import 'package:test/test.dart';
+import 'package:expector/expector.dart';
 import 'package:metrics/metrics.dart';
+import 'package:test/test.dart' hide expect;
 
 main() {
   test('start at zero', () {
     final counter = Counter();
-    expect(counter.count, equals(0));
+    expectThat(counter.count).equals(0);
   });
 
   test('increments by one', () {
     final counter = Counter();
     counter.inc();
-    expect(counter.count, equals(1));
+    expectThat(counter.count).equals(1);
   });
 
   test('increments by an arbitrary delta', () {
     final counter = Counter();
     counter.inc(12);
-    expect(counter.count, equals(12));
+    expectThat(counter.count).equals(12);
   });
 
   test('decrements by one', () {
     final counter = Counter();
     counter.dec();
-    expect(counter.count, equals(-1));
+    expectThat(counter.count).equals(-1);
   });
 
   test('decrements by an arbitrary delta', () {
     final counter = Counter();
     counter.dec(12);
-    expect(counter.count, equals(-12));
+    expectThat(counter.count).equals(-12);
   });
 }

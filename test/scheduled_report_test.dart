@@ -14,8 +14,9 @@
 
 import 'dart:async' as a;
 
-import 'package:test/test.dart';
+import 'package:expector/expector.dart';
 import 'package:metrics/metrics.dart';
+import 'package:test/test.dart' hide expect;
 
 import 'mocks.dart';
 
@@ -62,7 +63,7 @@ main() {
     reporter.start(const Duration(milliseconds: 200));
 
     a.Future.delayed(const Duration(milliseconds: 500), expectAsync0(() {
-      expect(reporter._count, equals(2));
+      expectThat(reporter._count).equals(2);
     })).whenComplete(() {
       reporter.stop();
     });

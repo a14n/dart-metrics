@@ -13,8 +13,9 @@
 // limitations under the License.
 
 import 'package:clock/clock.dart';
+import 'package:expector/expector.dart';
 import 'package:metrics/metrics.dart';
-import 'package:test/test.dart';
+import 'package:test/test.dart' hide expect;
 
 main() {
   test('a reservoir of 100 out of 1000 elements', () {
@@ -22,8 +23,8 @@ main() {
     for (var i = 0; i < 1000; i++) {
       reservoir.update(i);
     }
-    expect(reservoir.size, equals(100));
-    expect(reservoir.snapshot.size, equals(100));
+    expectThat(reservoir.size).equals(100);
+    expectThat(reservoir.snapshot.size).equals(100);
     _assertAllValuesBetween(reservoir, 0, 1000);
   });
 
@@ -32,8 +33,8 @@ main() {
     for (var i = 0; i < 10; i++) {
       reservoir.update(i);
     }
-    expect(reservoir.size, equals(10));
-    expect(reservoir.snapshot.size, equals(10));
+    expectThat(reservoir.size).equals(10);
+    expectThat(reservoir.snapshot.size).equals(10);
     _assertAllValuesBetween(reservoir, 0, 10);
   });
 
@@ -42,8 +43,8 @@ main() {
     for (var i = 0; i < 100; i++) {
       reservoir.update(i);
     }
-    expect(reservoir.size, equals(100));
-    expect(reservoir.snapshot.size, equals(100));
+    expectThat(reservoir.size).equals(100);
+    expectThat(reservoir.snapshot.size).equals(100);
     _assertAllValuesBetween(reservoir, 0, 100);
   });
 
@@ -59,7 +60,7 @@ main() {
       reservoir.update(1000 + i);
       millisecondsSinceEpoch += 100;
     }
-    expect(reservoir.snapshot.size, equals(10));
+    expectThat(reservoir.snapshot.size).equals(10);
     _assertAllValuesBetween(reservoir, 1000, 2000);
 
     // wait for 15 hours and add another value.
@@ -68,7 +69,7 @@ main() {
     // zero after rescale.
     millisecondsSinceEpoch += Duration(hours: 15).inMilliseconds;
     reservoir.update(2000);
-    expect(reservoir.snapshot.size, equals(2));
+    expectThat(reservoir.snapshot.size).equals(2);
     _assertAllValuesBetween(reservoir, 1000, 3000);
 
     // add 1000 values at a rate of 10 values/second
@@ -76,7 +77,7 @@ main() {
       reservoir.update(3000 + i);
       millisecondsSinceEpoch += 100;
     }
-    expect(reservoir.snapshot.size, equals(10));
+    expectThat(reservoir.snapshot.size).equals(10);
     _assertAllValuesBetween(reservoir, 3000, 4000);
   });
 
@@ -103,7 +104,7 @@ main() {
     }
 
     // expect that quantiles should be more about mode 2 after 10 minutes
-    expect(reservoir.snapshot.median, equals(9999));
+    expectThat(reservoir.snapshot.median).equals(9999);
   });
 
   test('spot fall', () {
@@ -129,7 +130,7 @@ main() {
     }
 
     // expect that quantiles should be more about mode 2 after 10 minutes
-    expect(reservoir.snapshot.get95thPercentile(), equals(178));
+    expectThat(reservoir.snapshot.get95thPercentile()).equals(178);
   });
 
   test('quantilies should be based on weights', () {
@@ -149,20 +150,20 @@ main() {
       reservoir.update(9999);
     }
 
-    expect(reservoir.snapshot.size, equals(50));
+    expectThat(reservoir.snapshot.size).equals(50);
 
     // the first added 40 items (177) have weights 1
     // the next added 10 items (9999) have weights ~6
     // so, it's 40 vs 60 distribution, not 40 vs 10
-    expect(reservoir.snapshot.median, equals(9999));
-    expect(reservoir.snapshot.get75thPercentile(), equals(9999));
+    expectThat(reservoir.snapshot.median).equals(9999);
+    expectThat(reservoir.snapshot.get75thPercentile()).equals(9999);
   });
 }
 
 void _assertAllValuesBetween(
     ExponentiallyDecayingReservoir reservoir, num min, num max) {
   for (num i in reservoir.snapshot.values) {
-    expect(i, greaterThanOrEqualTo(min));
-    expect(i, lessThan(max));
+    expectThat(i).greaterThanOrEqualTo(min);
+    expectThat(i).lessThan(max);
   }
 }

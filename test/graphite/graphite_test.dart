@@ -16,8 +16,9 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:expector/expector.dart';
 import 'package:metrics/metrics_graphite.dart';
-import 'package:test/test.dart';
+import 'package:test/test.dart' hide expect;
 
 main() {
   group('', () {
@@ -32,13 +33,15 @@ main() {
     tearDown(() => Future.wait([serverSocket.close(), graphite.close()]));
 
     test('graphite is not connected', () {
-      expect(graphite.isConnected, isFalse);
-      serverSocket.length.then(expectAsync1((int l) => expect(l, isZero)));
+      expectThat(graphite.isConnected).isFalse;
+      serverSocket.length.then(
+        expectAsync1((int length) => expectThat(length).isZero),
+      );
       return serverSocket.close();
     });
 
     test('measures failures', () {
-      expect(graphite.failures, isZero);
+      expectThat(graphite.failures).isZero;
     });
 
     test('connects to graphite', () {
@@ -49,7 +52,7 @@ main() {
           .connect()
           .then((_) => graphite.close())
           .then((_) => serverSocket.close())
-          .then(expectAsync1((_) => expect(con, equals(1))));
+          .then(expectAsync1((_) => expectThat(con).equals(1)));
     });
 
     test('disconnects from graphite', () {
@@ -57,13 +60,13 @@ main() {
       graphite
           .connect()
           .then((_) => graphite.close())
-          .then(expectAsync1((_) => expect(graphite.isConnected, isFalse)));
+          .then(expectAsync1((_) => expectThat(graphite.isConnected).isFalse));
     });
 
     test('does not allow double connections', () {
       serverSocket.listen((s) => utf8.decodeStream(s).then((_) => s.close()));
       graphite.connect().then(expectAsync1((_) {
-        expect(() => graphite.connect(), throwsStateError);
+        expectThat(() => graphite.connect()).throwsA<StateError>();
       }));
     });
 
@@ -82,7 +85,7 @@ main() {
                   100 * Duration.millisecondsPerSecond)))
           .then((_) => graphite.close())
           .then((_) => line.future)
-          .then(expectAsync1((s) => expect(s, equals('name value 100\n'))));
+          .then(expectAsync1((s) => expectThat(s).equals('name value 100\n')));
     });
 
     test('sanitizes names', () {
@@ -100,7 +103,9 @@ main() {
                   100 * Duration.millisecondsPerSecond)))
           .then((_) => graphite.close())
           .then((_) => line.future)
-          .then(expectAsync1((s) => expect(s, equals('name-woo value 100\n'))));
+          .then(expectAsync1(
+            (s) => expectThat(s).equals('name-woo value 100\n'),
+          ));
     });
 
     test('sanitizes values', () {
@@ -118,7 +123,9 @@ main() {
                   100 * Duration.millisecondsPerSecond)))
           .then((_) => graphite.close())
           .then((_) => line.future)
-          .then(expectAsync1((s) => expect(s, equals('name value-woo 100\n'))));
+          .then(expectAsync1(
+            (s) => expectThat(s).equals('name value-woo 100\n'),
+          ));
     });
   });
 }

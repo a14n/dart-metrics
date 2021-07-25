@@ -12,9 +12,10 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+import 'package:expector/expector.dart';
 import 'package:metrics/metrics.dart';
 import 'package:mocktail/mocktail.dart';
-import 'package:test/test.dart';
+import 'package:test/test.dart' hide expect;
 
 import 'mocks.dart';
 
@@ -38,92 +39,71 @@ main() {
       reservoir.update(1);
       reservoir.update(2);
 
-      expect(reservoir.size, equals(2));
-      expect(reservoir.snapshot.values, unorderedEquals([1, 2]));
+      expectThat(reservoir.size).equals(2);
+      expectThat(reservoir.snapshot.values).equals([1, 2]);
     });
 
     test('bounds measurements to a time window', () {
       when(() => clock.now())
           .thenReturn(DateTime.fromMicrosecondsSinceEpoch(0));
       reservoir.update(1);
-      expect(
-        reservoir.measurements,
-        equals({
-          DateTime.fromMicrosecondsSinceEpoch(0): [1],
-        }),
-      );
-      expect(reservoir.size, equals(1));
+      expectThat(reservoir.measurements).equals({
+        DateTime.fromMicrosecondsSinceEpoch(0): [1],
+      });
+      expectThat(reservoir.size).equals(1);
 
       when(() => clock.now())
           .thenReturn(DateTime.fromMicrosecondsSinceEpoch(5));
       reservoir.update(2);
-      expect(
-        reservoir.measurements,
-        equals({
-          DateTime.fromMicrosecondsSinceEpoch(0): [1],
-          DateTime.fromMicrosecondsSinceEpoch(5): [2],
-        }),
-      );
-      expect(reservoir.size, equals(2));
+      expectThat(reservoir.measurements).equals({
+        DateTime.fromMicrosecondsSinceEpoch(0): [1],
+        DateTime.fromMicrosecondsSinceEpoch(5): [2],
+      });
+      expectThat(reservoir.size).equals(2);
 
       when(() => clock.now())
           .thenReturn(DateTime.fromMicrosecondsSinceEpoch(10));
       reservoir.update(3);
-      expect(
-        reservoir.measurements,
-        equals({
-          DateTime.fromMicrosecondsSinceEpoch(0): [1],
-          DateTime.fromMicrosecondsSinceEpoch(5): [2],
-          DateTime.fromMicrosecondsSinceEpoch(10): [3],
-        }),
-      );
-      expect(reservoir.size, equals(3));
+      expectThat(reservoir.measurements).equals({
+        DateTime.fromMicrosecondsSinceEpoch(0): [1],
+        DateTime.fromMicrosecondsSinceEpoch(5): [2],
+        DateTime.fromMicrosecondsSinceEpoch(10): [3],
+      });
+      expectThat(reservoir.size).equals(3);
 
       when(() => clock.now())
           .thenReturn(DateTime.fromMicrosecondsSinceEpoch(15));
       reservoir.update(4);
-      expect(
-        reservoir.measurements,
-        equals({
-          DateTime.fromMicrosecondsSinceEpoch(0): [1],
-          DateTime.fromMicrosecondsSinceEpoch(5): [2],
-          DateTime.fromMicrosecondsSinceEpoch(10): [3],
-          DateTime.fromMicrosecondsSinceEpoch(15): [4],
-        }),
-      );
-      expect(reservoir.size, equals(3));
-      expect(
-        reservoir.measurements,
-        equals({
-          DateTime.fromMicrosecondsSinceEpoch(5): [2],
-          DateTime.fromMicrosecondsSinceEpoch(10): [3],
-          DateTime.fromMicrosecondsSinceEpoch(15): [4],
-        }),
-      );
+      expectThat(reservoir.measurements).equals({
+        DateTime.fromMicrosecondsSinceEpoch(0): [1],
+        DateTime.fromMicrosecondsSinceEpoch(5): [2],
+        DateTime.fromMicrosecondsSinceEpoch(10): [3],
+        DateTime.fromMicrosecondsSinceEpoch(15): [4],
+      });
+      expectThat(reservoir.size).equals(3);
+      expectThat(reservoir.measurements).equals({
+        DateTime.fromMicrosecondsSinceEpoch(5): [2],
+        DateTime.fromMicrosecondsSinceEpoch(10): [3],
+        DateTime.fromMicrosecondsSinceEpoch(15): [4],
+      });
 
       when(() => clock.now())
           .thenReturn(DateTime.fromMicrosecondsSinceEpoch(20));
       reservoir.update(5);
-      expect(
-        reservoir.measurements,
-        equals({
-          DateTime.fromMicrosecondsSinceEpoch(5): [2],
-          DateTime.fromMicrosecondsSinceEpoch(10): [3],
-          DateTime.fromMicrosecondsSinceEpoch(15): [4],
-          DateTime.fromMicrosecondsSinceEpoch(20): [5],
-        }),
-      );
-      expect(reservoir.size, equals(3));
-      expect(
-        reservoir.measurements,
-        equals({
-          DateTime.fromMicrosecondsSinceEpoch(10): [3],
-          DateTime.fromMicrosecondsSinceEpoch(15): [4],
-          DateTime.fromMicrosecondsSinceEpoch(20): [5],
-        }),
-      );
+      expectThat(reservoir.measurements).equals({
+        DateTime.fromMicrosecondsSinceEpoch(5): [2],
+        DateTime.fromMicrosecondsSinceEpoch(10): [3],
+        DateTime.fromMicrosecondsSinceEpoch(15): [4],
+        DateTime.fromMicrosecondsSinceEpoch(20): [5],
+      });
+      expectThat(reservoir.size).equals(3);
+      expectThat(reservoir.measurements).equals({
+        DateTime.fromMicrosecondsSinceEpoch(10): [3],
+        DateTime.fromMicrosecondsSinceEpoch(15): [4],
+        DateTime.fromMicrosecondsSinceEpoch(20): [5],
+      });
 
-      expect(reservoir.snapshot.values, equals([3, 4, 5]));
+      expectThat(reservoir.snapshot.values).equals([3, 4, 5]);
     });
   });
 }

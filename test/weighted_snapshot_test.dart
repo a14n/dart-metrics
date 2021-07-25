@@ -12,8 +12,9 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import 'package:test/test.dart';
+import 'package:expector/expector.dart';
 import 'package:metrics/metrics.dart';
+import 'package:test/test.dart' hide expect;
 
 main() {
   group('', () {
@@ -30,44 +31,44 @@ main() {
     });
 
     test('small quantiles are the first value', () {
-      expect(snapshot.getValue(0.0), equals(1.0));
+      expectThat(snapshot.getValue(0.0)).equals(1.0);
     });
 
     test('big quantiles are the last value', () {
-      expect(snapshot.getValue(1.0), equals(5.0));
+      expectThat(snapshot.getValue(1.0)).equals(5.0);
     });
 
     test('has a median', () {
-      expect(snapshot.median, closeTo(3.0, 0.1));
+      expectThat(snapshot.median).closeTo(3.0, 0.1);
     });
 
     test('has a p75', () {
-      expect(snapshot.get75thPercentile(), closeTo(4.0, 0.1));
+      expectThat(snapshot.get75thPercentile()).closeTo(4.0, 0.1);
     });
 
     test('has a p95', () {
-      expect(snapshot.get95thPercentile(), closeTo(5.0, 0.1));
+      expectThat(snapshot.get95thPercentile()).closeTo(5.0, 0.1);
     });
 
     test('has a p98', () {
-      expect(snapshot.get98thPercentile(), closeTo(5.0, 0.1));
+      expectThat(snapshot.get98thPercentile()).closeTo(5.0, 0.1);
     });
 
     test('has a p99', () {
-      expect(snapshot.get99thPercentile(), closeTo(5.0, 0.1));
+      expectThat(snapshot.get99thPercentile()).closeTo(5.0, 0.1);
     });
 
     test('has a p999', () {
-      expect(snapshot.get999thPercentile(), closeTo(5.0, 0.1));
+      expectThat(snapshot.get999thPercentile()).closeTo(5.0, 0.1);
     });
 
     test('has values', () {
-      expect(snapshot.values, hasLength(5));
-      expect(snapshot.values, equals([1, 2, 3, 4, 5]));
+      expectThat(snapshot.values).hasLength(5);
+      expectThat(snapshot.values).equals([1, 2, 3, 4, 5]);
     });
 
     test('has a size', () {
-      expect(snapshot.size, equals(5));
+      expectThat(snapshot.size).equals(5);
     });
 
     test('dumps to a sink', () {
@@ -75,48 +76,48 @@ main() {
 
       snapshot.dump(sb);
 
-      expect(sb.toString(), equals('1\n2\n3\n4\n5\n'));
+      expectThat(sb.toString()).equals('1\n2\n3\n4\n5\n');
     });
 
     test('calculates the minimum value', () {
-      expect(snapshot.min, equals(1));
+      expectThat(snapshot.min).equals(1);
     });
 
     test('calculates the maximum value', () {
-      expect(snapshot.max, equals(5));
+      expectThat(snapshot.max).equals(5);
     });
 
     test('calculates the mean value', () {
-      expect(snapshot.mean, equals(2.7));
+      expectThat(snapshot.mean).equals(2.7);
     });
 
     test('calculates the stdDev value', () {
-      expect(snapshot.stdDev, closeTo(1.2688, 0.0001));
+      expectThat(snapshot.stdDev).closeTo(1.2688, 0.0001);
     });
 
     test('calculates a min of zero for an empty snapshot', () {
       final emptySnapshot = WeightedSnapshot([]);
-      expect(emptySnapshot.min, equals(0));
+      expectThat(emptySnapshot.min).equals(0);
     });
 
     test('calculates a max of zero for an empty snapshot', () {
       final emptySnapshot = WeightedSnapshot([]);
-      expect(emptySnapshot.max, equals(0));
+      expectThat(emptySnapshot.max).equals(0);
     });
 
     test('calculates a mean of zero for an empty snapshot', () {
       final emptySnapshot = WeightedSnapshot([]);
-      expect(emptySnapshot.mean, equals(0));
+      expectThat(emptySnapshot.mean).equals(0);
     });
 
     test('calculates a stdDev of zero for an empty snapshot', () {
       final emptySnapshot = WeightedSnapshot([]);
-      expect(emptySnapshot.stdDev, equals(0));
+      expectThat(emptySnapshot.stdDev).equals(0);
     });
 
     test('calculates a stdDev of zero for an singleton snapshot', () {
       final singleItemSnapshot = WeightedSnapshot([WeightedSample(1, 1.0)]);
-      expect(singleItemSnapshot.stdDev, equals(0));
+      expectThat(singleItemSnapshot.stdDev).equals(0);
     });
 
     test('expect no overflow for low weights', () {
@@ -125,7 +126,7 @@ main() {
         WeightedSample(2, double.minPositive),
         WeightedSample(3, double.minPositive),
       ]);
-      expect(singleItemSnapshot.mean, equals(2));
+      expectThat(singleItemSnapshot.mean).equals(2);
     });
   });
 }

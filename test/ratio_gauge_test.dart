@@ -12,37 +12,38 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import 'package:test/test.dart';
+import 'package:expector/expector.dart';
 import 'package:metrics/metrics.dart';
+import 'package:test/test.dart' hide expect;
 
 main() {
   test('ratios are human readable', () {
     final ratio = Ratio(100, 200);
 
-    expect(ratio.toString(), equals('100:200'));
+    expectThat(ratio.toString()).equals('100:200');
   });
 
   test('calculates the ratio of the numerator to the denominator', () {
     final regular = RatioGauge(() => Ratio(2, 4));
 
-    expect(regular.value, equals(0.5));
+    expectThat(regular.value).equals(0.5);
   });
 
   test('handles divide by zero issues', () {
     final regular = RatioGauge(() => Ratio(100, 0));
 
-    expect(regular.value, isNaN);
+    expectThat(regular.value).isNaN;
   });
 
   test('handles infinite denominators', () {
     final regular = RatioGauge(() => Ratio(10, double.infinity));
 
-    expect(regular.value, isNaN);
+    expectThat(regular.value).isNaN;
   });
 
   test('handles NaN denominators', () {
     final regular = RatioGauge(() => Ratio(10, double.nan));
 
-    expect(regular.value, isNaN);
+    expectThat(regular.value).isNaN;
   });
 }

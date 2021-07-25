@@ -12,9 +12,10 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+import 'package:expector/expector.dart';
 import 'package:metrics/metrics.dart';
 import 'package:mocktail/mocktail.dart';
-import 'package:test/test.dart';
+import 'package:test/test.dart' hide expect;
 
 import 'mocks.dart';
 
@@ -29,11 +30,11 @@ main() {
     when(() => clock.now())
         .thenReturn(zeroTime.add(const Duration(seconds: 10)));
 
-    expect(meter.count, equals(0));
-    expect(meter.meanRate, closeTo(0, 0.001));
-    expect(meter.oneMinuteRate, closeTo(0, 0.001));
-    expect(meter.fiveMinuteRate, closeTo(0, 0.001));
-    expect(meter.fifteenMinuteRate, closeTo(0, 0.001));
+    expectThat(meter.count).equals(0);
+    expectThat(meter.meanRate).closeTo(0, 0.001);
+    expectThat(meter.oneMinuteRate).closeTo(0, 0.001);
+    expectThat(meter.fiveMinuteRate).closeTo(0, 0.001);
+    expectThat(meter.fifteenMinuteRate).closeTo(0, 0.001);
   });
 
   test('marks events and updates rates and count', () {
@@ -45,9 +46,9 @@ main() {
         .thenReturn(zeroTime.add(const Duration(seconds: 10)));
     meter.mark(2);
 
-    expect(meter.meanRate, closeTo(0.3, 0.001));
-    expect(meter.oneMinuteRate, closeTo(0.1840, 0.001));
-    expect(meter.fiveMinuteRate, closeTo(0.1966, 0.001));
-    expect(meter.fifteenMinuteRate, closeTo(0.1988, 0.001));
+    expectThat(meter.meanRate).closeTo(0.3, 0.001);
+    expectThat(meter.oneMinuteRate).closeTo(0.1840, 0.001);
+    expectThat(meter.fiveMinuteRate).closeTo(0.1966, 0.001);
+    expectThat(meter.fifteenMinuteRate).closeTo(0.1988, 0.001);
   });
 }

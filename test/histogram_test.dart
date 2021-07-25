@@ -12,9 +12,10 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+import 'package:expector/expector.dart';
 import 'package:metrics/metrics.dart';
 import 'package:mocktail/mocktail.dart';
-import 'package:test/test.dart';
+import 'package:test/test.dart' hide expect;
 
 import 'mocks.dart';
 
@@ -23,9 +24,9 @@ main() {
     final reservoir = MockReservoir();
     final histogram = Histogram(reservoir);
 
-    expect(histogram.count, equals(0));
+    expectThat(histogram.count).equals(0);
     histogram.update(1);
-    expect(histogram.count, equals(1));
+    expectThat(histogram.count).equals(1);
   });
 
   test('returns the snapshot from the reservoir', () {
@@ -35,7 +36,7 @@ main() {
 
     when(() => reservoir.snapshot).thenReturn(snapshot);
 
-    expect(histogram.snapshot, equals(snapshot));
+    expectThat(histogram.snapshot).equals(snapshot);
   });
 
   test('updates the reservoir', () {

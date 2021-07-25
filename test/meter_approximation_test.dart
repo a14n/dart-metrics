@@ -13,8 +13,9 @@
 // limitations under the License.
 
 import 'package:clock/clock.dart';
+import 'package:expector/expector.dart';
 import 'package:metrics/metrics.dart';
-import 'package:test/test.dart';
+import 'package:test/test.dart' hide expect;
 
 main() {
   for (var ratePerMinute in [15, 60, 600, 6000]) {
@@ -26,8 +27,8 @@ main() {
           ratePerMinute,
         );
 
-        expect(meter.oneMinuteRate * 60,
-            closeTo(ratePerMinute, 0.1 * ratePerMinute));
+        expectThat(meter.oneMinuteRate * 60)
+            .closeTo(ratePerMinute.toDouble(), 0.1 * ratePerMinute);
       });
 
       test('control meter 5 minute mean approximation', () {
@@ -37,8 +38,8 @@ main() {
           ratePerMinute,
         );
 
-        expect(meter.fiveMinuteRate * 60,
-            closeTo(ratePerMinute, 0.1 * ratePerMinute));
+        expectThat(meter.fiveMinuteRate * 60)
+            .closeTo(ratePerMinute.toDouble(), 0.1 * ratePerMinute);
       });
 
       test('control meter 15 minute mean approximation', () {
@@ -48,8 +49,8 @@ main() {
           ratePerMinute,
         );
 
-        expect(meter.fifteenMinuteRate * 60,
-            closeTo(ratePerMinute, 0.1 * ratePerMinute));
+        expectThat(meter.fifteenMinuteRate * 60)
+            .closeTo(ratePerMinute.toDouble(), 0.1 * ratePerMinute);
       });
     });
   }
