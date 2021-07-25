@@ -14,7 +14,7 @@
 
 Almost every core classes from the 3.1.0 Java version have been ported.
 
-There's also a [graphite](http://graphite.wikidot.com/) reporter.
+There's also a [graphite](https://graphite.wikidot.com/) reporter.
 
 # 0.0.1 (2014-11-28)
 
@@ -22,7 +22,7 @@ The initial release that follows mainly the 3.1.0 Java version.
 
 # Semantic Version Conventions
 
-http://semver.org/
+https://semver.org/
 
 - *Stable*:  All even numbered minor versions are considered API stable:
   i.e.: v1.0.x, v1.2.x, and so on.
