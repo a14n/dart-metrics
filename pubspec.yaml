@@ -1,5 +1,5 @@
 name: metrics
-version: 0.2.0
+version: 0.2.1
 description: Metrics provides a powerful toolkit of ways to measure the behavior of critical components in your production environment.
 homepage: https://github.com/a14n/dart-metrics
 

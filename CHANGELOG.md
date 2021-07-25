@@ -1,3 +1,7 @@
+# 0.2.1 (2021-07-25)
+
+- improve pub score.
+
 # 0.2.0 (2021-07-23)
 
 - update for Dart 2.12 and nullsafety.
