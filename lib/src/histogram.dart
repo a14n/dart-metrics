@@ -26,7 +26,7 @@ class Histogram implements Metric, Sampling, Counting {
 
   /// Adds a recorded value.
   void update(int value) {
-    _count += value;
+    _count++;
     _reservoir.update(value);
   }
 
