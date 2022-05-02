@@ -1,3 +1,7 @@
+# 0.2.2 (2022-05-02)
+
+- Fix an [Histogram count issue](https://github.com/a14n/dart-metrics/issues/4).
+
 # 0.2.1 (2021-07-25)
 
 - improve pub score.
